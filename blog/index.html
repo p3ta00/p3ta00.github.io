@@ -1,0 +1,50 @@
+---
+layout: default
+title: Blog
+---
+
+<section class="blog-section">
+  <div class="terminal-output">
+    <p>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">ls -la ~/blog/</span>
+    </p>
+  </div>
+
+  <h2 class="section-header">Blog Posts</h2>
+  <p style="color: var(--foreground-dark); margin-bottom: 20px;">
+    Thoughts on security, tools, techniques, and random tech musings.
+  </p>
+
+  {% for post in site.posts %}
+  <div class="writeup-card">
+    <a href="{{ post.url | relative_url }}">
+      <div class="writeup-title">{{ post.title }}</div>
+      <div class="writeup-meta">
+        <span>{{ post.date | date: "%Y-%m-%d" }}</span>
+        {% for tag in post.tags %}
+        <span class="writeup-tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% if post.excerpt %}
+      <p style="color: var(--foreground-dark); margin-top: 8px; font-size: 0.9rem;">
+        {{ post.excerpt | strip_html | truncate: 150 }}
+      </p>
+      {% endif %}
+    </a>
+  </div>
+  {% else %}
+  <div style="padding: 30px; text-align: center; color: var(--foreground-dark);">
+    <p style="font-size: 1.2rem; margin-bottom: 10px;">No blog posts yet.</p>
+    <p style="color: var(--cyan);">
+      # Create a post:<br>
+      vim _posts/2024-01-01-my-first-post.md
+    </p>
+  </div>
+  {% endfor %}
+
+  <div style="margin-top: 30px;">
+    <a href="{{ '/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
+      <span style="color: var(--green);">&lt;</span> cd ~/
+    </a>
+  </div>
+</section>

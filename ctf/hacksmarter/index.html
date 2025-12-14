@@ -1,0 +1,46 @@
+---
+layout: default
+title: HackSmarter Writeups
+---
+
+<section class="ctf-section">
+  <div class="terminal-output">
+    <p>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">ls -la ~/ctf/hacksmarter/</span>
+    </p>
+  </div>
+
+  <h2 class="section-header">HackSmarter Challenges</h2>
+
+  {% assign hacksmarter = site.ctf | where: "platform", "HackSmarter" | sort: 'date' | reverse %}
+  {% for writeup in hacksmarter %}
+  <div class="writeup-card">
+    <a href="{{ writeup.url | relative_url }}">
+      <div class="writeup-title">{{ writeup.title }}</div>
+      <div class="writeup-meta">
+        {% if writeup.category %}
+        <span class="writeup-tag">{{ writeup.category }}</span>
+        {% endif %}
+        {% if writeup.difficulty %}
+        <span class="writeup-difficulty difficulty-{{ writeup.difficulty | downcase }}">{{ writeup.difficulty }}</span>
+        {% endif %}
+        {% if writeup.points %}
+        <span>{{ writeup.points }} pts</span>
+        {% endif %}
+        <span>{{ writeup.date | date: "%Y-%m-%d" }}</span>
+      </div>
+    </a>
+  </div>
+  {% else %}
+  <p style="color: var(--foreground-dark); font-style: italic;">
+    No HackSmarter writeups yet.<br>
+    <span style="color: var(--cyan);">echo "Coming soon..." >> writeups.txt</span>
+  </p>
+  {% endfor %}
+
+  <div style="margin-top: 30px;">
+    <a href="{{ '/ctf/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
+      <span style="color: var(--green);">&lt;</span> cd ../
+    </a>
+  </div>
+</section>

@@ -1,0 +1,80 @@
+---
+layout: default
+---
+<article class="writeup">
+  <header class="writeup-header">
+    <h1 class="section-header glitch">{{ page.title }}</h1>
+    <div class="writeup-meta">
+      <span class="writeup-tag">{{ page.platform }}</span>
+      {% if page.difficulty %}
+      <span class="writeup-difficulty difficulty-{{ page.difficulty | downcase }}">{{ page.difficulty }}</span>
+      {% endif %}
+      {% if page.date %}
+      <span>{{ page.date | date: "%Y-%m-%d" }}</span>
+      {% endif %}
+      {% if page.os %}
+      <span>OS: {{ page.os }}</span>
+      {% endif %}
+      {% if page.points %}
+      <span>{{ page.points }} pts</span>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if page.active and page.hash_required %}
+  <div id="locked-section" class="locked-content">
+    <div class="lock-icon">[LOCKED]</div>
+    <p>This writeup is for an <strong>active</strong> machine.</p>
+    <p>Enter the root flag hash to unlock:</p>
+    <input type="password" id="hash-input" class="hash-input" placeholder="Enter root flag hash...">
+    <br>
+    <button onclick="unlockContent()" class="unlock-btn">./unlock.sh</button>
+    <p style="margin-top: 10px; font-size: 0.8rem; color: var(--foreground-dark);">
+      Only users who have rooted the box can access this writeup.
+    </p>
+  </div>
+
+  <div id="unlocked-content" class="post-content" style="display: none;">
+    {{ content }}
+  </div>
+
+  <script>
+    const correctHash = "{{ page.root_hash }}";
+
+    function unlockContent() {
+      const input = document.getElementById('hash-input').value.trim().toLowerCase();
+      if (input === correctHash.toLowerCase()) {
+        document.getElementById('locked-section').style.display = 'none';
+        document.getElementById('unlocked-content').style.display = 'block';
+        sessionStorage.setItem('unlocked_{{ page.slug }}', 'true');
+      } else {
+        document.getElementById('hash-input').style.borderColor = 'var(--red)';
+        document.getElementById('hash-input').value = '';
+        document.getElementById('hash-input').placeholder = 'Incorrect hash. Try again...';
+      }
+    }
+
+    // Check if already unlocked in this session
+    if (sessionStorage.getItem('unlocked_{{ page.slug }}') === 'true') {
+      document.getElementById('locked-section').style.display = 'none';
+      document.getElementById('unlocked-content').style.display = 'block';
+    }
+
+    // Allow Enter key to unlock
+    document.getElementById('hash-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') unlockContent();
+    });
+  </script>
+
+  {% else %}
+  <div class="post-content">
+    {{ content }}
+  </div>
+  {% endif %}
+
+  <div class="writeup-nav" style="margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--terminal-black);">
+    <a href="{{ '/ctf/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
+      <span style="color: var(--green);">&lt;</span> cd ../ctf
+    </a>
+  </div>
+</article>

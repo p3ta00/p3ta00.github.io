@@ -1,0 +1,46 @@
+---
+layout: default
+title: HTB Retired Machines
+---
+
+<section class="ctf-section">
+  <div class="terminal-output">
+    <p>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">ls -la ~/ctf/htb/retired/</span>
+    </p>
+  </div>
+
+  <h2 class="section-header">Retired Machines</h2>
+  <p style="color: var(--foreground-dark); margin-bottom: 15px;">
+    Writeups for retired HTB machines. No restrictions - dive in!
+  </p>
+
+  {% assign htb_retired = site.ctf | where: "platform", "HackTheBox" | where: "active", false | sort: 'date' | reverse %}
+  {% for writeup in htb_retired %}
+  <div class="writeup-card">
+    <a href="{{ writeup.url | relative_url }}">
+      <div class="writeup-title">{{ writeup.title }}</div>
+      <div class="writeup-meta">
+        <span class="writeup-difficulty difficulty-{{ writeup.difficulty | downcase }}">{{ writeup.difficulty }}</span>
+        <span>{{ writeup.os }}</span>
+        <span class="status retired">Retired</span>
+        <span>{{ writeup.date | date: "%Y-%m-%d" }}</span>
+      </div>
+    </a>
+  </div>
+  {% else %}
+  <div style="padding: 30px; text-align: center; color: var(--foreground-dark);">
+    <p style="font-size: 1.2rem; margin-bottom: 10px;">No retired machine writeups yet.</p>
+    <p style="color: var(--cyan);">
+      # Add a writeup:<br>
+      touch _ctf/htb-machinename.md
+    </p>
+  </div>
+  {% endfor %}
+
+  <div style="margin-top: 30px;">
+    <a href="{{ '/ctf/htb/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
+      <span style="color: var(--green);">&lt;</span> cd ../
+    </a>
+  </div>
+</section>

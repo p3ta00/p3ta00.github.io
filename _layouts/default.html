@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+
+  {% seo %}
+</head>
+<body>
+  <div class="matrix-bg"></div>
+
+  <div class="terminal-window">
+    <div class="terminal-header">
+      <div class="terminal-buttons">
+        <span class="terminal-btn close"></span>
+        <span class="terminal-btn minimize"></span>
+        <span class="terminal-btn maximize"></span>
+      </div>
+      <div class="terminal-title">p3ta@kali: ~/{{ page.url | remove: '/' | default: 'home' }}</div>
+    </div>
+
+    <div class="terminal-body">
+      {% include header.html %}
+
+      <nav class="nav-section">
+        <ul class="nav-list">
+          <li class="nav-item {% if page.url == '/' %}active{% endif %}">
+            <a href="{{ '/' | relative_url }}">~/ home</a>
+          </li>
+          <li class="nav-item {% if page.url contains '/ctf' %}active{% endif %}">
+            <a href="{{ '/ctf/' | relative_url }}">~/ctf</a>
+          </li>
+          <li class="nav-item {% if page.url contains '/blog' %}active{% endif %}">
+            <a href="{{ '/blog/' | relative_url }}">~/blog</a>
+          </li>
+          <li class="nav-item {% if page.url == '/about/' %}active{% endif %}">
+            <a href="{{ '/about/' | relative_url }}">~/about</a>
+          </li>
+        </ul>
+      </nav>
+
+      <main>
+        {{ content }}
+      </main>
+
+      <footer class="terminal-footer">
+        <div class="footer-status">
+          <span class="prompt-user">p3ta</span><span class="prompt-at">@</span><span class="prompt-host">terminal</span> <span class="prompt-symbol">$</span> <span class="cursor"></span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/p3ta00" target="_blank">[github]</a>
+          <a href="{{ '/ctf/' | relative_url }}">[writeups]</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+</body>
+</html>

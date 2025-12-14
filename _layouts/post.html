@@ -1,0 +1,24 @@
+---
+layout: default
+---
+<article class="blog-post">
+  <header class="post-header">
+    <h1 class="section-header glitch">{{ page.title }}</h1>
+    <div class="writeup-meta">
+      <span>{{ page.date | date: "%Y-%m-%d" }}</span>
+      {% for tag in page.tags %}
+      <span class="writeup-tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+  </header>
+
+  <div class="post-content">
+    {{ content }}
+  </div>
+
+  <div class="post-nav" style="margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--terminal-black);">
+    <a href="{{ '/blog/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
+      <span style="color: var(--green);">&lt;</span> cd ../blog
+    </a>
+  </div>
+</article>

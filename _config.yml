@@ -1,0 +1,42 @@
+# Site settings
+title: "p3ta@terminal"
+description: "CTF Writeups & Security Research"
+author: "p3ta00"
+baseurl: ""
+url: "https://p3ta00.github.io"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:categories/:title/
+
+# Collections
+collections:
+  ctf:
+    output: true
+    permalink: /ctf/:path/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "ctf"
+    values:
+      layout: "writeup"
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap

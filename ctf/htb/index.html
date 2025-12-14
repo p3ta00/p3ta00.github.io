@@ -1,0 +1,66 @@
+---
+layout: default
+title: Hack The Box Writeups
+---
+
+<section class="ctf-section">
+  <div class="terminal-output">
+    <p>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">ls -la ~/ctf/htb/</span>
+    </p>
+  </div>
+
+  <div class="tree" style="margin: 20px 0;">
+    <span class="tree-line">drwxr-xr-x  p3ta  p3ta  4096  htb/</span>
+    <span class="tree-line">├── <a href="{{ '/ctf/htb/active/' | relative_url }}" class="tree-dir">active/</a> <span class="tree-locked">[hash protected]</span></span>
+    <span class="tree-line">└── <a href="{{ '/ctf/htb/retired/' | relative_url }}" class="tree-dir">retired/</a></span>
+  </div>
+
+  <h2 class="section-header">Active Machines</h2>
+  <p style="color: var(--foreground-dark); margin-bottom: 15px;">
+    <span style="color: var(--red);">Warning:</span> Active machine writeups are protected. You must enter the root flag hash to access them.
+  </p>
+
+  {% assign htb_active = site.ctf | where: "platform", "HackTheBox" | where: "active", true | sort: 'date' | reverse %}
+  {% for writeup in htb_active %}
+  <div class="writeup-card" style="border-left-color: var(--green);">
+    <a href="{{ writeup.url | relative_url }}">
+      <div class="writeup-title">
+        <span style="color: var(--red);">[LOCKED]</span> {{ writeup.title }}
+      </div>
+      <div class="writeup-meta">
+        <span class="writeup-difficulty difficulty-{{ writeup.difficulty | downcase }}">{{ writeup.difficulty }}</span>
+        <span>{{ writeup.os }}</span>
+        <span class="status active">Active</span>
+      </div>
+    </a>
+  </div>
+  {% else %}
+  <p style="color: var(--foreground-dark); font-style: italic;">No active machine writeups.</p>
+  {% endfor %}
+
+  <h2 class="section-header">Retired Machines</h2>
+  <p style="color: var(--foreground-dark); margin-bottom: 15px;">Freely accessible writeups for retired machines</p>
+
+  {% assign htb_retired = site.ctf | where: "platform", "HackTheBox" | where: "active", false | sort: 'date' | reverse %}
+  {% for writeup in htb_retired %}
+  <div class="writeup-card">
+    <a href="{{ writeup.url | relative_url }}">
+      <div class="writeup-title">{{ writeup.title }}</div>
+      <div class="writeup-meta">
+        <span class="writeup-difficulty difficulty-{{ writeup.difficulty | downcase }}">{{ writeup.difficulty }}</span>
+        <span>{{ writeup.os }}</span>
+        <span class="status retired">Retired</span>
+      </div>
+    </a>
+  </div>
+  {% else %}
+  <p style="color: var(--foreground-dark); font-style: italic;">No retired machine writeups yet.</p>
+  {% endfor %}
+
+  <div style="margin-top: 30px;">
+    <a href="{{ '/ctf/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
+      <span style="color: var(--green);">&lt;</span> cd ../
+    </a>
+  </div>
+</section>
