@@ -16,9 +16,9 @@ $ id
 uid=1337(p3ta) gid=710(defcon) groups=710(defcon),27(sudo),1000(navy-veteran)
 ```
 
-20 years in the United States Navy. Destroyers. Carriers. Deployments to Iraq and Afghanistan. I've been in situations where the stakes were real long before I started breaking into boxes for a living.
+I served 20 years in the United States Navy aboard destroyers and carriers, with deployments to Iraq and Afghanistan. That experience taught me what it means to operate in high-stakes environments where precision and discipline aren't optional.
 
-These days, I lead a penetration testing team—and honestly, the best part of the job is working with hungry, talented people who remind me why I fell in love with this field in the first place. Watching the next generation of hackers level up? That never gets old.
+Today, I oversee a penetration testing team and have the privilege of working alongside some of the best emerging talent in the industry. Mentoring the next generation of security professionals and watching them grow into skilled operators is one of the most rewarding parts of what I do.
 
 ## Certifications
 
