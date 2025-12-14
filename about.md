@@ -36,9 +36,9 @@ CWEE     = true    # Certified Web Exploitation Expert
 CWES     = true    # Certified Web Exploitation Specialist
 
 [CompTIA]
-Network+ = true
-Security+= true
-SecurityX= true
+Network+  = true
+Security+ = true
+SecurityX = true
 
 [Other]
 CEH      = true    # Look, we all make mistakes. Don't @ me.
