@@ -6,9 +6,13 @@ permalink: /uwu-toolkit/
 
 # UwU Toolkit Wiki
 
-<p align="center">
-<img src="/assets/images/uwu-banner.png" alt="UwU Toolkit" width="600">
-</p>
+<div style="background: linear-gradient(135deg, #1a1b26 0%, #24283b 100%); border: 2px solid #bb9af7; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+  <div style="font-size: 2.5em; margin-bottom: 10px;">UwU</div>
+  <div style="color: #7dcfff; font-size: 1.2em;">Penetration Testing Framework</div>
+  <div style="margin-top: 15px;">
+    <a href="search" style="display: inline-block; padding: 10px 25px; background: #bb9af7; color: #1a1b26; text-decoration: none; border-radius: 4px; font-weight: bold;">Search Wiki</a>
+  </div>
+</div>
 
 **UwU Toolkit** is a modular penetration testing framework inspired by Metasploit, designed for modern offensive security workflows. Built to run seamlessly inside Exegol containers with a cyberpunk neon aesthetic.
 
