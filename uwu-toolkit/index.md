@@ -51,7 +51,9 @@ permalink: /uwu-toolkit/
 - **Exegol Support** - Seamlessly runs tools inside Exegol containers
 - **Claude AI** - Interactive AI assistant for code analysis and security questions
 - **Sliver C2** - Integrated Command & Control client management
-- **Shell Management** - Sliver-like shell session handling
+- **Penelope** - Advanced shell handler with auto-upgrade and session management
+- **Ligolo-ng** - Network tunneling with TUN interface and route management
+- **Shell Management** - Unified shell session handling across all tools
 
 ---
 

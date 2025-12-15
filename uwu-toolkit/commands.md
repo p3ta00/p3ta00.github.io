@@ -19,6 +19,8 @@ Complete reference for all UwU Toolkit console commands.
 - [Shell Management](#shell-management)
 - [Claude AI](#claude-ai)
 - [Sliver C2](#sliver-c2)
+- [Penelope Shell Handler](#penelope-shell-handler)
+- [Ligolo-ng Tunneling](#ligolo-ng-tunneling)
 - [Other Commands](#other-commands)
 
 ---
@@ -625,6 +627,168 @@ Show full Sliver command help.
 
 ```bash
 uwu > sliver help
+```
+
+---
+
+## Penelope Shell Handler
+
+Advanced shell handler with auto-upgrade and session management.
+
+### penelope
+
+Start Penelope listener.
+
+```bash
+uwu > penelope              # Default port 4444
+uwu > penelope 9001         # Specific port
+uwu > penelope -i 10.10.14.50 4444  # Specific interface
+```
+
+**In Penelope Mode:**
+- Full Penelope functionality
+- Auto PTY upgrade
+- Multi-session handling
+- `Ctrl+D` - Background session (listener stays active)
+- `quit` - Exit and return to UwU
+
+### penelope resume, fg
+
+Resume backgrounded Penelope session.
+
+```bash
+uwu > penelope resume
+uwu > penelope fg   # Alias
+```
+
+### penelope status
+
+Check Penelope status.
+
+```bash
+uwu > penelope status
+
+  Penelope Status
+  ========================================
+
+  Status:   Backgrounded (use 'penelope resume')
+  Port:     4444
+  Sessions: 2
+  Binary:   /opt/penelope/penelope.py
+```
+
+### penelope help
+
+Show full Penelope command help.
+
+```bash
+uwu > penelope help
+```
+
+**Note:** Penelope sessions automatically appear in the `shells` command.
+
+---
+
+## Ligolo-ng Tunneling
+
+Network tunneling with TUN interface support.
+
+### ligolo
+
+Start Ligolo-ng proxy.
+
+```bash
+uwu > ligolo                # Default port 11601
+uwu > ligolo 11601          # Specific port
+uwu > ligolo -tun mytun 11601  # Custom TUN interface
+```
+
+**TUN Interface:** UwU Toolkit automatically creates the TUN interface if it doesn't exist.
+
+**In Ligolo Mode:**
+- Full Ligolo proxy functionality
+- Agent management
+- Tunnel control
+- `Ctrl+D` - Background session (proxy stays active)
+- `exit` - Exit and return to UwU
+
+### ligolo resume, fg
+
+Resume backgrounded Ligolo session.
+
+```bash
+uwu > ligolo resume
+uwu > ligolo fg   # Alias
+```
+
+### ligolo agents
+
+List connected Ligolo agents.
+
+```bash
+uwu > ligolo agents
+
+  Ligolo-ng Agents
+  ============================================================
+
+  ID   Remote IP        Hostname             User         Tunnel
+  ---- ---------------- -------------------- ------------ --------
+  0    10.10.10.100     DC01                 CORP\admin   active
+  1    10.10.10.50      WEB01                www-data     idle
+```
+
+### ligolo route
+
+Manage routes through Ligolo tunnel.
+
+```bash
+# Add route
+uwu > ligolo route add 10.10.10.0/24
+[+] Route added: 10.10.10.0/24 via ligolo
+
+# Remove route
+uwu > ligolo route del 10.10.10.0/24
+[+] Route removed: 10.10.10.0/24
+```
+
+### ligolo routes
+
+List active routes through Ligolo interface.
+
+```bash
+uwu > ligolo routes
+
+  Ligolo Routes
+  ========================================
+
+    10.10.10.0/24 via ligolo
+    172.16.0.0/16 via ligolo
+```
+
+### ligolo status
+
+Check Ligolo status.
+
+```bash
+uwu > ligolo status
+
+  Ligolo-ng Status
+  ========================================
+
+  Status:    Backgrounded (use 'ligolo resume')
+  Port:      11601
+  TUN:       ligolo
+  Agents:    2
+  Binary:    /usr/local/bin/ligolo-proxy
+  Routes:    10.10.10.0/24
+```
+
+### ligolo help
+
+Show full Ligolo command help.
+
+```bash
+uwu > ligolo help
 ```
 
 ---
