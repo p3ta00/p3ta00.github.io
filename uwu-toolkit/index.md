@@ -21,8 +21,9 @@ permalink: /uwu-toolkit/
 | [Installation](installation) | Setup and configuration guide |
 | [Commands Reference](commands) | Complete command documentation |
 | [Modules Guide](modules) | Using and creating modules |
-| [Integrations](integrations) | Claude AI & Sliver C2 integration |
+| [Integrations](integrations) | Claude AI, Sliver, Penelope, Ligolo |
 | [Quick Reference](quick-reference) | Cheat sheet for common tasks |
+| [Search](search) | Search the wiki |
 
 ---
 
