@@ -10,15 +10,17 @@ tags: ["windows", "rdp", "credential-harvesting", "powershell-history", "psexec"
 
 ![Slayer Banner](/assets/images/ctf/slayer/banner.png)
 
+---
+
 ## Overview
 
-| Property | Value |
-|----------|-------|
-| **Platform** | HackSmarter |
-| **OS** | Windows 11 / Server 2025 |
-| **Difficulty** | Easy |
-| **IP** | 10.1.163.91 |
-| **Hostname** | EC2AMAZ-M1LFCNO |
+**Platform:** HackSmarter
+**OS:** Windows 11 / Server 2025
+**Difficulty:** Easy
+**IP:** `10.1.163.91`
+**Hostname:** `EC2AMAZ-M1LFCNO`
+
+---
 
 ## Objective
 
@@ -302,10 +304,10 @@ C:\Users\Administrator\Desktop> type root.txt
 
 ## Credentials Found
 
-| Username | Password | Access Level |
-|----------|----------|--------------|
-| tyler.ramsey | P@ssw0rd! | User (RDP) |
-| administrator | ebz0yxy3txh9BDE*yeh | Administrator (SYSTEM via PSExec) |
+```
+tyler.ramsey      : P@ssw0rd!            → User (RDP)
+administrator     : ebz0yxy3txh9BDE*yeh  → Administrator (SYSTEM via PSExec)
+```
 
 ---
 
