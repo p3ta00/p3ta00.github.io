@@ -44,15 +44,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Hacker terminal animation
 async function runHackerTerminal() {
+  console.log('[DEBUG] runHackerTerminal started');
+
   const terminal = document.getElementById('hacker-terminal');
   const asciiHeader = document.getElementById('ascii-header');
   const headerInfo = document.getElementById('header-info');
   const headerTagline = document.getElementById('header-tagline');
 
-  if (!terminal) return;
+  console.log('[DEBUG] terminal element:', terminal);
+
+  if (!terminal) {
+    console.log('[DEBUG] No terminal element found, returning');
+    return;
+  }
 
   // Check if we're on the home page
   const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html' || window.location.pathname === '';
+  console.log('[DEBUG] pathname:', window.location.pathname, 'isHomePage:', isHomePage);
 
   // If NOT on home page, show static ASCII with glow effect
   if (!isHomePage) {
@@ -68,7 +76,9 @@ async function runHackerTerminal() {
   }
 
   // Home page - always play the animation
+  console.log('[DEBUG] Starting animation on home page');
 
+  try {
   const prompt = '<span class="prompt-user">p3ta</span><span class="prompt-at">@</span><span class="prompt-host">dc710</span> <span class="prompt-symbol">$</span> ';
 
   // Helper function to type text character by character
@@ -276,6 +286,11 @@ async function runHackerTerminal() {
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleSubmit();
   });
+
+  console.log('[DEBUG] Animation complete, input box added');
+  } catch (error) {
+    console.error('[DEBUG] Animation error:', error);
+  }
 }
 
 // Hash cracking challenge prompt
