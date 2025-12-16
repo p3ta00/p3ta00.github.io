@@ -25,13 +25,12 @@ layout: default
   <div id="locked-section" class="locked-content">
     <div class="lock-icon">[LOCKED]</div>
     <p>This writeup is for an <strong>active</strong> machine.</p>
-    <p>Enter the root flag hash to unlock:</p>
-    <input type="password" id="hash-input" class="hash-input" placeholder="Enter root flag hash...">
-    <br>
-    <button onclick="unlockContent()" class="unlock-btn">./unlock.sh</button>
-    <p style="margin-top: 10px; font-size: 0.8rem; color: var(--foreground-dark);">
-      Only users who have rooted the box can access this writeup.
-    </p>
+    <p style="color: var(--cyan);">Crack the hash to unlock:</p>
+    <code style="color: var(--pink); font-size: 1.1em;">{{ page.locked_hash }}</code>
+    <br><br>
+    <input type="text" id="hash-input" class="hash-input" placeholder="Enter cracked password...">
+    <button id="unlock-btn" class="unlock-btn">Submit</button>
+    <div id="result-message" style="margin-top: 15px; min-height: 30px;"></div>
   </div>
 
   <div id="unlocked-content" class="post-content" style="display: none;">
@@ -39,18 +38,50 @@ layout: default
   </div>
 
   <script>
-    const correctHash = "{{ page.root_hash }}";
+    const correctPassword = "{{ page.unlock_password }}";
 
-    function unlockContent() {
-      const input = document.getElementById('hash-input').value.trim().toLowerCase();
-      if (input === correctHash.toLowerCase()) {
+    async function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function typeMessage(container, text, className) {
+      container.innerHTML = '';
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.className = className;
+        span.style.animationDelay = `${i * 0.1}s`;
+        span.textContent = text[i];
+        container.appendChild(span);
+        await sleep(60);
+      }
+    }
+
+    async function unlockContent() {
+      const input = document.getElementById('hash-input');
+      const btn = document.getElementById('unlock-btn');
+      const result = document.getElementById('result-message');
+      const attempt = input.value.trim();
+
+      input.disabled = true;
+      btn.disabled = true;
+
+      if (attempt === correctPassword) {
+        await typeMessage(result, 'You are a man that walks among the Gods', 'pulse-rainbow');
+        await sleep(1500);
+        result.innerHTML += '<br><span style="color: var(--green);">[+] ACCESS GRANTED</span>';
+        await sleep(1000);
         document.getElementById('locked-section').style.display = 'none';
         document.getElementById('unlocked-content').style.display = 'block';
         sessionStorage.setItem('unlocked_{{ page.slug }}', 'true');
       } else {
-        document.getElementById('hash-input').style.borderColor = 'var(--red)';
-        document.getElementById('hash-input').value = '';
-        document.getElementById('hash-input').placeholder = 'Incorrect hash. Try again...';
+        await typeMessage(result, 'Alexis stop being a noob!', 'pulse-rainbow');
+        await sleep(1500);
+        result.innerHTML += '<br><span style="color: var(--red);">[-] Try harder...</span>';
+        await sleep(500);
+        input.disabled = false;
+        btn.disabled = false;
+        input.value = '';
+        input.focus();
       }
     }
 
@@ -60,7 +91,7 @@ layout: default
       document.getElementById('unlocked-content').style.display = 'block';
     }
 
-    // Allow Enter key to unlock
+    document.getElementById('unlock-btn').addEventListener('click', unlockContent);
     document.getElementById('hash-input').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') unlockContent();
     });
