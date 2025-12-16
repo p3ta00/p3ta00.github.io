@@ -1,10 +1,10 @@
 /* UwU Toolkit Cyberpunk Neon Color Palette */
 :root {
-  --bg-dark: #0d0221;
-  --bg-darker: #080114;
-  --bg-lighter: #28143c;
-  --bg-highlight: #3c285a;
-  --terminal-black: #3c285a;
+  --bg-dark: #1a1b26;
+  --bg-darker: #16161e;
+  --bg-lighter: #24283b;
+  --bg-highlight: #292e42;
+  --terminal-black: #414868;
   --foreground: #e6e6fa;
   --foreground-dark: #8b7aa8;
   --comment: #8b7aa8;
@@ -19,7 +19,7 @@
   --green: #00ff9f;
   --teal: #00ff9f;
   --border: #ff10f0;
-  --selection: #3c285a;
+  --selection: #33467c;
   --glow: rgba(255, 16, 240, 0.3);
   --digital-rain: #00ff41;
 }
@@ -672,7 +672,7 @@ pre code {
 .highlight .lineno {
   color: #8b7aa8;
   padding-right: 15px;
-  border-right: 1px solid #3c285a;
+  border-right: 1px solid #414868;
   margin-right: 15px;
   user-select: none;
 }
@@ -683,7 +683,7 @@ pre code {
   position: absolute;
   top: 0;
   right: 0;
-  background: #3c285a;
+  background: #414868;
   color: #8b7aa8;
   padding: 2px 8px;
   font-size: 0.7rem;
