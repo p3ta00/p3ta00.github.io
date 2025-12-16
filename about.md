@@ -100,7 +100,7 @@ function updateUptime() {
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
   document.getElementById('uptime-counter').innerHTML =
-    years + ' years, ' + days + ' days, ' + hours + ' hours, ' + minutes + ' minutes, ' + seconds + ' seconds of service';
+    years + ' years, ' + days + ' days, ' + hours + ' hours, ' + minutes + ' minutes, ' + seconds + ' seconds of experience';
 }
 updateUptime();
 setInterval(updateUptime, 1000);
