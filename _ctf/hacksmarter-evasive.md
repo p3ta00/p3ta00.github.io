@@ -305,7 +305,7 @@ UserName                      SID
 WINSERVER01\alfonso           S-1-5-21-875136113-1806174397-556431496-1000
 ```
 
-**User Flag:** Found in PDF on alfonso's desktop - "AI is the Future Corp"
+**User Flag Retrieved!**
 
 ## 2.6 Additional Discovery
 

