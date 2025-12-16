@@ -78,7 +78,7 @@ for p in principles:
 
 ## The Journey
 
-From standing watch on a destroyer in hostile waters to standing up red team infrastructure—it's been one hell of a ride. The military taught me discipline, attention to detail, and how to operate under pressure. Offensive security gave me a new mission.
+From standing watch on a destroyer in hostile waters to standing up cybertest infrastructure—it's been one hell of a ride. The military taught me discipline, attention to detail, and how to operate under pressure. Offensive security gave me a new mission.
 
 Now I get to combine both: leading operators, planning engagements, and occasionally still getting my hands dirty in the trenches.
 
