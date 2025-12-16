@@ -1,26 +1,27 @@
-/* Tokyo Night Color Palette */
+/* UwU Toolkit Cyberpunk Neon Color Palette */
 :root {
-  --bg-dark: #1a1b26;
-  --bg-darker: #16161e;
-  --bg-lighter: #24283b;
-  --bg-highlight: #292e42;
-  --terminal-black: #414868;
-  --foreground: #a9b1d6;
-  --foreground-dark: #565f89;
-  --comment: #565f89;
-  --cyan: #7dcfff;
-  --blue: #7aa2f7;
-  --purple: #bb9af7;
-  --magenta: #bb9af7;
-  --pink: #f7768e;
-  --red: #f7768e;
-  --orange: #ff9e64;
-  --yellow: #e0af68;
-  --green: #9ece6a;
-  --teal: #73daca;
-  --border: #29a4bd;
-  --selection: #33467c;
-  --glow: rgba(122, 162, 247, 0.3);
+  --bg-dark: #0d0221;
+  --bg-darker: #080114;
+  --bg-lighter: #28143c;
+  --bg-highlight: #3c285a;
+  --terminal-black: #3c285a;
+  --foreground: #e6e6fa;
+  --foreground-dark: #8b7aa8;
+  --comment: #8b7aa8;
+  --cyan: #00e8ff;
+  --blue: #00a2ff;
+  --purple: #b620e0;
+  --magenta: #ff006e;
+  --pink: #ff10f0;
+  --red: #ff2975;
+  --orange: #ff7c00;
+  --yellow: #ffea00;
+  --green: #00ff9f;
+  --teal: #00ff9f;
+  --border: #ff10f0;
+  --selection: #3c285a;
+  --glow: rgba(255, 16, 240, 0.3);
+  --digital-rain: #00ff41;
 }
 
 * {
@@ -57,7 +58,7 @@ body {
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.3),
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    0 0 60px rgba(122, 162, 247, 0.1);
+    0 0 60px rgba(255, 16, 240, 0.15);
 }
 
 /* Terminal Title Bar */
@@ -248,7 +249,7 @@ body {
   border-left-color: var(--pink);
   background: var(--bg-highlight);
   transform: translateX(5px);
-  box-shadow: 0 0 20px rgba(122, 162, 247, 0.1);
+  box-shadow: 0 0 20px rgba(255, 16, 240, 0.15);
 }
 
 .writeup-card a {
@@ -381,7 +382,7 @@ pre code {
 }
 
 /* ============================================
-   Syntax Highlighting - Tokyo Night Theme
+   Syntax Highlighting - Cyberpunk Neon Theme
    Complete Rouge Token Coverage
    ============================================ */
 
@@ -407,7 +408,7 @@ pre code {
   color: var(--foreground);
 }
 
-/* Comments - Storm gray */
+/* Comments - Muted lavender */
 .highlight .c,      /* Comment */
 .highlight .c1,     /* Comment.Single */
 .highlight .cm,     /* Comment.Multiline */
@@ -415,11 +416,11 @@ pre code {
 .highlight .cs,     /* Comment.Special */
 .highlight .ch,     /* Comment.Hashbang */
 .highlight .cd {    /* Comment.Doc */
-  color: #565f89;
+  color: #8b7aa8;
   font-style: italic;
 }
 
-/* Keywords - Purple/Magenta */
+/* Keywords - Neon Purple */
 .highlight .k,      /* Keyword */
 .highlight .kc,     /* Keyword.Constant */
 .highlight .kd,     /* Keyword.Declaration */
@@ -427,11 +428,11 @@ pre code {
 .highlight .kp,     /* Keyword.Pseudo */
 .highlight .kr,     /* Keyword.Reserved */
 .highlight .kt {    /* Keyword.Type */
-  color: #bb9af7;
+  color: #b620e0;
   font-weight: 500;
 }
 
-/* Strings - Green */
+/* Strings - Neon Green */
 .highlight .s,      /* String */
 .highlight .s1,     /* String.Single */
 .highlight .s2,     /* String.Double */
@@ -445,15 +446,15 @@ pre code {
 .highlight .sr,     /* String.Regex */
 .highlight .ss,     /* String.Symbol */
 .highlight .sx {    /* String.Other */
-  color: #9ece6a;
+  color: #00ff9f;
 }
 
-/* String Escape - Orange */
+/* String Escape - Neon Orange */
 .highlight .se {
-  color: #ff9e64;
+  color: #ff7c00;
 }
 
-/* Numbers - Orange */
+/* Numbers - Neon Orange */
 .highlight .m,      /* Number */
 .highlight .mb,     /* Number.Bin */
 .highlight .mf,     /* Number.Float */
@@ -461,69 +462,69 @@ pre code {
 .highlight .mi,     /* Number.Integer */
 .highlight .mo,     /* Number.Oct */
 .highlight .il {    /* Number.Integer.Long */
-  color: #ff9e64;
+  color: #ff7c00;
 }
 
-/* Operators - Cyan */
+/* Operators - Electric Cyan */
 .highlight .o,      /* Operator */
 .highlight .ow {    /* Operator.Word */
-  color: #89ddff;
+  color: #00e8ff;
 }
 
-/* Punctuation - Foreground */
+/* Punctuation - Electric Cyan */
 .highlight .p {     /* Punctuation */
-  color: #89ddff;
+  color: #00e8ff;
 }
 
-/* Names - Blue */
+/* Names - Foreground */
 .highlight .n {     /* Name */
   color: var(--foreground);
 }
 
 .highlight .na {    /* Name.Attribute */
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .highlight .nb {    /* Name.Builtin */
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .highlight .nc {    /* Name.Class */
-  color: #ff9e64;
+  color: #ff7c00;
   font-weight: 500;
 }
 
 .highlight .nd {    /* Name.Decorator */
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .highlight .ne {    /* Name.Exception */
-  color: #f7768e;
+  color: #ff2975;
 }
 
 .highlight .nf,     /* Name.Function */
 .highlight .fm {    /* Name.Function.Magic */
-  color: #7aa2f7;
+  color: #00a2ff;
 }
 
 .highlight .ni {    /* Name.Entity */
-  color: #e0af68;
+  color: #ffea00;
 }
 
 .highlight .nl {    /* Name.Label */
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .highlight .nn {    /* Name.Namespace */
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .highlight .no {    /* Name.Constant */
-  color: #ff9e64;
+  color: #ff7c00;
 }
 
 .highlight .nt {    /* Name.Tag (HTML/XML) */
-  color: #f7768e;
+  color: #ff10f0;
 }
 
 .highlight .nv,     /* Name.Variable */
@@ -531,17 +532,17 @@ pre code {
 .highlight .vg,     /* Name.Variable.Global */
 .highlight .vc,     /* Name.Variable.Class */
 .highlight .vm {    /* Name.Variable.Magic */
-  color: #c0caf5;
+  color: #e6e6fa;
 }
 
 .highlight .bp {    /* Name.Builtin.Pseudo */
-  color: #f7768e;
+  color: #ff10f0;
 }
 
 /* Generic tokens */
 .highlight .gd {    /* Generic.Deleted */
-  color: #f7768e;
-  background: rgba(247, 118, 142, 0.1);
+  color: #ff2975;
+  background: rgba(255, 41, 117, 0.1);
 }
 
 .highlight .ge {    /* Generic.Emph */
@@ -549,21 +550,21 @@ pre code {
 }
 
 .highlight .gh {    /* Generic.Heading */
-  color: #7aa2f7;
+  color: #00a2ff;
   font-weight: bold;
 }
 
 .highlight .gi {    /* Generic.Inserted */
-  color: #9ece6a;
-  background: rgba(158, 206, 106, 0.1);
+  color: #00ff9f;
+  background: rgba(0, 255, 159, 0.1);
 }
 
 .highlight .go {    /* Generic.Output */
-  color: #565f89;
+  color: #8b7aa8;
 }
 
 .highlight .gp {    /* Generic.Prompt */
-  color: #7dcfff;
+  color: #00e8ff;
   font-weight: bold;
 }
 
@@ -572,22 +573,22 @@ pre code {
 }
 
 .highlight .gu {    /* Generic.Subheading */
-  color: #7dcfff;
+  color: #00e8ff;
   font-weight: bold;
 }
 
 .highlight .gt {    /* Generic.Traceback */
-  color: #f7768e;
+  color: #ff2975;
 }
 
 .highlight .gl {    /* Generic.Lineno */
-  color: #565f89;
+  color: #8b7aa8;
 }
 
 /* Error */
 .highlight .err {   /* Error */
-  color: #f7768e;
-  background: rgba(247, 118, 142, 0.1);
+  color: #ff2975;
+  background: rgba(255, 41, 117, 0.1);
 }
 
 /* Whitespace */
@@ -606,72 +607,72 @@ pre code {
 .language-bash .highlight .nv,
 .language-shell .highlight .nv,
 .language-sh .highlight .nv {
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .language-bash .highlight .nb,
 .language-shell .highlight .nb,
 .language-sh .highlight .nb {
-  color: #7aa2f7;
+  color: #00a2ff;
 }
 
 /* Python */
 .language-python .highlight .bp {
-  color: #bb9af7;
+  color: #b620e0;
 }
 
 .language-python .highlight .fm {
-  color: #7aa2f7;
+  color: #00a2ff;
 }
 
 /* JSON */
 .language-json .highlight .nt {
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 /* YAML */
 .language-yaml .highlight .na {
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .language-yaml .highlight .s {
-  color: #9ece6a;
+  color: #00ff9f;
 }
 
 /* SQL */
 .language-sql .highlight .k {
-  color: #bb9af7;
+  color: #b620e0;
   text-transform: uppercase;
 }
 
 /* PowerShell */
 .language-powershell .highlight .nv {
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 .language-powershell .highlight .nb {
-  color: #7aa2f7;
+  color: #00a2ff;
 }
 
 /* CSS */
 .language-css .highlight .nc,
 .language-css .highlight .nd {
-  color: #9ece6a;
+  color: #00ff9f;
 }
 
 .language-css .highlight .nt {
-  color: #f7768e;
+  color: #ff10f0;
 }
 
 .language-css .highlight .na {
-  color: #7dcfff;
+  color: #00e8ff;
 }
 
 /* Line numbers (if enabled) */
 .highlight .lineno {
-  color: #565f89;
+  color: #8b7aa8;
   padding-right: 15px;
-  border-right: 1px solid #414868;
+  border-right: 1px solid #3c285a;
   margin-right: 15px;
   user-select: none;
 }
@@ -682,8 +683,8 @@ pre code {
   position: absolute;
   top: 0;
   right: 0;
-  background: #414868;
-  color: #565f89;
+  background: #3c285a;
+  color: #8b7aa8;
   padding: 2px 8px;
   font-size: 0.7rem;
   border-radius: 0 4px 0 4px;
@@ -888,6 +889,11 @@ tr:nth-child(even) {
   100% { transform: translate(0); }
 }
 
+/* Neon glow effect on hover for interactive elements */
+a:hover, button:hover, .nav-item a:hover {
+  text-shadow: 0 0 10px var(--glow), 0 0 20px var(--glow);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .terminal-window {
@@ -929,7 +935,7 @@ tr:nth-child(even) {
   background: var(--foreground-dark);
 }
 
-/* Matrix-style background effect (optional) */
+/* Cyberpunk grid background effect */
 .matrix-bg {
   position: fixed;
   top: 0;
@@ -947,4 +953,14 @@ tr:nth-child(even) {
       var(--bg-dark) 2px,
       var(--bg-dark) 4px
     );
+}
+
+/* Terminal output styling */
+.terminal-output {
+  background: var(--bg-darker);
+  padding: 15px;
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  margin: 15px 0;
+  border-left: 2px solid var(--pink);
 }
