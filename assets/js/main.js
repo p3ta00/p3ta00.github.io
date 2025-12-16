@@ -51,14 +51,23 @@ async function runHackerTerminal() {
 
   if (!terminal) return;
 
-  // Check if animation already played this session
-  if (sessionStorage.getItem('terminalPlayed')) {
+  // Check if we're on the home page
+  const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html' || window.location.pathname === '';
+
+  // If NOT on home page, show static ASCII with glow effect
+  if (!isHomePage) {
     terminal.style.display = 'none';
-    asciiHeader.style.display = 'block';
-    headerInfo.style.display = 'block';
-    headerTagline.style.display = 'block';
+    if (asciiHeader) {
+      asciiHeader.style.display = 'block';
+      asciiHeader.style.color = 'var(--pink)';
+      asciiHeader.style.textShadow = '0 0 10px var(--glow), 0 0 20px var(--glow)';
+    }
+    if (headerInfo) headerInfo.style.display = 'none';
+    if (headerTagline) headerTagline.style.display = 'block';
     return;
   }
+
+  // Home page - always play the animation
 
   const prompt = '<span class="prompt-user">p3ta</span><span class="prompt-at">@</span><span class="prompt-host">dc710</span> <span class="prompt-symbol">$</span> ';
 
@@ -156,12 +165,6 @@ async function runHackerTerminal() {
 
   await sleep(200);
   addLine('<span style="color: var(--green)">[+] PWNED!</span> <span style="color: var(--foreground-dark)">// CTF Player | Security Researcher | Breaking things to learn how they work</span>', 'terminal-line');
-
-  // Mark animation as played for this session
-  sessionStorage.setItem('terminalPlayed', 'true');
-
-  // Show skip hint
-  await sleep(1000);
 }
 
 // Copy code block to clipboard

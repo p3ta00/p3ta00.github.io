@@ -999,3 +999,10 @@ a:hover, button:hover, .nav-item a:hover {
     opacity: 0.95;
   }
 }
+
+/* Static ASCII with pink glow (non-home pages) */
+.ascii-glow {
+  color: var(--pink);
+  text-shadow: 0 0 10px var(--glow), 0 0 20px var(--glow), 0 0 30px var(--glow);
+  animation: glowPulse 2s ease-in-out infinite;
+}
