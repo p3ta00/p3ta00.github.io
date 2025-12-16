@@ -1242,6 +1242,68 @@ a:hover, button:hover, .nav-item a:hover {
   border: 1px solid var(--red);
 }
 
+/* Philosophy Box */
+.philosophy-box {
+  background: var(--bg-darker);
+  border: 1px solid var(--terminal-black);
+  border-left: 3px solid var(--green);
+  padding: 20px 25px;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+  color: var(--foreground);
+  line-height: 1.8;
+}
+
+.philosophy-box p {
+  margin: 0;
+}
+
+/* LS Output Styling */
+.ls-output {
+  background: var(--bg-darker);
+  border: 1px solid var(--terminal-black);
+  border-radius: 4px;
+  padding: 15px 20px;
+  margin: 10px 0 20px 0;
+  overflow-x: auto;
+}
+
+.ls-output pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--foreground-dark);
+}
+
+.ls-output .dir-name {
+  color: var(--blue);
+  font-weight: bold;
+}
+
+.ls-output .cert-file {
+  color: var(--green);
+  font-weight: bold;
+}
+
+.ls-output .prolab-file {
+  color: var(--cyan);
+  font-weight: bold;
+}
+
+.ls-output .prolab-file.ml {
+  color: var(--pink);
+}
+
+.ls-output .prolab-tag {
+  font-size: 0.7rem;
+}
+
+.ls-output .ml-tag {
+  color: var(--orange);
+  text-shadow: 0 0 5px var(--orange);
+}
+
 /* Mobile responsive for experience */
 @media (max-width: 768px) {
   .ascii-divider,
@@ -1261,5 +1323,13 @@ a:hover, button:hover, .nav-item a:hover {
 
   .exp-role {
     font-size: 1rem;
+  }
+
+  .ls-output pre {
+    font-size: 0.65rem;
+  }
+
+  .philosophy-box {
+    padding: 15px;
   }
 }

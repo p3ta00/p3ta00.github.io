@@ -297,6 +297,71 @@ title: Experience
 
   </div>
 
+  <!-- Philosophy Section -->
+  <pre class="ascii-divider" style="margin-top: 50px;">
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              PHILOSOPHY                                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+  </pre>
+
+  <div class="philosophy-box">
+    <p>Training security professionals and watching them grow into skilled operators is one of the most rewarding parts of what I do.</p>
+  </div>
+
+  <br><br>
+
+  <!-- Certifications Section -->
+  <pre class="ascii-divider">
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                            CERTIFICATIONS                                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+  </pre>
+
+  <div class="terminal-output">
+    <p>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">ls -la ~/certs/</span>
+    </p>
+  </div>
+
+  <div class="ls-output">
+    <pre>drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2024  <span class="dir-name">.</span>
+drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2024  <span class="dir-name">..</span>
+-rw-r--r--  p3ta  p3ta  1337  Nov 20 2024  <span class="cert-file">OSCP.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Mar 15 2023  <span class="cert-file">OSWP.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Aug 10 2022  <span class="cert-file">Security+.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Jun 05 2021  <span class="cert-file">CySA+.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Jan 12 2020  <span class="cert-file">Network+.cert</span></pre>
+  </div>
+
+  <!-- Pro Labs Section -->
+  <pre class="ascii-divider" style="margin-top: 40px;">
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         HACKTHEBOX PRO LABS                                   ║
+║                            [ COMPLETED: 10 ]                                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+  </pre>
+
+  <div class="terminal-output">
+    <p>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">ls -la ~/htb/prolabs/</span>
+    </p>
+  </div>
+
+  <div class="ls-output">
+    <pre>drwxr-xr-x  p3ta  p3ta  4096  Nov 28 2025  <span class="dir-name">.</span>
+drwxr-xr-x  p3ta  p3ta  4096  Nov 28 2025  <span class="dir-name">..</span>
+-rw-r--r--  p3ta  p3ta  31337 Nov 28 2025  <span class="prolab-file ml">Unintended.prolab</span>        <span class="prolab-tag ml-tag">[ML]</span>
+-rw-r--r--  p3ta  p3ta  31337 Nov 06 2025  <span class="prolab-file ml">Mythical.prolab</span>          <span class="prolab-tag ml-tag">[ML]</span>
+-rw-r--r--  p3ta  p3ta  31337 Oct 10 2025  <span class="prolab-file">Ifrit.prolab</span>
+-rw-r--r--  p3ta  p3ta  31337 Jun 12 2025  <span class="prolab-file">Wanderer.prolab</span>
+-rw-r--r--  p3ta  p3ta  31337 Feb 07 2025  <span class="prolab-file ml">P.O.O.prolab</span>             <span class="prolab-tag ml-tag">[ML]</span>
+-rw-r--r--  p3ta  p3ta  31337 Jan 23 2025  <span class="prolab-file ml">Orion.prolab</span>             <span class="prolab-tag ml-tag">[ML]</span>
+-rw-r--r--  p3ta  p3ta  31337 May 09 2024  <span class="prolab-file">Cybernetics.prolab</span>
+-rw-r--r--  p3ta  p3ta  31337 Dec 12 2023  <span class="prolab-file">Dante.prolab</span>
+-rw-r--r--  p3ta  p3ta  31337 Nov 22 2023  <span class="prolab-file">Zephyr.prolab</span>
+-rw-r--r--  p3ta  p3ta  31337 Apr 14 2023  <span class="prolab-file">Genesis.prolab</span></pre>
+  </div>
+
   <pre class="ascii-footer">
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  EOF │ 20+ years │ Network Engineering → Cyber Security → Penetration Testing ║
