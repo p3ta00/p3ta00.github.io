@@ -173,6 +173,17 @@ async function runHackerTerminal() {
 
   await sleep(200);
   addLine('<span style="color: var(--green)">[+] PWNED!</span> <span style="color: var(--foreground-dark)">// CTF Player | Security Researcher | Breaking things to learn how they work</span>', 'terminal-line');
+
+  await sleep(500);
+
+  // Add clickable crack challenge prompt
+  const crackPrompt = addLine('', 'terminal-line');
+  crackPrompt.innerHTML = '<span style="color: var(--yellow)">[?]</span> <span class="crack-challenge" style="color: var(--cyan); cursor: pointer; text-decoration: underline;">Think you can crack that hash? Click here to try!</span>';
+
+  const crackLink = crackPrompt.querySelector('.crack-challenge');
+  if (crackLink) {
+    crackLink.addEventListener('click', () => showCrackPrompt(terminal, addLine, typeText, sleep));
+  }
 }
 
 // Hash cracking challenge prompt
