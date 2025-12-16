@@ -167,7 +167,7 @@ Password: [REDACTED]
 evil-winrm -i eloquia.htb -u Olivia.kat -p '[PASSWORD]'
 ```
 
-**User Flag:** 8FFE3CCF994EA91BB9C9C34F45ABC42A
+**User Flag Retrieved!**
 
 ---
 
