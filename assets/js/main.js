@@ -112,7 +112,15 @@ async function runHackerTerminal() {
   await sleep(300);
   addLine('<span style="color: var(--yellow)">[*]</span> Using the DRSUAPI method to get NTDS.DIT secrets', 'terminal-line');
   await sleep(400);
-  addLine('<span style="color: var(--green)">[+]</span> <span style="color: var(--foreground)">p3ta:1337:aad3b435b51404eeaad3b435b51404ee:<span style="color: var(--pink)">14CECFEA60D26E5CF08FF65CAEF94FC5</span>:::</span>', 'terminal-line');
+  const hashLine = addLine('<span style="color: var(--green)">[+]</span> <span style="color: var(--foreground)">p3ta:1337:aad3b435b51404eeaad3b435b51404ee:<span class="crackable-hash" style="color: var(--pink); cursor: pointer; text-decoration: underline dotted;">14CECFEA60D26E5CF08FF65CAEF94FC5</span>:::</span>', 'terminal-line');
+
+  // Add click handler to hash for cracking attempt
+  const hashSpan = hashLine.querySelector('.crackable-hash');
+  if (hashSpan) {
+    hashSpan.title = 'Click to try cracking this hash';
+    hashSpan.addEventListener('click', () => showCrackPrompt(terminal, addLine, typeText, sleep));
+  }
+
   await sleep(200);
   addLine('<span style="color: var(--yellow)">[*]</span> Cleaning up...', 'terminal-line');
   await sleep(600);
@@ -165,6 +173,98 @@ async function runHackerTerminal() {
 
   await sleep(200);
   addLine('<span style="color: var(--green)">[+] PWNED!</span> <span style="color: var(--foreground-dark)">// CTF Player | Security Researcher | Breaking things to learn how they work</span>', 'terminal-line');
+}
+
+// Hash cracking challenge prompt
+async function showCrackPrompt(terminal, addLine, typeText, sleep) {
+  const correctPassword = 'Scarface1!';
+
+  // Create input line
+  const inputLine = document.createElement('div');
+  inputLine.className = 'terminal-line';
+  inputLine.innerHTML = '<span style="color: var(--yellow)">[?]</span> <span style="color: var(--cyan)">Enter cracked password:</span> ';
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'hash-crack-input';
+  input.style.cssText = `
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--pink);
+    color: var(--green);
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    width: 200px;
+    padding: 2px 5px;
+  `;
+  inputLine.appendChild(input);
+  terminal.appendChild(inputLine);
+  input.focus();
+
+  // Scroll to input
+  terminal.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+  input.addEventListener('keydown', async (e) => {
+    if (e.key === 'Enter') {
+      const attempt = input.value.trim();
+      input.disabled = true;
+
+      await sleep(300);
+
+      if (attempt === correctPassword) {
+        // Correct password - show epic message with same pulsing effect
+        addLine('', 'terminal-line');
+        const successLine = document.createElement('div');
+        successLine.className = 'terminal-line taunt-message';
+        terminal.appendChild(successLine);
+
+        const successText = 'You are a man that walks among the Gods';
+
+        // Type out the success message with rainbow pulsing effect
+        for (let i = 0; i < successText.length; i++) {
+          const charSpan = document.createElement('span');
+          charSpan.className = 'pulse-rainbow';
+          charSpan.style.animationDelay = `${i * 0.1}s`;
+          charSpan.textContent = successText[i];
+          successLine.appendChild(charSpan);
+          await sleep(60 + Math.random() * 30);
+        }
+
+        addLine('', 'terminal-line');
+        addLine('<span style="color: var(--green)">[+] ACCESS GRANTED!</span> <span style="color: var(--foreground-dark)">The hash has been cracked.</span>', 'terminal-line');
+        await sleep(500);
+        addLine('<span style="color: var(--cyan)">[*]</span> <span style="color: var(--foreground-dark)">Redirecting to walkthroughs...</span>', 'terminal-line');
+        await sleep(1500);
+
+        // Redirect to CTF walkthroughs page
+        window.location.href = '/ctf/';
+      } else {
+        // Wrong password - show the taunt with pulsing colors and typing effect
+        addLine('', 'terminal-line');
+        const tauntLine = document.createElement('div');
+        tauntLine.className = 'terminal-line taunt-message';
+        terminal.appendChild(tauntLine);
+
+        const tauntText = 'Alexis stop being a noob!';
+
+        // Type out the taunt with rainbow pulsing effect
+        for (let i = 0; i < tauntText.length; i++) {
+          const charSpan = document.createElement('span');
+          charSpan.className = 'pulse-rainbow';
+          charSpan.style.animationDelay = `${i * 0.1}s`;
+          charSpan.textContent = tauntText[i];
+          tauntLine.appendChild(charSpan);
+          await sleep(80 + Math.random() * 40);
+        }
+
+        addLine('', 'terminal-line');
+        addLine('<span style="color: var(--red)">[-]</span> <span style="color: var(--foreground-dark)">Try harder... or use a better wordlist!</span>', 'terminal-line');
+      }
+
+      terminal.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  });
 }
 
 // Copy code block to clipboard

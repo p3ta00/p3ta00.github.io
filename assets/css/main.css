@@ -1006,3 +1006,57 @@ a:hover, button:hover, .nav-item a:hover {
   text-shadow: 0 0 10px var(--glow), 0 0 20px var(--glow), 0 0 30px var(--glow);
   animation: glowPulse 2s ease-in-out infinite;
 }
+
+/* Pulsing rainbow text for wrong hash attempts */
+.pulse-rainbow {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 1.2em;
+  animation: rainbowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes rainbowPulse {
+  0% {
+    color: var(--pink);
+    text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink);
+  }
+  16% {
+    color: var(--red);
+    text-shadow: 0 0 10px var(--red), 0 0 20px var(--red);
+  }
+  33% {
+    color: var(--orange);
+    text-shadow: 0 0 10px var(--orange), 0 0 20px var(--orange);
+  }
+  50% {
+    color: var(--yellow);
+    text-shadow: 0 0 10px var(--yellow), 0 0 20px var(--yellow);
+  }
+  66% {
+    color: var(--green);
+    text-shadow: 0 0 10px var(--green), 0 0 20px var(--green);
+  }
+  83% {
+    color: var(--cyan);
+    text-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan);
+  }
+  100% {
+    color: var(--pink);
+    text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink);
+  }
+}
+
+.taunt-message {
+  margin: 10px 0;
+  letter-spacing: 2px;
+}
+
+/* Hash crack input styling */
+.hash-crack-input:focus {
+  border-bottom-color: var(--cyan) !important;
+}
+
+.crackable-hash:hover {
+  color: var(--cyan) !important;
+  text-shadow: 0 0 10px var(--cyan);
+}

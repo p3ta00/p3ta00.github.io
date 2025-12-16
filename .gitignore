@@ -8,3 +8,7 @@ Gemfile.lock
 *.swp
 *.swo
 .DS_Store
+
+# Private files - not for GitHub
+.hash_legend
+.secrets/
