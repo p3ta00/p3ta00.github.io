@@ -7,8 +7,7 @@ date: 2025-12-13
 os: "Windows Server 2019"
 active: true
 hash_required: true
-locked_hash: "8FFE3CCF994EA91BB9C9C34F45ABC42A"
-unlock_password: "Scarface1!"
+unlock_password: "8FFE3CCF994EA91BB9C9C34F45ABC42A"
 tags: ["windows", "sqlite", "load_extension", "rce", "dpapi", "edge-browser", "credential-theft", "service-hijacking", "binary-hijacking"]
 ---
 

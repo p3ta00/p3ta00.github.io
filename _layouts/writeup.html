@@ -25,10 +25,9 @@ layout: default
   <div id="locked-section" class="locked-content">
     <div class="lock-icon">[LOCKED]</div>
     <p>This writeup is for an <strong>active</strong> machine.</p>
-    <p style="color: var(--cyan);">Crack the hash to unlock:</p>
-    <code style="color: var(--pink); font-size: 1.1em;">{{ page.locked_hash }}</code>
-    <br><br>
-    <input type="text" id="hash-input" class="hash-input" placeholder="Enter cracked password...">
+    <p style="color: var(--cyan);">Enter root.txt to unlock:</p>
+    <br>
+    <input type="text" id="hash-input" class="hash-input" placeholder="Enter root.txt hash...">
     <button id="unlock-btn" class="unlock-btn">Submit</button>
     <div id="result-message" style="margin-top: 15px; min-height: 30px;"></div>
   </div>
