@@ -360,16 +360,6 @@ administrator     : ebz0yxy3txh9BDE*yeh  → Administrator (SYSTEM via PSExec)
 
 ---
 
-## Lessons Learned
-
-1. **Always check PowerShell history** - The `ConsoleHost_history.txt` file often contains sensitive information including passwords, commands revealing infrastructure, and operational details.
-
-2. **Password reuse in administrative tasks** - The administrator set their password using `net user` directly in PowerShell, leaving it exposed in history.
-
-3. **C2 evasion challenges** - Active AV required multiple implant deployments; consider using more evasive payloads or living-off-the-land techniques.
-
-4. **Multiple attack vectors available** - The box was vulnerable to PrinterBug and MS-EVEN coercion, and had a potential DLL hijack path via `hassrv.dll`, though the intended path was simpler.
-
 ## Tools Used
 
 - **Nmap** - Port scanning and service enumeration

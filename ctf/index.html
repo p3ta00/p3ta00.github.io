@@ -16,72 +16,57 @@ title: CTF Writeups
     <span class="tree-line">└── <a href="{{ '/ctf/htb/' | relative_url }}" class="tree-dir">htb/</a></span>
   </div>
 
-  <h2 class="section-header">HackSmarter</h2>
-  <p style="color: var(--foreground-dark); margin-bottom: 15px;">Writeups from HackSmarter challenges</p>
+  <h2 class="section-header">Latest HackSmarter Lab</h2>
+  <p style="color: var(--foreground-dark); margin-bottom: 15px;">
+    <a href="{{ '/ctf/hacksmarter/' | relative_url }}" style="color: var(--cyan);">View all HackSmarter writeups →</a>
+  </p>
 
-  {% assign hacksmarter = site.ctf | where: "platform", "HackSmarter" | sort: 'date' | reverse %}
-  {% for writeup in hacksmarter %}
+  {% assign hacksmarter = site.ctf | where: "platform", "HackSmarter" | sort: 'date' | reverse | first %}
+  {% if hacksmarter %}
   <div class="writeup-card">
-    <a href="{{ writeup.url | relative_url }}">
-      <div class="writeup-title">{{ writeup.title }}</div>
+    <a href="{{ hacksmarter.url | relative_url }}">
+      <div class="writeup-title">{{ hacksmarter.title }}</div>
       <div class="writeup-meta">
-        {% if writeup.difficulty %}
-        <span class="writeup-difficulty difficulty-{{ writeup.difficulty | downcase }}">{{ writeup.difficulty }}</span>
+        {% if hacksmarter.difficulty %}
+        <span class="writeup-difficulty difficulty-{{ hacksmarter.difficulty | downcase }}">{{ hacksmarter.difficulty }}</span>
         {% endif %}
-        {% if writeup.points %}
-        <span>{{ writeup.points }} pts</span>
+        {% if hacksmarter.os %}
+        <span>{{ hacksmarter.os }}</span>
         {% endif %}
-        <span>{{ writeup.date | date: "%Y-%m-%d" }}</span>
+        <span>{{ hacksmarter.date | date: "%Y-%m-%d" }}</span>
       </div>
     </a>
   </div>
   {% else %}
   <p style="color: var(--foreground-dark); font-style: italic;">No writeups yet. Coming soon...</p>
-  {% endfor %}
+  {% endif %}
 
-  <h2 class="section-header">Hack The Box</h2>
-  <p style="color: var(--foreground-dark); margin-bottom: 15px;">Machine writeups from HTB</p>
+  <h2 class="section-header">Latest Hack The Box</h2>
+  <p style="color: var(--foreground-dark); margin-bottom: 15px;">
+    <a href="{{ '/ctf/htb/' | relative_url }}" style="color: var(--cyan);">View all HTB writeups →</a>
+  </p>
 
-  <h3 style="color: var(--orange); margin: 20px 0 10px; font-size: 1rem;">
-    <span class="status active">Active Machines</span>
-    <span style="color: var(--foreground-dark); font-weight: normal; font-size: 0.85rem;"> - requires root hash to unlock</span>
-  </h3>
-
-  {% assign htb_active = site.ctf | where: "platform", "HackTheBox" | where: "active", true | sort: 'date' | reverse %}
-  {% for writeup in htb_active %}
-  <div class="writeup-card" style="border-left-color: var(--green);">
-    <a href="{{ writeup.url | relative_url }}">
+  {% assign htb_latest = site.ctf | where: "platform", "HackTheBox" | sort: 'date' | reverse | first %}
+  {% if htb_latest %}
+  <div class="writeup-card" {% if htb_latest.active %}style="border-left-color: var(--green);"{% endif %}>
+    <a href="{{ htb_latest.url | relative_url }}">
       <div class="writeup-title">
-        <span style="color: var(--red);">[LOCKED]</span> {{ writeup.title }}
+        {% if htb_latest.active %}<span style="color: var(--red);">[LOCKED]</span> {% endif %}{{ htb_latest.title }}
       </div>
       <div class="writeup-meta">
-        <span class="writeup-difficulty difficulty-{{ writeup.difficulty | downcase }}">{{ writeup.difficulty }}</span>
-        <span>{{ writeup.os }}</span>
+        <span class="writeup-difficulty difficulty-{{ htb_latest.difficulty | downcase }}">{{ htb_latest.difficulty }}</span>
+        {% if htb_latest.os %}
+        <span>{{ htb_latest.os }}</span>
+        {% endif %}
+        {% if htb_latest.active %}
         <span class="status active">Active</span>
-      </div>
-    </a>
-  </div>
-  {% else %}
-  <p style="color: var(--foreground-dark); font-style: italic;">No active machine writeups.</p>
-  {% endfor %}
-
-  <h3 style="color: var(--foreground-dark); margin: 25px 0 10px; font-size: 1rem;">
-    <span class="status retired">Retired Machines</span>
-  </h3>
-
-  {% assign htb_retired = site.ctf | where: "platform", "HackTheBox" | where: "active", false | sort: 'date' | reverse %}
-  {% for writeup in htb_retired %}
-  <div class="writeup-card">
-    <a href="{{ writeup.url | relative_url }}">
-      <div class="writeup-title">{{ writeup.title }}</div>
-      <div class="writeup-meta">
-        <span class="writeup-difficulty difficulty-{{ writeup.difficulty | downcase }}">{{ writeup.difficulty }}</span>
-        <span>{{ writeup.os }}</span>
+        {% else %}
         <span class="status retired">Retired</span>
+        {% endif %}
       </div>
     </a>
   </div>
   {% else %}
-  <p style="color: var(--foreground-dark); font-style: italic;">No retired machine writeups yet.</p>
-  {% endfor %}
+  <p style="color: var(--foreground-dark); font-style: italic;">No writeups yet. Coming soon...</p>
+  {% endif %}
 </section>
