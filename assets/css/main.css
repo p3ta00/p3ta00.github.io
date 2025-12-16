@@ -1143,164 +1143,120 @@ a:hover, button:hover, .nav-item a:hover {
   overflow-x: auto;
 }
 
-.section-break {
-  color: var(--terminal-black);
-  text-align: center;
-  margin: 15px 0;
-  font-size: 0.8rem;
-}
-
-.exp-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.exp-card {
+/* Process List Terminal Styling */
+.process-list {
   background: var(--bg-darker);
   border: 1px solid var(--terminal-black);
-  border-left: 3px solid var(--purple);
-  padding: 15px 20px;
-  border-radius: 0 4px 4px 0;
-  transition: all 0.2s ease;
-}
-
-.exp-card:hover {
-  border-left-color: var(--cyan);
-  background: var(--bg-lighter);
-  box-shadow: 0 0 20px rgba(0, 232, 255, 0.1);
-}
-
-.exp-card.current {
-  border-left-color: var(--green);
-  box-shadow: 0 0 15px rgba(0, 255, 159, 0.15);
-}
-
-.exp-card.current:hover {
-  border-left-color: var(--green);
-  box-shadow: 0 0 25px rgba(0, 255, 159, 0.25);
-}
-
-.exp-card.military {
-  border-left-color: var(--blue);
-}
-
-.exp-card.military:hover {
-  border-left-color: var(--cyan);
-}
-
-.exp-card.combat {
-  border-left-color: var(--red);
-  background: linear-gradient(90deg, rgba(255, 41, 117, 0.05) 0%, var(--bg-darker) 30%);
-}
-
-.exp-card.combat:hover {
-  border-left-color: var(--orange);
-  box-shadow: 0 0 20px rgba(255, 41, 117, 0.15);
-}
-
-.exp-header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  font-size: 0.75rem;
-}
-
-.exp-status {
-  color: var(--foreground-dark);
+  border-radius: 4px;
+  padding: 15px;
   font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  overflow-x: auto;
 }
 
-.exp-status.blink {
+.process-header {
+  display: grid;
+  grid-template-columns: 50px 50px 40px 60px 50px 1fr;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--terminal-black);
+  margin-bottom: 10px;
+  color: var(--cyan);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.process-row {
+  display: grid;
+  grid-template-columns: 50px 50px 40px 60px 50px 1fr;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--terminal-black);
+  align-items: start;
+}
+
+.process-row:last-child {
+  border-bottom: none;
+}
+
+.process-row:hover {
+  background: var(--bg-lighter);
+}
+
+.process-row.active {
+  background: linear-gradient(90deg, rgba(0, 255, 159, 0.05) 0%, transparent 50%);
+}
+
+.process-row.military {
+  background: linear-gradient(90deg, rgba(0, 162, 255, 0.05) 0%, transparent 50%);
+}
+
+.process-row.combat {
+  background: linear-gradient(90deg, rgba(255, 41, 117, 0.08) 0%, transparent 50%);
+}
+
+.col-pid {
+  color: var(--foreground-dark);
+}
+
+.col-user {
+  color: var(--purple);
+}
+
+.col-stat {
+  font-weight: bold;
+}
+
+.stat-run {
   color: var(--green);
-  animation: blink 1.5s step-end infinite;
+  text-shadow: 0 0 5px var(--green);
+  animation: blink 1s step-end infinite;
 }
 
-.exp-status.mil {
+.stat-sleep {
+  color: var(--foreground-dark);
+}
+
+.stat-mil {
   color: var(--blue);
 }
 
-.exp-status.combat {
+.stat-combat {
   color: var(--red);
   text-shadow: 0 0 5px var(--red);
 }
 
-.exp-dates {
+.col-start {
   color: var(--foreground-dark);
-  font-family: 'JetBrains Mono', monospace;
 }
 
-.exp-role {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: var(--pink);
-  text-shadow: 0 0 10px var(--glow);
-}
-
-.exp-org {
-  color: var(--cyan);
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-.exp-details {
-  color: var(--foreground);
-  font-size: 0.85rem;
-  line-height: 1.6;
-  margin-bottom: 10px;
-}
-
-.exp-label {
+.col-time {
   color: var(--yellow);
+}
+
+.col-cmd {
+  color: var(--foreground);
+}
+
+.cmd-name {
+  color: var(--green);
   font-weight: bold;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
 }
 
-.exp-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+.cmd-args {
+  color: var(--foreground-dark);
+  margin-left: 20px;
+  margin-top: 3px;
+  font-size: 0.75rem;
 }
 
-.exp-tags span {
-  font-size: 0.7rem;
-  padding: 3px 8px;
-  border-radius: 3px;
-  font-family: 'JetBrains Mono', monospace;
-  text-transform: lowercase;
-}
-
-.tag-cyber {
-  background: rgba(255, 16, 240, 0.15);
-  color: var(--pink);
-  border: 1px solid var(--pink);
-}
-
-.tag-tech {
-  background: rgba(0, 232, 255, 0.1);
+.arg-flag {
   color: var(--cyan);
-  border: 1px solid var(--cyan);
 }
 
-.tag-mgmt {
-  background: rgba(182, 32, 224, 0.1);
-  color: var(--purple);
-  border: 1px solid var(--purple);
-}
-
-.tag-mil {
-  background: rgba(0, 162, 255, 0.1);
-  color: var(--blue);
-  border: 1px solid var(--blue);
-}
-
-.tag-combat {
-  background: rgba(255, 41, 117, 0.15);
-  color: var(--red);
-  border: 1px solid var(--red);
+.arg-val {
+  color: var(--orange);
 }
 
 /* Philosophy Box */
@@ -1376,18 +1332,37 @@ a:hover, button:hover, .nav-item a:hover {
     font-size: 0.45rem;
   }
 
-  .exp-header-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+  .process-list {
+    font-size: 0.7rem;
+    padding: 10px;
   }
 
-  .exp-card {
-    padding: 12px 15px;
+  .process-header {
+    display: none;
   }
 
-  .exp-role {
-    font-size: 1rem;
+  .process-row {
+    display: block;
+    padding: 15px 0;
+  }
+
+  .process-row .col-pid,
+  .process-row .col-user,
+  .process-row .col-stat,
+  .process-row .col-start,
+  .process-row .col-time {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 0.65rem;
+  }
+
+  .process-row .col-cmd {
+    display: block;
+    margin-top: 8px;
+  }
+
+  .cmd-args {
+    margin-left: 10px;
   }
 
   .ls-output pre {

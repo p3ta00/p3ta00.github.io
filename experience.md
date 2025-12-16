@@ -6,293 +6,213 @@ title: Experience
 <section class="experience-section">
   <div class="terminal-output">
     <p>
-      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">cat ~/experience.log | grep -E "(ROLE|LOCATION|FOCUS)"</span>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">ps aux --sort=-start_time | grep -E "career"</span>
     </p>
   </div>
 
   <div class="ascii-box cyan-glow">
     <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
     <div class="ascii-line">║ <span class="ascii-title">PROFESSIONAL EXPERIENCE</span>                                      ║</div>
-    <div class="ascii-line">║ <span class="ascii-subtitle">[ SECURITY CLEARANCE: TS/SCI ]</span>                              ║</div>
+    <div class="ascii-line">║ <span class="ascii-subtitle">[ CLEARED ]</span>                                                   ║</div>
     <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
   </div>
 
-  <div class="exp-grid">
+  <div class="process-list">
+    <div class="process-header">
+      <span class="col-pid">PID</span>
+      <span class="col-user">USER</span>
+      <span class="col-stat">STAT</span>
+      <span class="col-start">START</span>
+      <span class="col-time">TIME</span>
+      <span class="col-cmd">COMMAND</span>
+    </div>
 
     <!-- Current Role -->
-    <div class="exp-card current">
-      <div class="exp-header-bar">
-        <span class="exp-status blink">[ACTIVE]</span>
-        <span class="exp-dates">2024.01 → PRESENT</span>
-      </div>
-      <div class="exp-role">Technical Advisor</div>
-      <div class="exp-org">@ Astrion</div>
-      <div class="exp-details">
-        <span class="exp-label">FOCUS:</span> Penetration testing & cyber security advisory for defense clients
-      </div>
-      <div class="exp-tags">
-        <span class="tag-cyber">pentest</span>
-        <span class="tag-cyber">red-team</span>
-        <span class="tag-cyber">defense</span>
-      </div>
+    <div class="process-row active">
+      <span class="col-pid">1337</span>
+      <span class="col-user">p3ta</span>
+      <span class="col-stat stat-run">R+</span>
+      <span class="col-start">Jan24</span>
+      <span class="col-time">NOW</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./technical_advisor</span> --org="Astrion"
+        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"pentest,red-team,defense-advisory"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--clearance</span>=<span class="arg-val">ACTIVE</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- Chief Engineer -->
-    <div class="exp-card">
-      <div class="exp-header-bar">
-        <span class="exp-status">[COMPLETE]</span>
-        <span class="exp-dates">2021.10 → 2024.07</span>
-      </div>
-      <div class="exp-role">Chief Engineer</div>
-      <div class="exp-org">@ Oasis Systems LLC</div>
-      <div class="exp-details">
-        <span class="exp-label">FOCUS:</span> Led cyber test management operations<br>
-        <span class="exp-label">OPS:</span> Penetration testing & ethical hacking for aerospace/defense
-      </div>
-      <div class="exp-tags">
-        <span class="tag-cyber">pentest</span>
-        <span class="tag-mgmt">leadership</span>
-        <span class="tag-mgmt">business-ops</span>
-      </div>
+    <div class="process-row">
+      <span class="col-pid">1336</span>
+      <span class="col-user">p3ta</span>
+      <span class="col-stat stat-sleep">S</span>
+      <span class="col-start">Oct21</span>
+      <span class="col-time">2y9m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./chief_engineer</span> --org="Oasis Systems LLC"
+        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"cyber-test-management"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--ops</span>=<span class="arg-val">"pentest,ethical-hacking,aerospace"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- Navy CPO -->
-    <div class="exp-card military">
-      <div class="exp-header-bar">
-        <span class="exp-status mil">[MILITARY]</span>
-        <span class="exp-dates">2012.01 → 2022.11</span>
-      </div>
-      <div class="exp-role">Chief Petty Officer (E-7)</div>
-      <div class="exp-org">@ US Navy │ Communications Chief</div>
-      <div class="exp-details">
-        <span class="exp-label">YEARS:</span> 10+ years leading sailors<br>
-        <span class="exp-label">AWARDS:</span> Sailor of the Year (E-6)<br>
-        <span class="exp-label">FOCUS:</span> Training programs, mentorship, mission readiness
-      </div>
-      <div class="exp-tags">
-        <span class="tag-mil">navy</span>
-        <span class="tag-mgmt">leadership</span>
-        <span class="tag-mgmt">training</span>
-      </div>
+    <div class="process-row military">
+      <span class="col-pid">1335</span>
+      <span class="col-user">usn</span>
+      <span class="col-stat stat-mil">M</span>
+      <span class="col-start">Jan12</span>
+      <span class="col-time">10y</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./chief_petty_officer</span> --org="US Navy" --rank="E-7"
+        <div class="cmd-args">├─ <span class="arg-flag">--role</span>=<span class="arg-val">"Communications Chief"</span></div>
+        <div class="cmd-args">├─ <span class="arg-flag">--award</span>=<span class="arg-val">"Sailor of the Year"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--focus</span>=<span class="arg-val">"leadership,training,mentorship"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- COLSA -->
-    <div class="exp-card">
-      <div class="exp-header-bar">
-        <span class="exp-status">[COMPLETE]</span>
-        <span class="exp-dates">2021.06 → 2021.10</span>
-      </div>
-      <div class="exp-role">Cyber Flight Test Engineer</div>
-      <div class="exp-org">@ COLSA</div>
-      <div class="exp-details">
-        <span class="exp-label">FOCUS:</span> Avionics penetration testing<br>
-        <span class="exp-label">SCOPE:</span> Flight systems & aerospace programs
-      </div>
-      <div class="exp-tags">
-        <span class="tag-cyber">pentest</span>
-        <span class="tag-tech">avionics</span>
-        <span class="tag-tech">aerospace</span>
-      </div>
+    <div class="process-row">
+      <span class="col-pid">1334</span>
+      <span class="col-user">p3ta</span>
+      <span class="col-stat stat-sleep">S</span>
+      <span class="col-start">Jun21</span>
+      <span class="col-time">4m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./cyber_flight_test_engineer</span> --org="COLSA"
+        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"avionics-pentest"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--scope</span>=<span class="arg-val">"flight-systems,aerospace"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- Afghanistan -->
-    <div class="exp-card combat">
-      <div class="exp-header-bar">
-        <span class="exp-status combat">[COMBAT ZONE]</span>
-        <span class="exp-dates">2018.10 → 2019.10</span>
-      </div>
-      <div class="exp-role">Executive Communications Engineer</div>
-      <div class="exp-org">@ Resolute Support │ Kabul, Afghanistan</div>
-      <div class="exp-details">
-        <span class="exp-label">MISSION:</span> NATO Resolute Support<br>
-        <span class="exp-label">PRINCIPAL:</span> COMRS (Four-Star General)<br>
-        <span class="exp-label">FOCUS:</span> Secure executive comms, classified networks, 24/7 ops
-      </div>
-      <div class="exp-tags">
-        <span class="tag-combat">deployed</span>
-        <span class="tag-tech">network-eng</span>
-        <span class="tag-cyber">classified</span>
-      </div>
+    <div class="process-row combat">
+      <span class="col-pid">1333</span>
+      <span class="col-user">usn</span>
+      <span class="col-stat stat-combat">!</span>
+      <span class="col-start">Oct18</span>
+      <span class="col-time">1y</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./exec_comms_engineer</span> --org="Resolute Support" --loc="Kabul, AFG"
+        <div class="cmd-args">├─ <span class="arg-flag">--mission</span>=<span class="arg-val">"NATO Resolute Support"</span></div>
+        <div class="cmd-args">├─ <span class="arg-flag">--principal</span>=<span class="arg-val">"COMRS (4-Star General)"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--ops</span>=<span class="arg-val">"secure-comms,classified-networks,24/7"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- JT4 -->
-    <div class="exp-card">
-      <div class="exp-header-bar">
-        <span class="exp-status">[COMPLETE]</span>
-        <span class="exp-dates">2016.08 → 2021.05</span>
-      </div>
-      <div class="exp-role">Cyber Security Analyst</div>
-      <div class="exp-org">@ JT4 │ Edwards Air Force Base</div>
-      <div class="exp-details">
-        <span class="exp-label">FOCUS:</span> Cyber security analysis & support<br>
-        <span class="exp-label">MISSION:</span> Air Force flight test operations
-      </div>
-      <div class="exp-tags">
-        <span class="tag-cyber">cyber-sec</span>
-        <span class="tag-mil">dod</span>
-        <span class="tag-tech">flight-test</span>
-      </div>
+    <div class="process-row">
+      <span class="col-pid">1332</span>
+      <span class="col-user">p3ta</span>
+      <span class="col-stat stat-sleep">S</span>
+      <span class="col-start">Aug16</span>
+      <span class="col-time">4y9m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./cyber_security_analyst</span> --org="JT4" --loc="Edwards AFB"
+        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"cyber-security-analysis"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--mission</span>=<span class="arg-val">"USAF flight-test-ops"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- Aerial Ag -->
-    <div class="exp-card">
-      <div class="exp-header-bar">
-        <span class="exp-status">[COMPLETE]</span>
-        <span class="exp-dates">2014.08 → 2016.08</span>
-      </div>
-      <div class="exp-role">Operations Manager / Network Engineer</div>
-      <div class="exp-org">@ Aerial Ag Imagery / Spiral Technology</div>
-      <div class="exp-details">
-        <span class="exp-label">BUILD:</span> Network infrastructure for precision ag<br>
-        <span class="exp-label">DEV:</span> Proprietary camera systems, web apps, flight path gen
-      </div>
-      <div class="exp-tags">
-        <span class="tag-tech">network-eng</span>
-        <span class="tag-tech">web-dev</span>
-        <span class="tag-mgmt">operations</span>
-      </div>
+    <div class="process-row">
+      <span class="col-pid">1331</span>
+      <span class="col-user">p3ta</span>
+      <span class="col-stat stat-sleep">S</span>
+      <span class="col-start">Aug14</span>
+      <span class="col-time">2y</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./ops_manager</span> --org="Aerial Ag / Spiral Tech"
+        <div class="cmd-args">├─ <span class="arg-flag">--build</span>=<span class="arg-val">"network-infra,camera-systems"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--dev</span>=<span class="arg-val">"web-apps,flight-path-gen"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- London Properties -->
-    <div class="exp-card">
-      <div class="exp-header-bar">
-        <span class="exp-status">[COMPLETE]</span>
-        <span class="exp-dates">2014.04 → 2014.08</span>
-      </div>
-      <div class="exp-role">Network Administrator</div>
-      <div class="exp-org">@ London Properties</div>
-      <div class="exp-details">
-        <span class="exp-label">SCOPE:</span> 9 locations, 200+ users<br>
-        <span class="exp-label">TECH:</span> Citrix, VMware ESXi, XenApp 6.5 migration
-      </div>
-      <div class="exp-tags">
-        <span class="tag-tech">citrix</span>
-        <span class="tag-tech">vmware</span>
-        <span class="tag-tech">network</span>
-      </div>
+    <div class="process-row">
+      <span class="col-pid">1330</span>
+      <span class="col-user">p3ta</span>
+      <span class="col-stat stat-sleep">S</span>
+      <span class="col-start">Apr14</span>
+      <span class="col-time">4m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./network_admin</span> --org="London Properties"
+        <div class="cmd-args">├─ <span class="arg-flag">--scope</span>=<span class="arg-val">"9-locations,200+-users"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--tech</span>=<span class="arg-val">"citrix,vmware,xenapp"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- SPOC Medical -->
-    <div class="exp-card">
-      <div class="exp-header-bar">
-        <span class="exp-status">[COMPLETE]</span>
-        <span class="exp-dates">2012.01 → 2014.04</span>
-      </div>
-      <div class="exp-role">Network Administrator</div>
-      <div class="exp-org">@ SPOC Medical</div>
-      <div class="exp-details">
-        <span class="exp-label">ROLE:</span> Sole IT admin<br>
-        <span class="exp-label">OPS:</span> Servers, Citrix, medical records, 50+ tickets/day<br>
-        <span class="exp-label">DEPLOY:</span> Dragon Medical for 60+ providers
-      </div>
-      <div class="exp-tags">
-        <span class="tag-tech">healthcare-it</span>
-        <span class="tag-tech">server-admin</span>
-        <span class="tag-tech">citrix</span>
-      </div>
+    <div class="process-row">
+      <span class="col-pid">1329</span>
+      <span class="col-user">p3ta</span>
+      <span class="col-stat stat-sleep">S</span>
+      <span class="col-start">Jan12</span>
+      <span class="col-time">2y3m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./network_admin</span> --org="SPOC Medical"
+        <div class="cmd-args">├─ <span class="arg-flag">--role</span>=<span class="arg-val">"sole-IT-admin"</span></div>
+        <div class="cmd-args">├─ <span class="arg-flag">--ops</span>=<span class="arg-val">"servers,citrix,medical-records"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--deploy</span>=<span class="arg-val">"dragon-medical (60+ providers)"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- Recruiter -->
-    <div class="exp-card military">
-      <div class="exp-header-bar">
-        <span class="exp-status mil">[MILITARY]</span>
-        <span class="exp-dates">2008.08 → 2012.01</span>
-      </div>
-      <div class="exp-role">Recruiter / Sales Manager</div>
-      <div class="exp-org">@ NRD San Francisco │ US Navy</div>
-      <div class="exp-details">
-        <span class="exp-label">COMMAND:</span> 4 stations, 22 recruiters<br>
-        <span class="exp-label">AO:</span> Central Valley region
-      </div>
-      <div class="exp-tags">
-        <span class="tag-mil">navy</span>
-        <span class="tag-mgmt">leadership</span>
-        <span class="tag-mgmt">sales</span>
-      </div>
+    <div class="process-row military">
+      <span class="col-pid">1328</span>
+      <span class="col-user">usn</span>
+      <span class="col-stat stat-mil">M</span>
+      <span class="col-start">Aug08</span>
+      <span class="col-time">3y5m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./recruiter</span> --org="NRD San Francisco" --branch="US Navy"
+        <div class="cmd-args">├─ <span class="arg-flag">--command</span>=<span class="arg-val">"4-stations,22-recruiters"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--ao</span>=<span class="arg-val">"Central Valley"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- MNF-Iraq -->
-    <div class="exp-card combat">
-      <div class="exp-header-bar">
-        <span class="exp-status combat">[COMBAT ZONE]</span>
-        <span class="exp-dates">2007.10 → 2008.08</span>
-      </div>
-      <div class="exp-role">Information Management Officer</div>
-      <div class="exp-org">@ MNF-Iraq │ Joint Operations Center</div>
-      <div class="exp-details">
-        <span class="exp-label">NETWORKS:</span> SIPR/CENTRIX classified systems<br>
-        <span class="exp-label">LEADERSHIP:</span> GEN Petraeus, GEN Odierno<br>
-        <span class="exp-label">AWARD:</span> Defense Meritorious Service Medal
-      </div>
-      <div class="exp-tags">
-        <span class="tag-combat">deployed</span>
-        <span class="tag-cyber">classified</span>
-        <span class="tag-cyber">ia-compliance</span>
-      </div>
+    <div class="process-row combat">
+      <span class="col-pid">1327</span>
+      <span class="col-user">usn</span>
+      <span class="col-stat stat-combat">!</span>
+      <span class="col-start">Oct07</span>
+      <span class="col-time">10m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./info_mgmt_officer</span> --org="MNF-Iraq" --loc="JOC Baghdad"
+        <div class="cmd-args">├─ <span class="arg-flag">--networks</span>=<span class="arg-val">"SIPR,CENTRIX"</span></div>
+        <div class="cmd-args">├─ <span class="arg-flag">--leadership</span>=<span class="arg-val">"GEN Petraeus, GEN Odierno"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--award</span>=<span class="arg-val">"Defense Meritorious Service Medal"</span></div>
+      </span>
     </div>
-
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
 
     <!-- VFA-137 -->
-    <div class="exp-card military">
-      <div class="exp-header-bar">
-        <span class="exp-status mil">[MILITARY]</span>
-        <span class="exp-dates">2005.04 → 2007.10</span>
-      </div>
-      <div class="exp-role">Network Administrator</div>
-      <div class="exp-org">@ VFA-137 │ US Navy Fighter Squadron</div>
-      <div class="exp-details">
-        <span class="exp-label">SCOPE:</span> Classified & unclassified networks<br>
-        <span class="exp-label">OPS:</span> Mobile network deployment shore-to-sea<br>
-        <span class="exp-label">T&E:</span> JMPS-M test and evaluation
-      </div>
-      <div class="exp-tags">
-        <span class="tag-mil">naval-aviation</span>
-        <span class="tag-cyber">comsec</span>
-        <span class="tag-mil">deployment</span>
-      </div>
+    <div class="process-row military">
+      <span class="col-pid">1326</span>
+      <span class="col-user">usn</span>
+      <span class="col-stat stat-mil">M</span>
+      <span class="col-start">Apr05</span>
+      <span class="col-time">2y6m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./network_admin</span> --org="VFA-137" --branch="US Navy Fighter Squadron"
+        <div class="cmd-args">├─ <span class="arg-flag">--scope</span>=<span class="arg-val">"classified,unclassified"</span></div>
+        <div class="cmd-args">├─ <span class="arg-flag">--ops</span>=<span class="arg-val">"mobile-network,shore-to-sea"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--te</span>=<span class="arg-val">"JMPS-M"</span></div>
+      </span>
     </div>
 
-    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
-
     <!-- USS Lassen -->
-    <div class="exp-card military">
-      <div class="exp-header-bar">
-        <span class="exp-status mil">[MILITARY]</span>
-        <span class="exp-dates">2003.03 → 2005.04</span>
-      </div>
-      <div class="exp-role">SCI Network Administrator</div>
-      <div class="exp-org">@ USS Lassen DDG-82 │ Guided Missile Destroyer</div>
-      <div class="exp-details">
-        <span class="exp-label">CLEARANCE:</span> SCI networks & SCIF ops<br>
-        <span class="exp-label">ROLE:</span> COMSEC custodian, ISSO duties<br>
-        <span class="exp-label">MISSION:</span> Secure communications
-      </div>
-      <div class="exp-tags">
-        <span class="tag-cyber">sci-networks</span>
-        <span class="tag-cyber">comsec</span>
-        <span class="tag-mil">ship-ops</span>
-      </div>
+    <div class="process-row military">
+      <span class="col-pid">1325</span>
+      <span class="col-user">usn</span>
+      <span class="col-stat stat-mil">M</span>
+      <span class="col-start">Mar03</span>
+      <span class="col-time">2y1m</span>
+      <span class="col-cmd">
+        <span class="cmd-name">./sci_network_admin</span> --org="USS Lassen DDG-82"
+        <div class="cmd-args">├─ <span class="arg-flag">--clearance</span>=<span class="arg-val">"SCI,SCIF-ops"</span></div>
+        <div class="cmd-args">├─ <span class="arg-flag">--role</span>=<span class="arg-val">"COMSEC-custodian,ISSO"</span></div>
+        <div class="cmd-args">└─ <span class="arg-flag">--mission</span>=<span class="arg-val">"secure-communications"</span></div>
+      </span>
     </div>
 
   </div>
