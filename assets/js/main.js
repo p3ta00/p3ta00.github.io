@@ -176,14 +176,106 @@ async function runHackerTerminal() {
 
   await sleep(500);
 
-  // Add clickable crack challenge prompt
-  const crackPrompt = addLine('', 'terminal-line');
-  crackPrompt.innerHTML = '<span style="color: var(--yellow)">[?]</span> <span class="crack-challenge" style="color: var(--cyan); cursor: pointer; text-decoration: underline;">Think you can crack that hash? Click here to try!</span>';
+  // Add crack challenge input directly
+  addLine('', 'terminal-line');
+  const challengeLine = addLine('<span style="color: var(--yellow)">[?]</span> <span style="color: var(--cyan);">Can you crack the hash? Enter password:</span> ', 'terminal-line');
 
-  const crackLink = crackPrompt.querySelector('.crack-challenge');
-  if (crackLink) {
-    crackLink.addEventListener('click', () => showCrackPrompt(terminal, addLine, typeText, sleep));
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'hash-crack-input';
+  input.placeholder = 'type password here...';
+  input.style.cssText = `
+    background: var(--bg-darker);
+    border: 1px solid var(--pink);
+    border-radius: 3px;
+    color: var(--green);
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    padding: 5px 10px;
+    width: 200px;
+    margin-left: 5px;
+  `;
+  challengeLine.appendChild(input);
+
+  const submitBtn = document.createElement('button');
+  submitBtn.textContent = 'Submit';
+  submitBtn.style.cssText = `
+    background: var(--pink);
+    border: none;
+    border-radius: 3px;
+    color: var(--bg-dark);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    margin-left: 10px;
+    padding: 5px 15px;
+  `;
+  challengeLine.appendChild(submitBtn);
+
+  const correctPassword = 'Scarface1!';
+
+  async function handleSubmit() {
+    const attempt = input.value.trim();
+    input.disabled = true;
+    submitBtn.disabled = true;
+
+    await sleep(300);
+
+    if (attempt === correctPassword) {
+      // Success message with typing effect
+      addLine('', 'terminal-line');
+      const successLine = document.createElement('div');
+      successLine.className = 'terminal-line';
+      terminal.appendChild(successLine);
+
+      const successText = 'You are a man that walks among the Gods';
+      for (let i = 0; i < successText.length; i++) {
+        const charSpan = document.createElement('span');
+        charSpan.className = 'pulse-rainbow';
+        charSpan.style.animationDelay = `${i * 0.1}s`;
+        charSpan.textContent = successText[i];
+        successLine.appendChild(charSpan);
+        await sleep(60);
+      }
+
+      addLine('', 'terminal-line');
+      addLine('<span style="color: var(--green)">[+] ACCESS GRANTED!</span>', 'terminal-line');
+      await sleep(1000);
+      window.location.href = '/ctf/';
+    } else {
+      // Failure message with typing effect
+      addLine('', 'terminal-line');
+      const tauntLine = document.createElement('div');
+      tauntLine.className = 'terminal-line';
+      terminal.appendChild(tauntLine);
+
+      const tauntText = 'Alexis stop being a noob!';
+      for (let i = 0; i < tauntText.length; i++) {
+        const charSpan = document.createElement('span');
+        charSpan.className = 'pulse-rainbow';
+        charSpan.style.animationDelay = `${i * 0.1}s`;
+        charSpan.textContent = tauntText[i];
+        tauntLine.appendChild(charSpan);
+        await sleep(80);
+      }
+
+      addLine('', 'terminal-line');
+      addLine('<span style="color: var(--red)">[-] Try harder...</span>', 'terminal-line');
+
+      // Re-enable for another try
+      await sleep(1000);
+      input.disabled = false;
+      submitBtn.disabled = false;
+      input.value = '';
+      input.focus();
+    }
   }
+
+  submitBtn.addEventListener('click', handleSubmit);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleSubmit();
+  });
 }
 
 // Hash cracking challenge prompt
