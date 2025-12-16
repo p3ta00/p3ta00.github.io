@@ -16,7 +16,7 @@ $ id
 uid=1337(p3ta) gid=710(defcon) groups=710(defcon),27(sudo),1000(navy-veteran)
 ```
 
-I served 20 years in the United States Navy aboard destroyers and carriers, with deployments to Iraq and Afghanistan. That experience taught me what it means to operate in high-stakes environments where precision and discipline aren't optional.
+I'm Jayson Ek. I served 20 years in the United States Navy aboard destroyers and carriers, with deployments to Iraq and Afghanistan. That experience taught me what it means to operate in high-stakes environments where precision and discipline aren't optional.
 
 Today, I oversee a penetration testing team and have the privilege of working alongside some of the best emerging talent in the industry. Mentoring the next generation of security professionals and watching them grow into skilled operators is one of the most rewarding parts of what I do.
 
