@@ -1143,120 +1143,97 @@ a:hover, button:hover, .nav-item a:hover {
   overflow-x: auto;
 }
 
-/* Process List Terminal Styling */
-.process-list {
+/* Cat Command Terminal Styling */
+.cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cat-entry {
   background: var(--bg-darker);
   border: 1px solid var(--terminal-black);
-  border-radius: 4px;
-  padding: 15px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  overflow-x: auto;
+  border-left: 3px solid var(--purple);
+  border-radius: 0 4px 4px 0;
+  overflow: hidden;
 }
 
-.process-header {
-  display: grid;
-  grid-template-columns: 50px 50px 40px 60px 50px 1fr;
-  gap: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--terminal-black);
-  margin-bottom: 10px;
-  color: var(--cyan);
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 0.7rem;
+.cat-entry:hover {
+  border-left-color: var(--cyan);
 }
 
-.process-row {
-  display: grid;
-  grid-template-columns: 50px 50px 40px 60px 50px 1fr;
-  gap: 10px;
-  padding: 12px 0;
-  border-bottom: 1px dashed var(--terminal-black);
-  align-items: start;
+.cat-entry.active {
+  border-left-color: var(--green);
 }
 
-.process-row:last-child {
-  border-bottom: none;
+.cat-entry.military {
+  border-left-color: var(--blue);
 }
 
-.process-row:hover {
+.cat-entry.combat {
+  border-left-color: var(--red);
+}
+
+.cat-command {
   background: var(--bg-lighter);
+  padding: 10px 15px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--terminal-black);
 }
 
-.process-row.active {
-  background: linear-gradient(90deg, rgba(0, 255, 159, 0.05) 0%, transparent 50%);
+.cat-cmd {
+  color: var(--cyan);
 }
 
-.process-row.military {
-  background: linear-gradient(90deg, rgba(0, 162, 255, 0.05) 0%, transparent 50%);
+.cat-file {
+  color: var(--green);
 }
 
-.process-row.combat {
-  background: linear-gradient(90deg, rgba(255, 41, 117, 0.08) 0%, transparent 50%);
+.cat-status {
+  float: right;
+  font-size: 0.75rem;
 }
 
-.col-pid {
-  color: var(--foreground-dark);
-}
-
-.col-user {
-  color: var(--purple);
-}
-
-.col-stat {
-  font-weight: bold;
-}
-
-.stat-run {
+.cat-status.active {
   color: var(--green);
   text-shadow: 0 0 5px var(--green);
-  animation: blink 1s step-end infinite;
+  animation: blink 1.5s step-end infinite;
 }
 
-.stat-sleep {
-  color: var(--foreground-dark);
-}
-
-.stat-mil {
+.cat-status.mil {
   color: var(--blue);
 }
 
-.stat-combat {
+.cat-status.combat {
   color: var(--red);
   text-shadow: 0 0 5px var(--red);
 }
 
-.col-start {
-  color: var(--foreground-dark);
+.cat-output {
+  padding: 12px 15px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
 }
 
-.col-time {
+.cat-line {
+  display: flex;
+  margin: 4px 0;
+}
+
+.cat-key {
   color: var(--yellow);
-}
-
-.col-cmd {
-  color: var(--foreground);
-}
-
-.cmd-name {
-  color: var(--green);
+  min-width: 100px;
   font-weight: bold;
 }
 
-.cmd-args {
-  color: var(--foreground-dark);
-  margin-left: 20px;
-  margin-top: 3px;
-  font-size: 0.75rem;
+.cat-key::after {
+  content: ':';
+  margin-right: 10px;
 }
 
-.arg-flag {
-  color: var(--cyan);
-}
-
-.arg-val {
-  color: var(--orange);
+.cat-val {
+  color: var(--foreground);
 }
 
 /* Philosophy Box */
@@ -1332,41 +1309,36 @@ a:hover, button:hover, .nav-item a:hover {
     font-size: 0.45rem;
   }
 
-  .process-list {
+  .cat-command {
+    font-size: 0.75rem;
+    padding: 8px 12px;
+  }
+
+  .cat-output {
     font-size: 0.7rem;
-    padding: 10px;
+    padding: 10px 12px;
   }
 
-  .process-header {
-    display: none;
+  .cat-line {
+    flex-direction: column;
   }
 
-  .process-row {
-    display: block;
-    padding: 15px 0;
+  .cat-key {
+    min-width: auto;
+    margin-bottom: 2px;
   }
 
-  .process-row .col-pid,
-  .process-row .col-user,
-  .process-row .col-stat,
-  .process-row .col-start,
-  .process-row .col-time {
-    display: inline-block;
-    margin-right: 10px;
-    font-size: 0.65rem;
+  .cat-key::after {
+    content: '';
   }
 
-  .process-row .col-cmd {
-    display: block;
-    margin-top: 8px;
-  }
-
-  .cmd-args {
-    margin-left: 10px;
+  .cat-val {
+    margin-left: 15px;
+    color: var(--foreground-dark);
   }
 
   .ls-output pre {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
   }
 
   .philosophy-box {

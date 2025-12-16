@@ -13,206 +13,170 @@ title: Experience
   <div class="ascii-box cyan-glow">
     <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
     <div class="ascii-line">║ <span class="ascii-title">PROFESSIONAL EXPERIENCE</span>                                      ║</div>
-    <div class="ascii-line">║ <span class="ascii-subtitle">[ CLEARED ]</span>                                                   ║</div>
+    <div class="ascii-line">║ <span class="ascii-subtitle">Security Clearance: Cleared</span>                                  ║</div>
     <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
   </div>
 
-  <div class="process-list">
-    <div class="process-header">
-      <span class="col-pid">PID</span>
-      <span class="col-user">USER</span>
-      <span class="col-stat">STAT</span>
-      <span class="col-start">START</span>
-      <span class="col-time">TIME</span>
-      <span class="col-cmd">COMMAND</span>
-    </div>
+  <div class="cat-list">
 
     <!-- Current Role -->
-    <div class="process-row active">
-      <span class="col-pid">1337</span>
-      <span class="col-user">p3ta</span>
-      <span class="col-stat stat-run">R+</span>
-      <span class="col-start">Jan24</span>
-      <span class="col-time">NOW</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./technical_advisor</span> --org="Astrion"
-        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"pentest,red-team,defense-advisory"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--clearance</span>=<span class="arg-val">ACTIVE</span></div>
-      </span>
+    <div class="cat-entry active">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./technical_advisor</span> <span class="cat-status active">[ACTIVE]</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Technical Advisor</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Astrion</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jan 2024 → Present</span></div>
+        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Penetration testing & cyber security advisory for defense clients</span></div>
+      </div>
     </div>
 
     <!-- Chief Engineer -->
-    <div class="process-row">
-      <span class="col-pid">1336</span>
-      <span class="col-user">p3ta</span>
-      <span class="col-stat stat-sleep">S</span>
-      <span class="col-start">Oct21</span>
-      <span class="col-time">2y9m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./chief_engineer</span> --org="Oasis Systems LLC"
-        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"cyber-test-management"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--ops</span>=<span class="arg-val">"pentest,ethical-hacking,aerospace"</span></div>
-      </span>
+    <div class="cat-entry">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./chief_engineer</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Chief Engineer</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Oasis Systems LLC</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Oct 2021 → Jul 2024</span></div>
+        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Led cyber test management operations</span></div>
+        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Penetration testing & ethical hacking for aerospace/defense</span></div>
+      </div>
     </div>
 
     <!-- Navy CPO -->
-    <div class="process-row military">
-      <span class="col-pid">1335</span>
-      <span class="col-user">usn</span>
-      <span class="col-stat stat-mil">M</span>
-      <span class="col-start">Jan12</span>
-      <span class="col-time">10y</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./chief_petty_officer</span> --org="US Navy" --rank="E-7"
-        <div class="cmd-args">├─ <span class="arg-flag">--role</span>=<span class="arg-val">"Communications Chief"</span></div>
-        <div class="cmd-args">├─ <span class="arg-flag">--award</span>=<span class="arg-val">"Sailor of the Year"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--focus</span>=<span class="arg-val">"leadership,training,mentorship"</span></div>
-      </span>
+    <div class="cat-entry military">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./chief_petty_officer</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Chief Petty Officer (E-7) - Communications Chief</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">US Navy</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jan 2012 → Nov 2022</span></div>
+        <div class="cat-line"><span class="cat-key">YEARS</span><span class="cat-val">10+ years leading sailors</span></div>
+        <div class="cat-line"><span class="cat-key">AWARD</span><span class="cat-val">Sailor of the Year (E-6)</span></div>
+        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Training programs, mentorship, mission readiness</span></div>
+      </div>
     </div>
 
     <!-- COLSA -->
-    <div class="process-row">
-      <span class="col-pid">1334</span>
-      <span class="col-user">p3ta</span>
-      <span class="col-stat stat-sleep">S</span>
-      <span class="col-start">Jun21</span>
-      <span class="col-time">4m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./cyber_flight_test_engineer</span> --org="COLSA"
-        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"avionics-pentest"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--scope</span>=<span class="arg-val">"flight-systems,aerospace"</span></div>
-      </span>
+    <div class="cat-entry">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./cyber_flight_test_engineer</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Cyber Flight Test Engineer</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">COLSA</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jun 2021 → Oct 2021</span></div>
+        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Avionics penetration testing</span></div>
+        <div class="cat-line"><span class="cat-key">SCOPE</span><span class="cat-val">Flight systems & aerospace programs</span></div>
+      </div>
     </div>
 
     <!-- Afghanistan -->
-    <div class="process-row combat">
-      <span class="col-pid">1333</span>
-      <span class="col-user">usn</span>
-      <span class="col-stat stat-combat">!</span>
-      <span class="col-start">Oct18</span>
-      <span class="col-time">1y</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./exec_comms_engineer</span> --org="Resolute Support" --loc="Kabul, AFG"
-        <div class="cmd-args">├─ <span class="arg-flag">--mission</span>=<span class="arg-val">"NATO Resolute Support"</span></div>
-        <div class="cmd-args">├─ <span class="arg-flag">--principal</span>=<span class="arg-val">"COMRS (4-Star General)"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--ops</span>=<span class="arg-val">"secure-comms,classified-networks,24/7"</span></div>
-      </span>
+    <div class="cat-entry combat">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./exec_comms_engineer</span> <span class="cat-status combat">[COMBAT ZONE]</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Executive Communications Engineer</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Resolute Support - Kabul, Afghanistan</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Oct 2018 → Oct 2019</span></div>
+        <div class="cat-line"><span class="cat-key">MISSION</span><span class="cat-val">NATO Resolute Support</span></div>
+        <div class="cat-line"><span class="cat-key">PRINCIPAL</span><span class="cat-val">COMRS (Four-Star General)</span></div>
+        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Secure executive comms, classified networks, 24/7</span></div>
+      </div>
     </div>
 
     <!-- JT4 -->
-    <div class="process-row">
-      <span class="col-pid">1332</span>
-      <span class="col-user">p3ta</span>
-      <span class="col-stat stat-sleep">S</span>
-      <span class="col-start">Aug16</span>
-      <span class="col-time">4y9m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./cyber_security_analyst</span> --org="JT4" --loc="Edwards AFB"
-        <div class="cmd-args">├─ <span class="arg-flag">--focus</span>=<span class="arg-val">"cyber-security-analysis"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--mission</span>=<span class="arg-val">"USAF flight-test-ops"</span></div>
-      </span>
+    <div class="cat-entry">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./cyber_security_analyst</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Cyber Security Analyst</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">JT4 @ Edwards Air Force Base</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Aug 2016 → May 2021</span></div>
+        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Cyber security analysis & support</span></div>
+        <div class="cat-line"><span class="cat-key">MISSION</span><span class="cat-val">Air Force flight test operations</span></div>
+      </div>
     </div>
 
     <!-- Aerial Ag -->
-    <div class="process-row">
-      <span class="col-pid">1331</span>
-      <span class="col-user">p3ta</span>
-      <span class="col-stat stat-sleep">S</span>
-      <span class="col-start">Aug14</span>
-      <span class="col-time">2y</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./ops_manager</span> --org="Aerial Ag / Spiral Tech"
-        <div class="cmd-args">├─ <span class="arg-flag">--build</span>=<span class="arg-val">"network-infra,camera-systems"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--dev</span>=<span class="arg-val">"web-apps,flight-path-gen"</span></div>
-      </span>
+    <div class="cat-entry">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./ops_manager</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Operations Manager / Network Engineer</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Aerial Ag Imagery / Spiral Technology</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Aug 2014 → Aug 2016</span></div>
+        <div class="cat-line"><span class="cat-key">BUILD</span><span class="cat-val">Network infrastructure for precision agriculture</span></div>
+        <div class="cat-line"><span class="cat-key">DEV</span><span class="cat-val">Proprietary camera systems, web apps, flight path gen</span></div>
+      </div>
     </div>
 
     <!-- London Properties -->
-    <div class="process-row">
-      <span class="col-pid">1330</span>
-      <span class="col-user">p3ta</span>
-      <span class="col-stat stat-sleep">S</span>
-      <span class="col-start">Apr14</span>
-      <span class="col-time">4m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./network_admin</span> --org="London Properties"
-        <div class="cmd-args">├─ <span class="arg-flag">--scope</span>=<span class="arg-val">"9-locations,200+-users"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--tech</span>=<span class="arg-val">"citrix,vmware,xenapp"</span></div>
-      </span>
+    <div class="cat-entry">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_london</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Network Administrator</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">London Properties</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Apr 2014 → Aug 2014</span></div>
+        <div class="cat-line"><span class="cat-key">SCOPE</span><span class="cat-val">9 locations, 200+ users</span></div>
+        <div class="cat-line"><span class="cat-key">TECH</span><span class="cat-val">Citrix, VMware ESXi, XenApp 6.5 migration</span></div>
+      </div>
     </div>
 
     <!-- SPOC Medical -->
-    <div class="process-row">
-      <span class="col-pid">1329</span>
-      <span class="col-user">p3ta</span>
-      <span class="col-stat stat-sleep">S</span>
-      <span class="col-start">Jan12</span>
-      <span class="col-time">2y3m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./network_admin</span> --org="SPOC Medical"
-        <div class="cmd-args">├─ <span class="arg-flag">--role</span>=<span class="arg-val">"sole-IT-admin"</span></div>
-        <div class="cmd-args">├─ <span class="arg-flag">--ops</span>=<span class="arg-val">"servers,citrix,medical-records"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--deploy</span>=<span class="arg-val">"dragon-medical (60+ providers)"</span></div>
-      </span>
+    <div class="cat-entry">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_spoc</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Network Administrator (Sole IT Admin)</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">SPOC Medical</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jan 2012 → Apr 2014</span></div>
+        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Servers, Citrix, medical records, 50+ tickets/day</span></div>
+        <div class="cat-line"><span class="cat-key">DEPLOY</span><span class="cat-val">Dragon Medical for 60+ providers</span></div>
+      </div>
     </div>
 
     <!-- Recruiter -->
-    <div class="process-row military">
-      <span class="col-pid">1328</span>
-      <span class="col-user">usn</span>
-      <span class="col-stat stat-mil">M</span>
-      <span class="col-start">Aug08</span>
-      <span class="col-time">3y5m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./recruiter</span> --org="NRD San Francisco" --branch="US Navy"
-        <div class="cmd-args">├─ <span class="arg-flag">--command</span>=<span class="arg-val">"4-stations,22-recruiters"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--ao</span>=<span class="arg-val">"Central Valley"</span></div>
-      </span>
+    <div class="cat-entry military">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./recruiter</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Recruiter / Sales Manager</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">NRD San Francisco - US Navy</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Aug 2008 → Jan 2012</span></div>
+        <div class="cat-line"><span class="cat-key">COMMAND</span><span class="cat-val">4 stations, 22 recruiters</span></div>
+        <div class="cat-line"><span class="cat-key">AO</span><span class="cat-val">Central Valley region</span></div>
+      </div>
     </div>
 
     <!-- MNF-Iraq -->
-    <div class="process-row combat">
-      <span class="col-pid">1327</span>
-      <span class="col-user">usn</span>
-      <span class="col-stat stat-combat">!</span>
-      <span class="col-start">Oct07</span>
-      <span class="col-time">10m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./info_mgmt_officer</span> --org="MNF-Iraq" --loc="JOC Baghdad"
-        <div class="cmd-args">├─ <span class="arg-flag">--networks</span>=<span class="arg-val">"SIPR,CENTRIX"</span></div>
-        <div class="cmd-args">├─ <span class="arg-flag">--leadership</span>=<span class="arg-val">"GEN Petraeus, GEN Odierno"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--award</span>=<span class="arg-val">"Defense Meritorious Service Medal"</span></div>
-      </span>
+    <div class="cat-entry combat">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./info_mgmt_officer</span> <span class="cat-status combat">[COMBAT ZONE]</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Information Management Officer</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">MNF-Iraq - Joint Operations Center</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Oct 2007 → Aug 2008</span></div>
+        <div class="cat-line"><span class="cat-key">NETWORKS</span><span class="cat-val">SIPR/CENTRIX classified systems</span></div>
+        <div class="cat-line"><span class="cat-key">LEADERSHIP</span><span class="cat-val">GEN Petraeus, GEN Odierno</span></div>
+        <div class="cat-line"><span class="cat-key">AWARD</span><span class="cat-val">Defense Meritorious Service Medal</span></div>
+      </div>
     </div>
 
     <!-- VFA-137 -->
-    <div class="process-row military">
-      <span class="col-pid">1326</span>
-      <span class="col-user">usn</span>
-      <span class="col-stat stat-mil">M</span>
-      <span class="col-start">Apr05</span>
-      <span class="col-time">2y6m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./network_admin</span> --org="VFA-137" --branch="US Navy Fighter Squadron"
-        <div class="cmd-args">├─ <span class="arg-flag">--scope</span>=<span class="arg-val">"classified,unclassified"</span></div>
-        <div class="cmd-args">├─ <span class="arg-flag">--ops</span>=<span class="arg-val">"mobile-network,shore-to-sea"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--te</span>=<span class="arg-val">"JMPS-M"</span></div>
-      </span>
+    <div class="cat-entry military">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_vfa137</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Network Administrator</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">VFA-137 - US Navy Fighter Squadron</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Apr 2005 → Oct 2007</span></div>
+        <div class="cat-line"><span class="cat-key">SCOPE</span><span class="cat-val">Classified & unclassified networks</span></div>
+        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Mobile network deployment shore-to-sea</span></div>
+        <div class="cat-line"><span class="cat-key">T&E</span><span class="cat-val">JMPS-M test and evaluation</span></div>
+      </div>
     </div>
 
     <!-- USS Lassen -->
-    <div class="process-row military">
-      <span class="col-pid">1325</span>
-      <span class="col-user">usn</span>
-      <span class="col-stat stat-mil">M</span>
-      <span class="col-start">Mar03</span>
-      <span class="col-time">2y1m</span>
-      <span class="col-cmd">
-        <span class="cmd-name">./sci_network_admin</span> --org="USS Lassen DDG-82"
-        <div class="cmd-args">├─ <span class="arg-flag">--clearance</span>=<span class="arg-val">"SCI,SCIF-ops"</span></div>
-        <div class="cmd-args">├─ <span class="arg-flag">--role</span>=<span class="arg-val">"COMSEC-custodian,ISSO"</span></div>
-        <div class="cmd-args">└─ <span class="arg-flag">--mission</span>=<span class="arg-val">"secure-communications"</span></div>
-      </span>
+    <div class="cat-entry military">
+      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./sci_network_admin</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="cat-output">
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">SCI Network Administrator</span></div>
+        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">USS Lassen DDG-82 - Guided Missile Destroyer</span></div>
+        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Mar 2003 → Apr 2005</span></div>
+        <div class="cat-line"><span class="cat-key">CLEARANCE</span><span class="cat-val">SCI networks & SCIF operations</span></div>
+        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">COMSEC custodian, ISSO duties</span></div>
+        <div class="cat-line"><span class="cat-key">MISSION</span><span class="cat-val">Secure communications</span></div>
+      </div>
     </div>
 
   </div>
@@ -244,12 +208,17 @@ title: Experience
   </div>
 
   <div class="ls-output">
-    <pre>drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2024  <span class="dir-name">.</span>
-drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2024  <span class="dir-name">..</span>
--rw-r--r--  p3ta  p3ta  1337  Nov 20 2024  <span class="cert-file">OSCP.cert</span>
--rw-r--r--  p3ta  p3ta  1337  Mar 15 2023  <span class="cert-file">OSWP.cert</span>
+    <pre>drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2025  <span class="dir-name">.</span>
+drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2025  <span class="dir-name">..</span>
+-rw-r--r--  p3ta  p3ta  1337  Dec 01 2025  <span class="cert-file">OSCP+.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Nov 15 2025  <span class="cert-file">OSEP.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Oct 20 2025  <span class="cert-file">CWEE.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Sep 10 2025  <span class="cert-file">CAPE.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Aug 05 2025  <span class="cert-file">CPTS.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Jul 12 2025  <span class="cert-file">CWES.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Jun 18 2024  <span class="cert-file">SecurityX.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Mar 22 2023  <span class="cert-file">C|EH.cert</span>
 -rw-r--r--  p3ta  p3ta  1337  Aug 10 2022  <span class="cert-file">Security+.cert</span>
--rw-r--r--  p3ta  p3ta  1337  Jun 05 2021  <span class="cert-file">CySA+.cert</span>
 -rw-r--r--  p3ta  p3ta  1337  Jan 12 2020  <span class="cert-file">Network+.cert</span></pre>
   </div>
 
