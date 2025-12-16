@@ -16,7 +16,7 @@ $ id
 uid=1337(p3ta) gid=710(defcon) groups=710(defcon),27(sudo),1000(navy-veteran)
 ```
 
-I'm Jayson Ek. I served 20 years in the United States Navy aboard destroyers and carriers, with deployments to Iraq and Afghanistan. That experience taught me what it means to operate in high-stakes environments where precision and discipline aren't optional.
+I'm Jayson Ek. I retired as a Navy Chief after 20 years in the United States Navy aboard destroyers and carriers, with deployments to Iraq and Afghanistan. That experience taught me what it means to operate in high-stakes environments where precision and discipline aren't optional.
 
 Today, I oversee a penetration testing team and have the privilege of working alongside some of the best emerging talent in the industry. Mentoring the next generation of security professionals and watching them grow into skilled operators is one of the most rewarding parts of what I do.
 
@@ -82,10 +82,29 @@ From standing watch on a destroyer in hostile waters to standing up cybertest in
 
 Now I get to combine both: leading operators, planning engagements, and occasionally still getting my hands dirty in the trenches.
 
-```
-$ uptime
-20 years of service, still going strong
-```
+<div class="terminal-output" style="background: var(--background); padding: 15px; border-radius: 5px; font-family: 'JetBrains Mono', monospace;">
+<span style="color: var(--green);">$</span> <span style="color: var(--cyan);">uptime</span><br>
+<span id="uptime-counter" style="color: var(--foreground);"></span>
+</div>
+
+<script>
+function updateUptime() {
+  const start = new Date('2002-08-06T00:00:00');
+  const now = new Date();
+  const diff = now - start;
+
+  const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+  const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 365.25)) / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  document.getElementById('uptime-counter').innerHTML =
+    years + ' years, ' + days + ' days, ' + hours + ' hours, ' + minutes + ' minutes, ' + seconds + ' seconds of service';
+}
+updateUptime();
+setInterval(updateUptime, 1000);
+</script>
 
 ## Connect
 
