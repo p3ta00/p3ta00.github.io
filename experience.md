@@ -82,6 +82,21 @@ title: Experience
 
     <div class="experience-item">
       <div class="experience-header">
+        <span class="experience-title">Executive Communications Engineer</span>
+        <span class="experience-date">Oct 2018 - Oct 2019</span>
+      </div>
+      <div class="experience-company">Resolute Support - Kabul, Afghanistan</div>
+      <p class="experience-desc">Deployed to Kabul in support of NATO's Resolute Support mission, serving as the principal communications and network engineer for the Commanding General (COMRS), a Four-Star General. Engineered and maintained secure executive communications infrastructure, administered classified network systems, and ensured 24/7 operational readiness for strategic command operations in an active combat theater.</p>
+      <div class="experience-tags">
+        <span class="tag">Combat Deployment</span>
+        <span class="tag">Network Engineering</span>
+        <span class="tag">Executive Comms</span>
+        <span class="tag">Cyber Security</span>
+      </div>
+    </div>
+
+    <div class="experience-item">
+      <div class="experience-header">
         <span class="experience-title">Operations Manager / Network Engineer</span>
         <span class="experience-date">Aug 2014 - Aug 2016</span>
       </div>
