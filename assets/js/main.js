@@ -234,7 +234,7 @@ async function runHackerTerminal() {
         const charSpan = document.createElement('span');
         charSpan.className = 'pulse-rainbow';
         charSpan.style.animationDelay = `${i * 0.1}s`;
-        charSpan.textContent = successText[i];
+        charSpan.innerHTML = successText[i] === ' ' ? '&nbsp;' : successText[i];
         successLine.appendChild(charSpan);
         await sleep(60);
       }
@@ -255,7 +255,7 @@ async function runHackerTerminal() {
         const charSpan = document.createElement('span');
         charSpan.className = 'pulse-rainbow';
         charSpan.style.animationDelay = `${i * 0.1}s`;
-        charSpan.textContent = tauntText[i];
+        charSpan.innerHTML = tauntText[i] === ' ' ? '&nbsp;' : tauntText[i];
         tauntLine.appendChild(charSpan);
         await sleep(80);
       }
@@ -333,7 +333,7 @@ async function showCrackPrompt(terminal, addLine, typeText, sleep) {
           const charSpan = document.createElement('span');
           charSpan.className = 'pulse-rainbow';
           charSpan.style.animationDelay = `${i * 0.1}s`;
-          charSpan.textContent = successText[i];
+          charSpan.innerHTML = successText[i] === ' ' ? '&nbsp;' : successText[i];
           successLine.appendChild(charSpan);
           await sleep(60 + Math.random() * 30);
         }
@@ -360,7 +360,7 @@ async function showCrackPrompt(terminal, addLine, typeText, sleep) {
           const charSpan = document.createElement('span');
           charSpan.className = 'pulse-rainbow';
           charSpan.style.animationDelay = `${i * 0.1}s`;
-          charSpan.textContent = tauntText[i];
+          charSpan.innerHTML = tauntText[i] === ' ' ? '&nbsp;' : tauntText[i];
           tauntLine.appendChild(charSpan);
           await sleep(80 + Math.random() * 40);
         }
