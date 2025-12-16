@@ -103,7 +103,7 @@ async function runHackerTerminal() {
   await sleep(300);
   addLine('<span style="color: var(--yellow)">[*]</span> Using the DRSUAPI method to get NTDS.DIT secrets', 'terminal-line');
   await sleep(400);
-  addLine('<span style="color: var(--green)">[+]</span> <span style="color: var(--foreground)">p3ta:1337:aad3b435b51404eeaad3b435b51404ee:<span style="color: var(--pink)">20FD31577178DC306C436CE692D1A4BB</span>:::</span>', 'terminal-line');
+  addLine('<span style="color: var(--green)">[+]</span> <span style="color: var(--foreground)">p3ta:1337:aad3b435b51404eeaad3b435b51404ee:<span style="color: var(--pink)">14CECFEA60D26E5CF08FF65CAEF94FC5</span>:::</span>', 'terminal-line');
   await sleep(200);
   addLine('<span style="color: var(--yellow)">[*]</span> Cleaning up...', 'terminal-line');
   await sleep(600);
@@ -114,7 +114,7 @@ async function runHackerTerminal() {
   let cmd2 = document.createElement('span');
   cmd2.style.color = 'var(--cyan)';
   line2.appendChild(cmd2);
-  await typeText(cmd2, 'evil-winrm -i dc710 -u p3ta -H 20FD31577178DC306C436CE692D1A4BB', 45);
+  await typeText(cmd2, 'evil-winrm -i dc710 -u p3ta -H 14CECFEA60D26E5CF08FF65CAEF94FC5', 45);
 
   await sleep(500);
 
