@@ -10,12 +10,12 @@ title: Experience
     </p>
   </div>
 
-  <pre class="ascii-divider">
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                         PROFESSIONAL EXPERIENCE                               ║
-║                          [ SECURITY CLEARANCE: TS/SCI ]                       ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-  </pre>
+  <div class="ascii-box cyan-glow">
+    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
+    <div class="ascii-line">║ <span class="ascii-title">PROFESSIONAL EXPERIENCE</span>                                      ║</div>
+    <div class="ascii-line">║ <span class="ascii-subtitle">[ SECURITY CLEARANCE: TS/SCI ]</span>                              ║</div>
+    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+  </div>
 
   <div class="exp-grid">
 
@@ -298,11 +298,11 @@ title: Experience
   </div>
 
   <!-- Philosophy Section -->
-  <pre class="ascii-divider" style="margin-top: 50px;">
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                              PHILOSOPHY                                       ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-  </pre>
+  <div class="ascii-box green-glow" style="margin-top: 50px;">
+    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
+    <div class="ascii-line">║ <span class="ascii-title green">PHILOSOPHY</span>                                                    ║</div>
+    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+  </div>
 
   <div class="philosophy-box">
     <p>Training security professionals and watching them grow into skilled operators is one of the most rewarding parts of what I do.</p>
@@ -311,11 +311,11 @@ title: Experience
   <br><br>
 
   <!-- Certifications Section -->
-  <pre class="ascii-divider">
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                            CERTIFICATIONS                                     ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-  </pre>
+  <div class="ascii-box purple-glow">
+    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
+    <div class="ascii-line">║ <span class="ascii-title purple">CERTIFICATIONS</span>                                                ║</div>
+    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+  </div>
 
   <div class="terminal-output">
     <p>
@@ -334,12 +334,12 @@ drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2024  <span class="dir-name">..</span>
   </div>
 
   <!-- Pro Labs Section -->
-  <pre class="ascii-divider" style="margin-top: 40px;">
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                         HACKTHEBOX PRO LABS                                   ║
-║                            [ COMPLETED: 10 ]                                  ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-  </pre>
+  <div class="ascii-box pink-glow" style="margin-top: 40px;">
+    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
+    <div class="ascii-line">║ <span class="ascii-title pink">HACKTHEBOX PRO LABS</span>                                           ║</div>
+    <div class="ascii-line">║ <span class="ascii-subtitle">[ COMPLETED: 10 ]</span>                                             ║</div>
+    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+  </div>
 
   <div class="terminal-output">
     <p>
@@ -362,11 +362,11 @@ drwxr-xr-x  p3ta  p3ta  4096  Nov 28 2025  <span class="dir-name">..</span>
 -rw-r--r--  p3ta  p3ta  31337 Apr 14 2023  <span class="prolab-file">Genesis.prolab</span></pre>
   </div>
 
-  <pre class="ascii-footer">
-╔══════════════════════════════════════════════════════════════════════════════╗
-║  EOF │ 20+ years │ Network Engineering → Cyber Security → Penetration Testing ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-  </pre>
+  <div class="ascii-box cyan-glow" style="margin-top: 40px;">
+    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
+    <div class="ascii-line">║ <span class="ascii-eof">EOF</span> │ <span class="ascii-highlight">20+ years</span> │ <span class="ascii-path">Network Engineering → Cyber Security → Pentest</span> ║</div>
+    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+  </div>
 
   <div style="margin-top: 30px;">
     <a href="{{ '/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">

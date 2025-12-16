@@ -1070,6 +1070,67 @@ a:hover, button:hover, .nav-item a:hover {
   margin: 0 auto;
 }
 
+/* ASCII Box Styling */
+.ascii-box {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.ascii-line {
+  white-space: pre;
+  color: var(--terminal-black);
+}
+
+.ascii-box.cyan-glow .ascii-line {
+  color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(0, 232, 255, 0.3);
+}
+
+.ascii-box.green-glow .ascii-line {
+  color: var(--green);
+  text-shadow: 0 0 10px var(--green), 0 0 20px rgba(0, 255, 159, 0.3);
+}
+
+.ascii-box.purple-glow .ascii-line {
+  color: var(--purple);
+  text-shadow: 0 0 10px var(--purple), 0 0 20px rgba(182, 32, 224, 0.3);
+}
+
+.ascii-box.pink-glow .ascii-line {
+  color: var(--pink);
+  text-shadow: 0 0 10px var(--pink), 0 0 20px rgba(255, 16, 240, 0.3);
+}
+
+.ascii-title {
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.ascii-title.green { color: var(--green); }
+.ascii-title.purple { color: var(--purple); }
+.ascii-title.pink { color: var(--pink); }
+
+.ascii-subtitle {
+  color: var(--yellow);
+}
+
+.ascii-eof {
+  color: var(--red);
+  font-weight: bold;
+}
+
+.ascii-highlight {
+  color: var(--green);
+  font-weight: bold;
+}
+
+.ascii-path {
+  color: var(--cyan);
+}
+
 .ascii-divider,
 .ascii-footer {
   color: var(--cyan);
@@ -1306,6 +1367,10 @@ a:hover, button:hover, .nav-item a:hover {
 
 /* Mobile responsive for experience */
 @media (max-width: 768px) {
+  .ascii-box {
+    font-size: 0.5rem;
+  }
+
   .ascii-divider,
   .ascii-footer {
     font-size: 0.45rem;
