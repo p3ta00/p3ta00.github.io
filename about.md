@@ -93,6 +93,8 @@ $ uptime
 $ cat ~/.profile | grep -i social
 
 GITHUB="https://github.com/p3ta00"
+LINKEDIN="https://www.linkedin.com/in/jayson-p3ta-ek/"
+DISCORD="p3ta00"
 DEFCON="DC710 - Mojave"
 HTB="Active"
 HACKSMARTER="Discord Regular"
