@@ -6,193 +6,302 @@ title: Experience
 <section class="experience-section">
   <div class="terminal-output">
     <p>
-      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">cat ~/experience.txt</span>
+      <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">cat ~/experience.log | grep -E "(ROLE|LOCATION|FOCUS)"</span>
     </p>
   </div>
 
-  <h1 class="section-header">Professional Experience</h1>
+  <pre class="ascii-divider">
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         PROFESSIONAL EXPERIENCE                               ║
+║                          [ SECURITY CLEARANCE: TS/SCI ]                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+  </pre>
 
-  <div class="experience-timeline">
+  <div class="exp-grid">
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Technical Advisor</span>
-        <span class="experience-date">Jan 2024 - Present</span>
+    <!-- Current Role -->
+    <div class="exp-card current">
+      <div class="exp-header-bar">
+        <span class="exp-status blink">[ACTIVE]</span>
+        <span class="exp-dates">2024.01 → PRESENT</span>
       </div>
-      <div class="experience-company">Astrion</div>
-      <p class="experience-desc">Continued role after Oasis Systems merged into Astrion. Focused on penetration testing and cyber security advisory for defense clients.</p>
-      <div class="experience-tags">
-        <span class="tag">Penetration Testing</span>
-        <span class="tag">Cyber Security</span>
+      <div class="exp-role">Technical Advisor</div>
+      <div class="exp-org">@ Astrion</div>
+      <div class="exp-details">
+        <span class="exp-label">FOCUS:</span> Penetration testing & cyber security advisory for defense clients
+      </div>
+      <div class="exp-tags">
+        <span class="tag-cyber">pentest</span>
+        <span class="tag-cyber">red-team</span>
+        <span class="tag-cyber">defense</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Chief Engineer</span>
-        <span class="experience-date">Oct 2021 - Jul 2024</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- Chief Engineer -->
+    <div class="exp-card">
+      <div class="exp-header-bar">
+        <span class="exp-status">[COMPLETE]</span>
+        <span class="exp-dates">2021.10 → 2024.07</span>
       </div>
-      <div class="experience-company">Oasis Systems LLC</div>
-      <p class="experience-desc">Led cyber test management operations as Chief Engineer. Conducted penetration testing and ethical hacking engagements for aerospace and defense programs.</p>
-      <div class="experience-tags">
-        <span class="tag">Penetration Testing</span>
-        <span class="tag">Business Management</span>
+      <div class="exp-role">Chief Engineer</div>
+      <div class="exp-org">@ Oasis Systems LLC</div>
+      <div class="exp-details">
+        <span class="exp-label">FOCUS:</span> Led cyber test management operations<br>
+        <span class="exp-label">OPS:</span> Penetration testing & ethical hacking for aerospace/defense
+      </div>
+      <div class="exp-tags">
+        <span class="tag-cyber">pentest</span>
+        <span class="tag-mgmt">leadership</span>
+        <span class="tag-mgmt">business-ops</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Chief Petty Officer - Communications Chief</span>
-        <span class="experience-date">Jan 2012 - Nov 2022</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- Navy CPO -->
+    <div class="exp-card military">
+      <div class="exp-header-bar">
+        <span class="exp-status mil">[MILITARY]</span>
+        <span class="exp-dates">2012.01 → 2022.11</span>
       </div>
-      <div class="experience-company">US Navy</div>
-      <p class="experience-desc">10+ years leading and managing sailors. Oversaw training programs, mentored Sailor of the Year awardees, and maintained mission readiness for worldwide deployment. Personally awarded Sailor of the Year as First Class Petty Officer.</p>
-      <div class="experience-tags">
-        <span class="tag">Leadership</span>
-        <span class="tag">Training</span>
-        <span class="tag">Management</span>
+      <div class="exp-role">Chief Petty Officer (E-7)</div>
+      <div class="exp-org">@ US Navy │ Communications Chief</div>
+      <div class="exp-details">
+        <span class="exp-label">YEARS:</span> 10+ years leading sailors<br>
+        <span class="exp-label">AWARDS:</span> Sailor of the Year (E-6)<br>
+        <span class="exp-label">FOCUS:</span> Training programs, mentorship, mission readiness
+      </div>
+      <div class="exp-tags">
+        <span class="tag-mil">navy</span>
+        <span class="tag-mgmt">leadership</span>
+        <span class="tag-mgmt">training</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Cyber Flight Test Engineer</span>
-        <span class="experience-date">Jun 2021 - Oct 2021</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- COLSA -->
+    <div class="exp-card">
+      <div class="exp-header-bar">
+        <span class="exp-status">[COMPLETE]</span>
+        <span class="exp-dates">2021.06 → 2021.10</span>
       </div>
-      <div class="experience-company">COLSA</div>
-      <p class="experience-desc">Managed avionics penetration testing for flight systems and aerospace programs.</p>
-      <div class="experience-tags">
-        <span class="tag">Avionics</span>
-        <span class="tag">Penetration Testing</span>
+      <div class="exp-role">Cyber Flight Test Engineer</div>
+      <div class="exp-org">@ COLSA</div>
+      <div class="exp-details">
+        <span class="exp-label">FOCUS:</span> Avionics penetration testing<br>
+        <span class="exp-label">SCOPE:</span> Flight systems & aerospace programs
+      </div>
+      <div class="exp-tags">
+        <span class="tag-cyber">pentest</span>
+        <span class="tag-tech">avionics</span>
+        <span class="tag-tech">aerospace</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Cyber Security Analyst</span>
-        <span class="experience-date">Aug 2016 - May 2021</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- Afghanistan -->
+    <div class="exp-card combat">
+      <div class="exp-header-bar">
+        <span class="exp-status combat">[COMBAT ZONE]</span>
+        <span class="exp-dates">2018.10 → 2019.10</span>
       </div>
-      <div class="experience-company">JT4 @ Edwards Air Force Base</div>
-      <p class="experience-desc">Provided cyber security analysis and support for Air Force flight test operations at Edwards AFB.</p>
-      <div class="experience-tags">
-        <span class="tag">Cyber Security</span>
-        <span class="tag">DoD</span>
+      <div class="exp-role">Executive Communications Engineer</div>
+      <div class="exp-org">@ Resolute Support │ Kabul, Afghanistan</div>
+      <div class="exp-details">
+        <span class="exp-label">MISSION:</span> NATO Resolute Support<br>
+        <span class="exp-label">PRINCIPAL:</span> COMRS (Four-Star General)<br>
+        <span class="exp-label">FOCUS:</span> Secure executive comms, classified networks, 24/7 ops
+      </div>
+      <div class="exp-tags">
+        <span class="tag-combat">deployed</span>
+        <span class="tag-tech">network-eng</span>
+        <span class="tag-cyber">classified</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Executive Communications Engineer</span>
-        <span class="experience-date">Oct 2018 - Oct 2019</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- JT4 -->
+    <div class="exp-card">
+      <div class="exp-header-bar">
+        <span class="exp-status">[COMPLETE]</span>
+        <span class="exp-dates">2016.08 → 2021.05</span>
       </div>
-      <div class="experience-company">Resolute Support - Kabul, Afghanistan</div>
-      <p class="experience-desc">Deployed to Kabul in support of NATO's Resolute Support mission, serving as the principal communications and network engineer for the Commanding General (COMRS), a Four-Star General. Engineered and maintained secure executive communications infrastructure, administered classified network systems, and ensured 24/7 operational readiness for strategic command operations in an active combat theater.</p>
-      <div class="experience-tags">
-        <span class="tag">Combat Deployment</span>
-        <span class="tag">Network Engineering</span>
-        <span class="tag">Executive Comms</span>
-        <span class="tag">Cyber Security</span>
+      <div class="exp-role">Cyber Security Analyst</div>
+      <div class="exp-org">@ JT4 │ Edwards Air Force Base</div>
+      <div class="exp-details">
+        <span class="exp-label">FOCUS:</span> Cyber security analysis & support<br>
+        <span class="exp-label">MISSION:</span> Air Force flight test operations
+      </div>
+      <div class="exp-tags">
+        <span class="tag-cyber">cyber-sec</span>
+        <span class="tag-mil">dod</span>
+        <span class="tag-tech">flight-test</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Operations Manager / Network Engineer</span>
-        <span class="experience-date">Aug 2014 - Aug 2016</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- Aerial Ag -->
+    <div class="exp-card">
+      <div class="exp-header-bar">
+        <span class="exp-status">[COMPLETE]</span>
+        <span class="exp-dates">2014.08 → 2016.08</span>
       </div>
-      <div class="experience-company">Aerial Ag Imagery / Spiral Technology</div>
-      <p class="experience-desc">Built and managed network infrastructure for precision agriculture operations. Engineered proprietary camera systems, developed web applications, and managed flight path generation for multispectral imaging.</p>
-      <div class="experience-tags">
-        <span class="tag">Network Engineering</span>
-        <span class="tag">Web Development</span>
-        <span class="tag">Operations</span>
+      <div class="exp-role">Operations Manager / Network Engineer</div>
+      <div class="exp-org">@ Aerial Ag Imagery / Spiral Technology</div>
+      <div class="exp-details">
+        <span class="exp-label">BUILD:</span> Network infrastructure for precision ag<br>
+        <span class="exp-label">DEV:</span> Proprietary camera systems, web apps, flight path gen
+      </div>
+      <div class="exp-tags">
+        <span class="tag-tech">network-eng</span>
+        <span class="tag-tech">web-dev</span>
+        <span class="tag-mgmt">operations</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Network Administrator</span>
-        <span class="experience-date">Apr 2014 - Aug 2014</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- London Properties -->
+    <div class="exp-card">
+      <div class="exp-header-bar">
+        <span class="exp-status">[COMPLETE]</span>
+        <span class="exp-dates">2014.04 → 2014.08</span>
       </div>
-      <div class="experience-company">London Properties</div>
-      <p class="experience-desc">Managed network across 9 locations and 200+ users. Administered Citrix farms, VMware ESXi, and completed XenApp 6.5 migration.</p>
-      <div class="experience-tags">
-        <span class="tag">Citrix</span>
-        <span class="tag">VMware</span>
-        <span class="tag">Network Admin</span>
+      <div class="exp-role">Network Administrator</div>
+      <div class="exp-org">@ London Properties</div>
+      <div class="exp-details">
+        <span class="exp-label">SCOPE:</span> 9 locations, 200+ users<br>
+        <span class="exp-label">TECH:</span> Citrix, VMware ESXi, XenApp 6.5 migration
+      </div>
+      <div class="exp-tags">
+        <span class="tag-tech">citrix</span>
+        <span class="tag-tech">vmware</span>
+        <span class="tag-tech">network</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Network Administrator</span>
-        <span class="experience-date">Jan 2012 - Apr 2014</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- SPOC Medical -->
+    <div class="exp-card">
+      <div class="exp-header-bar">
+        <span class="exp-status">[COMPLETE]</span>
+        <span class="exp-dates">2012.01 → 2014.04</span>
       </div>
-      <div class="experience-company">SPOC Medical</div>
-      <p class="experience-desc">Sole IT administrator managing servers, Citrix farms, medical record systems, and 50+ daily support tickets. Deployed Dragon Medical for 60+ healthcare providers.</p>
-      <div class="experience-tags">
-        <span class="tag">Healthcare IT</span>
-        <span class="tag">Server Admin</span>
+      <div class="exp-role">Network Administrator</div>
+      <div class="exp-org">@ SPOC Medical</div>
+      <div class="exp-details">
+        <span class="exp-label">ROLE:</span> Sole IT admin<br>
+        <span class="exp-label">OPS:</span> Servers, Citrix, medical records, 50+ tickets/day<br>
+        <span class="exp-label">DEPLOY:</span> Dragon Medical for 60+ providers
+      </div>
+      <div class="exp-tags">
+        <span class="tag-tech">healthcare-it</span>
+        <span class="tag-tech">server-admin</span>
+        <span class="tag-tech">citrix</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Recruiter / Sales Manager</span>
-        <span class="experience-date">Aug 2008 - Jan 2012</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- Recruiter -->
+    <div class="exp-card military">
+      <div class="exp-header-bar">
+        <span class="exp-status mil">[MILITARY]</span>
+        <span class="exp-dates">2008.08 → 2012.01</span>
       </div>
-      <div class="experience-company">NRD San Francisco - US Navy</div>
-      <p class="experience-desc">Supervised 4 recruiting stations and 22 recruiters. Managed training, budget, and met recruiting objectives across the Central Valley region.</p>
-      <div class="experience-tags">
-        <span class="tag">Leadership</span>
-        <span class="tag">Sales</span>
-        <span class="tag">Training</span>
+      <div class="exp-role">Recruiter / Sales Manager</div>
+      <div class="exp-org">@ NRD San Francisco │ US Navy</div>
+      <div class="exp-details">
+        <span class="exp-label">COMMAND:</span> 4 stations, 22 recruiters<br>
+        <span class="exp-label">AO:</span> Central Valley region
+      </div>
+      <div class="exp-tags">
+        <span class="tag-mil">navy</span>
+        <span class="tag-mgmt">leadership</span>
+        <span class="tag-mgmt">sales</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Information Management Officer</span>
-        <span class="experience-date">Oct 2007 - Aug 2008</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- MNF-Iraq -->
+    <div class="exp-card combat">
+      <div class="exp-header-bar">
+        <span class="exp-status combat">[COMBAT ZONE]</span>
+        <span class="exp-dates">2007.10 → 2008.08</span>
       </div>
-      <div class="experience-company">MNF-Iraq (Joint Operations Center)</div>
-      <p class="experience-desc">Managed classified networks (SIPR/CENTRIX) under General Petraeus and General Odierno. Awarded Defense Meritorious Service Medal for network optimization that reduced operational downtime.</p>
-      <div class="experience-tags">
-        <span class="tag">Classified Networks</span>
-        <span class="tag">IA Compliance</span>
-        <span class="tag">Combat Zone</span>
+      <div class="exp-role">Information Management Officer</div>
+      <div class="exp-org">@ MNF-Iraq │ Joint Operations Center</div>
+      <div class="exp-details">
+        <span class="exp-label">NETWORKS:</span> SIPR/CENTRIX classified systems<br>
+        <span class="exp-label">LEADERSHIP:</span> GEN Petraeus, GEN Odierno<br>
+        <span class="exp-label">AWARD:</span> Defense Meritorious Service Medal
+      </div>
+      <div class="exp-tags">
+        <span class="tag-combat">deployed</span>
+        <span class="tag-cyber">classified</span>
+        <span class="tag-cyber">ia-compliance</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">Network Administrator</span>
-        <span class="experience-date">Apr 2005 - Oct 2007</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- VFA-137 -->
+    <div class="exp-card military">
+      <div class="exp-header-bar">
+        <span class="exp-status mil">[MILITARY]</span>
+        <span class="exp-dates">2005.04 → 2007.10</span>
       </div>
-      <div class="experience-company">VFA-137 - US Navy</div>
-      <p class="experience-desc">Managed classified and unclassified networks for fighter squadron. Deployed mobile networks from shore to sea with minimal downtime. Assisted in JMPS-M test and evaluation.</p>
-      <div class="experience-tags">
-        <span class="tag">Naval Aviation</span>
-        <span class="tag">COMSEC</span>
-        <span class="tag">Deployment</span>
+      <div class="exp-role">Network Administrator</div>
+      <div class="exp-org">@ VFA-137 │ US Navy Fighter Squadron</div>
+      <div class="exp-details">
+        <span class="exp-label">SCOPE:</span> Classified & unclassified networks<br>
+        <span class="exp-label">OPS:</span> Mobile network deployment shore-to-sea<br>
+        <span class="exp-label">T&E:</span> JMPS-M test and evaluation
+      </div>
+      <div class="exp-tags">
+        <span class="tag-mil">naval-aviation</span>
+        <span class="tag-cyber">comsec</span>
+        <span class="tag-mil">deployment</span>
       </div>
     </div>
 
-    <div class="experience-item">
-      <div class="experience-header">
-        <span class="experience-title">SCI Network Administrator</span>
-        <span class="experience-date">Mar 2003 - Apr 2005</span>
+    <pre class="section-break">───────────────────────────────────────────────────────────────</pre>
+
+    <!-- USS Lassen -->
+    <div class="exp-card military">
+      <div class="exp-header-bar">
+        <span class="exp-status mil">[MILITARY]</span>
+        <span class="exp-dates">2003.03 → 2005.04</span>
       </div>
-      <div class="experience-company">USS Lassen DDG-82 - US Navy</div>
-      <p class="experience-desc">Managed SCI networks and SCIF operations aboard guided missile destroyer. COMSEC custodian responsible for secure communications and ISSO duties.</p>
-      <div class="experience-tags">
-        <span class="tag">SCI Networks</span>
-        <span class="tag">COMSEC</span>
-        <span class="tag">Ship Operations</span>
+      <div class="exp-role">SCI Network Administrator</div>
+      <div class="exp-org">@ USS Lassen DDG-82 │ Guided Missile Destroyer</div>
+      <div class="exp-details">
+        <span class="exp-label">CLEARANCE:</span> SCI networks & SCIF ops<br>
+        <span class="exp-label">ROLE:</span> COMSEC custodian, ISSO duties<br>
+        <span class="exp-label">MISSION:</span> Secure communications
+      </div>
+      <div class="exp-tags">
+        <span class="tag-cyber">sci-networks</span>
+        <span class="tag-cyber">comsec</span>
+        <span class="tag-mil">ship-ops</span>
       </div>
     </div>
 
   </div>
+
+  <pre class="ascii-footer">
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  EOF │ 20+ years │ Network Engineering → Cyber Security → Penetration Testing ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+  </pre>
 
   <div style="margin-top: 30px;">
     <a href="{{ '/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
