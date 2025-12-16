@@ -44,23 +44,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Hacker terminal animation
 async function runHackerTerminal() {
-  console.log('[DEBUG] runHackerTerminal started');
-
   const terminal = document.getElementById('hacker-terminal');
   const asciiHeader = document.getElementById('ascii-header');
   const headerInfo = document.getElementById('header-info');
   const headerTagline = document.getElementById('header-tagline');
 
-  console.log('[DEBUG] terminal element:', terminal);
-
-  if (!terminal) {
-    console.log('[DEBUG] No terminal element found, returning');
-    return;
-  }
+  if (!terminal) return;
 
   // Check if we're on the home page
   const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html' || window.location.pathname === '';
-  console.log('[DEBUG] pathname:', window.location.pathname, 'isHomePage:', isHomePage);
 
   // If NOT on home page, show static ASCII with glow effect
   if (!isHomePage) {
@@ -76,8 +68,6 @@ async function runHackerTerminal() {
   }
 
   // Home page - always play the animation
-  console.log('[DEBUG] Starting animation on home page');
-
   try {
   const prompt = '<span class="prompt-user">p3ta</span><span class="prompt-at">@</span><span class="prompt-host">dc710</span> <span class="prompt-symbol">$</span> ';
 
@@ -287,9 +277,8 @@ async function runHackerTerminal() {
     if (e.key === 'Enter') handleSubmit();
   });
 
-  console.log('[DEBUG] Animation complete, input box added');
   } catch (error) {
-    console.error('[DEBUG] Animation error:', error);
+    console.error('Animation error:', error);
   }
 }
 
