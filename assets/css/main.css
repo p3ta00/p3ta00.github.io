@@ -964,3 +964,38 @@ a:hover, button:hover, .nav-item a:hover {
   margin: 15px 0;
   border-left: 2px solid var(--pink);
 }
+
+/* Hacker terminal animation */
+.hacker-terminal {
+  background: var(--bg-darker);
+  border: 1px solid var(--terminal-black);
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  min-height: 200px;
+}
+
+.hacker-terminal .terminal-line {
+  margin: 2px 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.hacker-terminal .ascii-header {
+  margin: 15px 0;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow: 0 0 5px var(--glow), 0 0 10px var(--glow);
+    opacity: 1;
+  }
+  50% {
+    text-shadow: 0 0 15px var(--glow), 0 0 25px var(--glow);
+    opacity: 0.95;
+  }
+}
