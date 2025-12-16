@@ -11,171 +11,171 @@ title: Experience
   </div>
 
   <div class="ascii-box cyan-glow">
-    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
-    <div class="ascii-line">║ <span class="ascii-title">PROFESSIONAL EXPERIENCE</span>                                      ║</div>
-    <div class="ascii-line">║ <span class="ascii-subtitle">Security Clearance: Cleared</span>                                  ║</div>
-    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+    <pre class="ascii-art">╔═════════════════════════════════════════════════════════╗
+║               PROFESSIONAL EXPERIENCE                  ║
+║              Security Clearance: Cleared               ║
+╚═════════════════════════════════════════════════════════╝</pre>
   </div>
 
   <div class="cat-list">
 
     <!-- Current Role -->
-    <div class="cat-entry active">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./technical_advisor</span> <span class="cat-status active">[ACTIVE]</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Technical Advisor</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Astrion</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jan 2024 → Present</span></div>
-        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Penetration testing & cyber security advisory for defense clients</span></div>
+    <div class="terminal-box active">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./technical_advisor</span> <span class="cat-status active">[ACTIVE]</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Technical Advisor
+<span class="cat-key">ORG</span>       Astrion
+<span class="cat-key">DATE</span>      Jan 2024 → Present
+<span class="cat-key">FOCUS</span>     Penetration testing & cyber security advisory for defense</pre>
       </div>
     </div>
 
     <!-- Chief Engineer -->
-    <div class="cat-entry">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./chief_engineer</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Chief Engineer</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Oasis Systems LLC</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Oct 2021 → Jul 2024</span></div>
-        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Led cyber test management operations</span></div>
-        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Penetration testing & ethical hacking for aerospace/defense</span></div>
+    <div class="terminal-box">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./chief_engineer</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Chief Engineer
+<span class="cat-key">ORG</span>       Oasis Systems LLC
+<span class="cat-key">DATE</span>      Oct 2021 → Jul 2024
+<span class="cat-key">FOCUS</span>     Led cyber test management operations
+<span class="cat-key">OPS</span>       Penetration testing & ethical hacking for aerospace/defense</pre>
       </div>
     </div>
 
     <!-- Navy CPO -->
-    <div class="cat-entry military">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./chief_petty_officer</span> <span class="cat-status mil">[MILITARY]</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Chief Petty Officer (E-7) - Communications Chief</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">US Navy</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jan 2012 → Nov 2022</span></div>
-        <div class="cat-line"><span class="cat-key">YEARS</span><span class="cat-val">10+ years leading sailors</span></div>
-        <div class="cat-line"><span class="cat-key">AWARD</span><span class="cat-val">Sailor of the Year (E-6)</span></div>
-        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Training programs, mentorship, mission readiness</span></div>
+    <div class="terminal-box military">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./chief_petty_officer</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Chief Petty Officer (E-7) - Communications Chief
+<span class="cat-key">ORG</span>       US Navy
+<span class="cat-key">DATE</span>      Jan 2012 → Nov 2022
+<span class="cat-key">YEARS</span>     10+ years leading sailors
+<span class="cat-key">AWARD</span>     Sailor of the Year (E-6)
+<span class="cat-key">FOCUS</span>     Training programs, mentorship, mission readiness</pre>
       </div>
     </div>
 
     <!-- COLSA -->
-    <div class="cat-entry">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./cyber_flight_test_engineer</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Cyber Flight Test Engineer</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">COLSA</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jun 2021 → Oct 2021</span></div>
-        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Avionics penetration testing</span></div>
-        <div class="cat-line"><span class="cat-key">SCOPE</span><span class="cat-val">Flight systems & aerospace programs</span></div>
+    <div class="terminal-box">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./cyber_flight_test_engineer</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Cyber Flight Test Engineer
+<span class="cat-key">ORG</span>       COLSA
+<span class="cat-key">DATE</span>      Jun 2021 → Oct 2021
+<span class="cat-key">FOCUS</span>     Avionics penetration testing
+<span class="cat-key">SCOPE</span>     Flight systems & aerospace programs</pre>
       </div>
     </div>
 
     <!-- Afghanistan -->
-    <div class="cat-entry combat">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./exec_comms_engineer</span> <span class="cat-status combat">[COMBAT ZONE]</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Executive Communications Engineer</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Resolute Support - Kabul, Afghanistan</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Oct 2018 → Oct 2019</span></div>
-        <div class="cat-line"><span class="cat-key">MISSION</span><span class="cat-val">NATO Resolute Support</span></div>
-        <div class="cat-line"><span class="cat-key">PRINCIPAL</span><span class="cat-val">COMRS (Four-Star General)</span></div>
-        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Secure executive comms, classified networks, 24/7</span></div>
+    <div class="terminal-box combat">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./exec_comms_engineer</span> <span class="cat-status combat">[COMBAT ZONE]</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Executive Communications Engineer
+<span class="cat-key">ORG</span>       Resolute Support - Kabul, Afghanistan
+<span class="cat-key">DATE</span>      Oct 2018 → Oct 2019
+<span class="cat-key">MISSION</span>   NATO Resolute Support
+<span class="cat-key">PRINCIPAL</span> COMRS (Four-Star General)
+<span class="cat-key">OPS</span>       Secure executive comms, classified networks, 24/7</pre>
       </div>
     </div>
 
     <!-- JT4 -->
-    <div class="cat-entry">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./cyber_security_analyst</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Cyber Security Analyst</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">JT4 @ Edwards Air Force Base</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Aug 2016 → May 2021</span></div>
-        <div class="cat-line"><span class="cat-key">FOCUS</span><span class="cat-val">Cyber security analysis & support</span></div>
-        <div class="cat-line"><span class="cat-key">MISSION</span><span class="cat-val">Air Force flight test operations</span></div>
+    <div class="terminal-box">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./cyber_security_analyst</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Cyber Security Analyst
+<span class="cat-key">ORG</span>       JT4 @ Edwards Air Force Base
+<span class="cat-key">DATE</span>      Aug 2016 → May 2021
+<span class="cat-key">FOCUS</span>     Cyber security analysis & support
+<span class="cat-key">MISSION</span>   Air Force flight test operations</pre>
       </div>
     </div>
 
     <!-- Aerial Ag -->
-    <div class="cat-entry">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./ops_manager</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Operations Manager / Network Engineer</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">Aerial Ag Imagery / Spiral Technology</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Aug 2014 → Aug 2016</span></div>
-        <div class="cat-line"><span class="cat-key">BUILD</span><span class="cat-val">Network infrastructure for precision agriculture</span></div>
-        <div class="cat-line"><span class="cat-key">DEV</span><span class="cat-val">Proprietary camera systems, web apps, flight path gen</span></div>
+    <div class="terminal-box">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./ops_manager</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Operations Manager / Network Engineer
+<span class="cat-key">ORG</span>       Aerial Ag Imagery / Spiral Technology
+<span class="cat-key">DATE</span>      Aug 2014 → Aug 2016
+<span class="cat-key">BUILD</span>     Network infrastructure for precision agriculture
+<span class="cat-key">DEV</span>       Proprietary camera systems, web apps, flight path gen</pre>
       </div>
     </div>
 
     <!-- London Properties -->
-    <div class="cat-entry">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_london</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Network Administrator</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">London Properties</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Apr 2014 → Aug 2014</span></div>
-        <div class="cat-line"><span class="cat-key">SCOPE</span><span class="cat-val">9 locations, 200+ users</span></div>
-        <div class="cat-line"><span class="cat-key">TECH</span><span class="cat-val">Citrix, VMware ESXi, XenApp 6.5 migration</span></div>
+    <div class="terminal-box">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_london</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Network Administrator
+<span class="cat-key">ORG</span>       London Properties
+<span class="cat-key">DATE</span>      Apr 2014 → Aug 2014
+<span class="cat-key">SCOPE</span>     9 locations, 200+ users
+<span class="cat-key">TECH</span>      Citrix, VMware ESXi, XenApp 6.5 migration</pre>
       </div>
     </div>
 
     <!-- SPOC Medical -->
-    <div class="cat-entry">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_spoc</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Network Administrator (Sole IT Admin)</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">SPOC Medical</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Jan 2012 → Apr 2014</span></div>
-        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Servers, Citrix, medical records, 50+ tickets/day</span></div>
-        <div class="cat-line"><span class="cat-key">DEPLOY</span><span class="cat-val">Dragon Medical for 60+ providers</span></div>
+    <div class="terminal-box">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_spoc</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Network Administrator (Sole IT Admin)
+<span class="cat-key">ORG</span>       SPOC Medical
+<span class="cat-key">DATE</span>      Jan 2012 → Apr 2014
+<span class="cat-key">OPS</span>       Servers, Citrix, medical records, 50+ tickets/day
+<span class="cat-key">DEPLOY</span>    Dragon Medical for 60+ providers</pre>
       </div>
     </div>
 
     <!-- Recruiter -->
-    <div class="cat-entry military">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./recruiter</span> <span class="cat-status mil">[MILITARY]</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Recruiter / Sales Manager</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">NRD San Francisco - US Navy</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Aug 2008 → Jan 2012</span></div>
-        <div class="cat-line"><span class="cat-key">COMMAND</span><span class="cat-val">4 stations, 22 recruiters</span></div>
-        <div class="cat-line"><span class="cat-key">AO</span><span class="cat-val">Central Valley region</span></div>
+    <div class="terminal-box military">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./recruiter</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Recruiter / Sales Manager
+<span class="cat-key">ORG</span>       NRD San Francisco - US Navy
+<span class="cat-key">DATE</span>      Aug 2008 → Jan 2012
+<span class="cat-key">COMMAND</span>   4 stations, 22 recruiters
+<span class="cat-key">AO</span>        Central Valley region</pre>
       </div>
     </div>
 
     <!-- MNF-Iraq -->
-    <div class="cat-entry combat">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./info_mgmt_officer</span> <span class="cat-status combat">[COMBAT ZONE]</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Information Management Officer</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">MNF-Iraq - Joint Operations Center</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Oct 2007 → Aug 2008</span></div>
-        <div class="cat-line"><span class="cat-key">NETWORKS</span><span class="cat-val">SIPR/CENTRIX classified systems</span></div>
-        <div class="cat-line"><span class="cat-key">LEADERSHIP</span><span class="cat-val">GEN Petraeus, GEN Odierno</span></div>
-        <div class="cat-line"><span class="cat-key">AWARD</span><span class="cat-val">Defense Meritorious Service Medal</span></div>
+    <div class="terminal-box combat">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./info_mgmt_officer</span> <span class="cat-status combat">[COMBAT ZONE]</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Information Management Officer
+<span class="cat-key">ORG</span>       MNF-Iraq - Joint Operations Center
+<span class="cat-key">DATE</span>      Oct 2007 → Aug 2008
+<span class="cat-key">NETWORKS</span>  SIPR/CENTRIX classified systems
+<span class="cat-key">LEADERS</span>   GEN Petraeus, GEN Odierno
+<span class="cat-key">AWARD</span>     Defense Meritorious Service Medal</pre>
       </div>
     </div>
 
     <!-- VFA-137 -->
-    <div class="cat-entry military">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_vfa137</span> <span class="cat-status mil">[MILITARY]</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">Network Administrator</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">VFA-137 - US Navy Fighter Squadron</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Apr 2005 → Oct 2007</span></div>
-        <div class="cat-line"><span class="cat-key">SCOPE</span><span class="cat-val">Classified & unclassified networks</span></div>
-        <div class="cat-line"><span class="cat-key">OPS</span><span class="cat-val">Mobile network deployment shore-to-sea</span></div>
-        <div class="cat-line"><span class="cat-key">T&E</span><span class="cat-val">JMPS-M test and evaluation</span></div>
+    <div class="terminal-box military">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./network_admin_vfa137</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      Network Administrator
+<span class="cat-key">ORG</span>       VFA-137 - US Navy Fighter Squadron
+<span class="cat-key">DATE</span>      Apr 2005 → Oct 2007
+<span class="cat-key">SCOPE</span>     Classified & unclassified networks
+<span class="cat-key">OPS</span>       Mobile network deployment shore-to-sea
+<span class="cat-key">T&E</span>       JMPS-M test and evaluation</pre>
       </div>
     </div>
 
     <!-- USS Lassen -->
-    <div class="cat-entry military">
-      <div class="cat-command"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./sci_network_admin</span> <span class="cat-status mil">[MILITARY]</span></div>
-      <div class="cat-output">
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">SCI Network Administrator</span></div>
-        <div class="cat-line"><span class="cat-key">ORG</span><span class="cat-val">USS Lassen DDG-82 - Guided Missile Destroyer</span></div>
-        <div class="cat-line"><span class="cat-key">DATE</span><span class="cat-val">Mar 2003 → Apr 2005</span></div>
-        <div class="cat-line"><span class="cat-key">CLEARANCE</span><span class="cat-val">SCI networks & SCIF operations</span></div>
-        <div class="cat-line"><span class="cat-key">ROLE</span><span class="cat-val">COMSEC custodian, ISSO duties</span></div>
-        <div class="cat-line"><span class="cat-key">MISSION</span><span class="cat-val">Secure communications</span></div>
+    <div class="terminal-box military">
+      <div class="terminal-prompt"><span class="prompt-symbol">$</span> <span class="cat-cmd">cat</span> <span class="cat-file">./sci_network_admin</span> <span class="cat-status mil">[MILITARY]</span></div>
+      <div class="terminal-content">
+        <pre><span class="cat-key">ROLE</span>      SCI Network Administrator
+<span class="cat-key">ORG</span>       USS Lassen DDG-82 - Guided Missile Destroyer
+<span class="cat-key">DATE</span>      Mar 2003 → Apr 2005
+<span class="cat-key">ACCESS</span>    SCI networks & SCIF operations
+<span class="cat-key">DUTIES</span>    COMSEC custodian, ISSO
+<span class="cat-key">MISSION</span>   Secure communications</pre>
       </div>
     </div>
 
@@ -183,9 +183,9 @@ title: Experience
 
   <!-- Philosophy Section -->
   <div class="ascii-box green-glow" style="margin-top: 50px;">
-    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
-    <div class="ascii-line">║ <span class="ascii-title green">PHILOSOPHY</span>                                                    ║</div>
-    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+    <pre class="ascii-art">╔═════════════════════════════════════════════════════════╗
+║                      PHILOSOPHY                        ║
+╚═════════════════════════════════════════════════════════╝</pre>
   </div>
 
   <div class="philosophy-box">
@@ -196,9 +196,9 @@ title: Experience
 
   <!-- Certifications Section -->
   <div class="ascii-box purple-glow">
-    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
-    <div class="ascii-line">║ <span class="ascii-title purple">CERTIFICATIONS</span>                                                ║</div>
-    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+    <pre class="ascii-art">╔═════════════════════════════════════════════════════════╗
+║                    CERTIFICATIONS                      ║
+╚═════════════════════════════════════════════════════════╝</pre>
   </div>
 
   <div class="terminal-output">
@@ -217,17 +217,17 @@ drwxr-xr-x  p3ta  p3ta  4096  Dec 15 2025  <span class="dir-name">..</span>
 -rw-r--r--  p3ta  p3ta  1337  Aug 05 2025  <span class="cert-file">CPTS.cert</span>
 -rw-r--r--  p3ta  p3ta  1337  Jul 12 2025  <span class="cert-file">CWES.cert</span>
 -rw-r--r--  p3ta  p3ta  1337  Jun 18 2024  <span class="cert-file">SecurityX.cert</span>
--rw-r--r--  p3ta  p3ta  1337  Mar 22 2023  <span class="cert-file">C|EH.cert</span>
+-rw-r--r--  p3ta  p3ta  1337  Mar 22 2023  <span class="cert-file">C|EH.cert</span>  <span style="color: var(--red);"># we don't talk about this one</span>
 -rw-r--r--  p3ta  p3ta  1337  Aug 10 2022  <span class="cert-file">Security+.cert</span>
 -rw-r--r--  p3ta  p3ta  1337  Jan 12 2020  <span class="cert-file">Network+.cert</span></pre>
   </div>
 
   <!-- Pro Labs Section -->
   <div class="ascii-box pink-glow" style="margin-top: 40px;">
-    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
-    <div class="ascii-line">║ <span class="ascii-title pink">HACKTHEBOX PRO LABS</span>                                           ║</div>
-    <div class="ascii-line">║ <span class="ascii-subtitle">[ COMPLETED: 10 ]</span>                                             ║</div>
-    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+    <pre class="ascii-art">╔═════════════════════════════════════════════════════════╗
+║                 HACKTHEBOX PRO LABS                    ║
+║                  [ COMPLETED: 10 ]                     ║
+╚═════════════════════════════════════════════════════════╝</pre>
   </div>
 
   <div class="terminal-output">
@@ -252,9 +252,9 @@ drwxr-xr-x  p3ta  p3ta  4096  Nov 28 2025  <span class="dir-name">..</span>
   </div>
 
   <div class="ascii-box cyan-glow" style="margin-top: 40px;">
-    <div class="ascii-line">╔═══════════════════════════════════════════════════════════════╗</div>
-    <div class="ascii-line">║ <span class="ascii-eof">EOF</span> │ <span class="ascii-highlight">20+ years</span> │ <span class="ascii-path">Network Engineering → Cyber Security → Pentest</span> ║</div>
-    <div class="ascii-line">╚═══════════════════════════════════════════════════════════════╝</div>
+    <pre class="ascii-art">╔═════════════════════════════════════════════════════════╗
+║  EOF │ 20+ years │ Network Eng → Cyber Sec → Pentest   ║
+╚═════════════════════════════════════════════════════════╝</pre>
   </div>
 
   <div style="margin-top: 30px;">

@@ -1084,22 +1084,36 @@ a:hover, button:hover, .nav-item a:hover {
   color: var(--terminal-black);
 }
 
-.ascii-box.cyan-glow .ascii-line {
+.ascii-art {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--terminal-black);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.ascii-box.cyan-glow .ascii-line,
+.ascii-box.cyan-glow .ascii-art {
   color: var(--cyan);
   text-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(0, 232, 255, 0.3);
 }
 
-.ascii-box.green-glow .ascii-line {
+.ascii-box.green-glow .ascii-line,
+.ascii-box.green-glow .ascii-art {
   color: var(--green);
   text-shadow: 0 0 10px var(--green), 0 0 20px rgba(0, 255, 159, 0.3);
 }
 
-.ascii-box.purple-glow .ascii-line {
+.ascii-box.purple-glow .ascii-line,
+.ascii-box.purple-glow .ascii-art {
   color: var(--purple);
   text-shadow: 0 0 10px var(--purple), 0 0 20px rgba(182, 32, 224, 0.3);
 }
 
-.ascii-box.pink-glow .ascii-line {
+.ascii-box.pink-glow .ascii-line,
+.ascii-box.pink-glow .ascii-art {
   color: var(--pink);
   text-shadow: 0 0 10px var(--pink), 0 0 20px rgba(255, 16, 240, 0.3);
 }
@@ -1143,43 +1157,53 @@ a:hover, button:hover, .nav-item a:hover {
   overflow-x: auto;
 }
 
-/* Cat Command Terminal Styling */
+/* Terminal Box Styling */
 .cat-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.cat-entry {
+.terminal-box {
   background: var(--bg-darker);
   border: 1px solid var(--terminal-black);
-  border-left: 3px solid var(--purple);
-  border-radius: 0 4px 4px 0;
+  border-radius: 4px;
   overflow: hidden;
 }
 
-.cat-entry:hover {
-  border-left-color: var(--cyan);
+.terminal-box.active {
+  border-color: var(--green);
+  box-shadow: 0 0 10px rgba(0, 255, 159, 0.1);
 }
 
-.cat-entry.active {
-  border-left-color: var(--green);
+.terminal-box.military {
+  border-color: var(--blue);
 }
 
-.cat-entry.military {
-  border-left-color: var(--blue);
+.terminal-box.combat {
+  border-color: var(--red);
+  box-shadow: 0 0 10px rgba(255, 41, 117, 0.1);
 }
 
-.cat-entry.combat {
-  border-left-color: var(--red);
-}
-
-.cat-command {
+.terminal-prompt {
   background: var(--bg-lighter);
   padding: 10px 15px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
   border-bottom: 1px solid var(--terminal-black);
+}
+
+.terminal-content {
+  padding: 12px 15px;
+}
+
+.terminal-content pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--foreground);
+  white-space: pre-wrap;
 }
 
 .cat-cmd {
@@ -1210,30 +1234,9 @@ a:hover, button:hover, .nav-item a:hover {
   text-shadow: 0 0 5px var(--red);
 }
 
-.cat-output {
-  padding: 12px 15px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-}
-
-.cat-line {
-  display: flex;
-  margin: 4px 0;
-}
-
 .cat-key {
   color: var(--yellow);
-  min-width: 100px;
   font-weight: bold;
-}
-
-.cat-key::after {
-  content: ':';
-  margin-right: 10px;
-}
-
-.cat-val {
-  color: var(--foreground);
 }
 
 /* Philosophy Box */
@@ -1301,44 +1304,25 @@ a:hover, button:hover, .nav-item a:hover {
 /* Mobile responsive for experience */
 @media (max-width: 768px) {
   .ascii-box {
-    font-size: 0.5rem;
+    font-size: 0.45rem;
   }
 
   .ascii-divider,
   .ascii-footer {
-    font-size: 0.45rem;
+    font-size: 0.4rem;
   }
 
-  .cat-command {
-    font-size: 0.75rem;
+  .terminal-prompt {
+    font-size: 0.7rem;
     padding: 8px 12px;
   }
 
-  .cat-output {
-    font-size: 0.7rem;
-    padding: 10px 12px;
-  }
-
-  .cat-line {
-    flex-direction: column;
-  }
-
-  .cat-key {
-    min-width: auto;
-    margin-bottom: 2px;
-  }
-
-  .cat-key::after {
-    content: '';
-  }
-
-  .cat-val {
-    margin-left: 15px;
-    color: var(--foreground-dark);
+  .terminal-content pre {
+    font-size: 0.65rem;
   }
 
   .ls-output pre {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
   }
 
   .philosophy-box {
