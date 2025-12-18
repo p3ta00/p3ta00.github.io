@@ -1329,3 +1329,157 @@ a:hover, button:hover, .nav-item a:hover {
     padding: 15px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TERMINAL OUTPUT HIGHLIGHTING - UwU Neon Theme
+   For nmap, netexec, and other security tool output
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Console/Terminal output - special neon styling */
+.language-console .highlight,
+.language-terminal .highlight,
+.language-text .highlight,
+.language-plaintext .highlight,
+.highlighter-rouge:not([class*="language-"]) .highlight {
+  color: var(--foreground);
+}
+
+/* Generic output - make it pop with neon accents via JS injection */
+.highlight .go {  /* Generic.Output */
+  color: var(--foreground);
+}
+
+/* UwU Toolkit status indicators */
+.highlight .gp {  /* Generic.Prompt - used for [*], [+], etc */
+  color: var(--cyan);
+  font-weight: bold;
+}
+
+/* Add neon glow to code blocks on hover */
+.highlight:hover {
+  box-shadow: 0 0 20px rgba(255, 16, 240, 0.1);
+}
+
+/* Progress bar styling in code blocks */
+.highlight {
+  position: relative;
+}
+
+/* Language tag in corner */
+div.highlighter-rouge::before {
+  content: attr(class);
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--terminal-black);
+  color: var(--foreground-dark);
+  padding: 2px 10px;
+  font-size: 0.65rem;
+  border-radius: 0 4px 0 4px;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+div.language-bash::before { content: "bash"; }
+div.language-shell::before { content: "shell"; }
+div.language-sh::before { content: "sh"; }
+div.language-python::before { content: "python"; }
+div.language-py::before { content: "python"; }
+div.language-ruby::before { content: "ruby"; }
+div.language-sql::before { content: "sql"; }
+div.language-powershell::before { content: "powershell"; }
+div.language-ps1::before { content: "powershell"; }
+div.language-json::before { content: "json"; }
+div.language-yaml::before { content: "yaml"; }
+div.language-xml::before { content: "xml"; }
+div.language-html::before { content: "html"; }
+div.language-css::before { content: "css"; }
+div.language-javascript::before { content: "js"; }
+div.language-js::before { content: "js"; }
+div.language-c::before { content: "c"; }
+div.language-cpp::before { content: "c++"; }
+div.language-java::before { content: "java"; }
+div.language-go::before { content: "go"; }
+div.language-rust::before { content: "rust"; }
+div.language-console::before { content: "console"; }
+div.language-terminal::before { content: "terminal"; }
+div.language-text::before { content: "output"; }
+div.language-plaintext::before { content: "output"; }
+
+/* Hide default label for unspecified languages */
+div.highlighter-rouge:not([class*="language-"])::before {
+  content: "output";
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UWU NEON SECURITY OUTPUT HIGHLIGHTING
+   Dynamic highlighting for security tool output
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Status indicators */
+.uwu-success { color: #00ff9f; font-weight: bold; }  /* Neon green */
+.uwu-info { color: #00e8ff; font-weight: bold; }     /* Electric cyan */
+.uwu-error { color: #ff2975; font-weight: bold; }    /* Neon red */
+.uwu-warning { color: #ff7c00; font-weight: bold; }  /* Neon orange */
+
+/* Ports and protocols */
+.uwu-port { color: #ffea00; }           /* Electric yellow */
+.uwu-protocol { color: #8b7aa8; }       /* Muted lavender */
+.uwu-port-open { color: #00ff9f; font-weight: bold; }    /* Neon green */
+.uwu-port-closed { color: #ff2975; }    /* Neon red */
+.uwu-port-filtered { color: #ff7c00; }  /* Neon orange */
+
+/* Network */
+.uwu-ip { color: #00a2ff; }             /* Neon blue */
+.uwu-domain { color: #00e8ff; }         /* Electric cyan */
+.uwu-service { color: #b620e0; }        /* Neon purple */
+
+/* Credentials */
+.uwu-user { color: #00e8ff; }           /* Electric cyan */
+.uwu-password {
+  color: #ff10f0;                       /* Hot pink */
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 16, 240, 0.5);
+}
+.uwu-hash {
+  color: #b620e0;                       /* Neon purple */
+  font-family: monospace;
+}
+.uwu-hash-ntlm {
+  color: #ff006e;                       /* Magenta */
+  font-family: monospace;
+  word-break: break-all;
+}
+
+/* Windows/AD */
+.uwu-admin { color: #ff7c00; font-weight: bold; }  /* Neon orange */
+.uwu-dangerous {
+  color: #ff2975;                       /* Neon red */
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 41, 117, 0.5);
+}
+
+/* Nmap */
+.uwu-nmap-header { color: #00e8ff; font-weight: bold; }  /* Cyan */
+.uwu-nmap-section { color: #b620e0; }   /* Purple */
+
+/* Success indicators */
+.uwu-pwned {
+  color: #00ff9f;                       /* Neon green */
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 159, 0.7);
+  animation: pwned-pulse 1s ease-in-out infinite;
+}
+
+@keyframes pwned-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Paths */
+.uwu-path { color: #00a2ff; }           /* Neon blue */
+
+/* Command styling */
+.uwu-command { color: #00ff9f; }        /* Neon green */
+.uwu-flag { color: #ff7c00; }           /* Neon orange */
+.uwu-argument { color: #ffea00; }       /* Electric yellow */
