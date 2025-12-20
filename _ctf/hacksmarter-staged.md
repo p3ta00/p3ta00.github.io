@@ -16,13 +16,11 @@ tags: ["windows", "linux", "sliver", "c2", "av-bypass", "seimpersonate", "godpot
 
 ## Overview
 
-| Property | Value |
-|----------|-------|
-| **Platform** | HackSmarter |
-| **OS** | Windows Server 2022 / Ubuntu 22.04 |
-| **Difficulty** | Medium |
-| **Web Server IP** | `10.0.29.199` |
-| **SQL Server IP** | `10.0.18.213` |
+**Platform:** HackSmarter
+**OS:** Windows Server 2022 / Ubuntu 22.04
+**Difficulty:** Medium
+**Web Server IP:** `10.0.29.199`
+**SQL Server IP:** `10.0.18.213`
 
 ---
 
