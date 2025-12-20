@@ -8,12 +8,6 @@ os: "Windows Server 2022 / Ubuntu 22.04"
 tags: ["windows", "linux", "sliver", "c2", "av-bypass", "seimpersonate", "godpotato", "donut", "ligolo", "pivoting", "credential-dumping", "mysql", "uwu-toolkit"]
 ---
 
-<div style="text-align: center;">
-  <img src="/assets/images/ctf/staged/banner.png" alt="Staged Banner" style="max-width: 100%;" />
-</div>
-
----
-
 ## Overview
 
 **Platform:** HackSmarter
