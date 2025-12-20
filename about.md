@@ -114,7 +114,7 @@ and occasionally still getting my hands dirty in the trenches.</pre>
 <span class="cat-key">LINKEDIN</span>    <a href="https://www.linkedin.com/in/jayson-p3ta-ek/" style="color: var(--cyan);">linkedin.com/in/jayson-p3ta-ek</a>
 <span class="cat-key">DISCORD</span>     p3ta00
 <span class="cat-key">DEFCON</span>      DC710 - Mojave
-<span class="cat-key">HTB</span>         Active
+<span class="cat-key">HTB</span>         <a href="https://app.hackthebox.com/public/users/998467" style="color: var(--cyan);">app.hackthebox.com/p3ta</a>
 <span class="cat-key">HACKSMARTER</span> Discord Regular</pre>
     </div>
   </div>
