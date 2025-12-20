@@ -16,14 +16,12 @@ tags: ["windows", "ad", "responder", "ntlm", "slinky", "genericall", "acl-abuse"
 
 ## Overview
 
-| Property | Value |
-|----------|-------|
-| **Platform** | HackSmarter |
-| **OS** | Windows Server 2022 Build 20348 |
-| **Difficulty** | Medium |
-| **IP** | `10.1.124.132` |
-| **Domain** | `hack.smarter` |
-| **Hostname** | `DC01` |
+**Platform:** HackSmarter
+**OS:** Windows Server 2022 Build 20348
+**Difficulty:** Medium
+**IP:** `10.1.124.132`
+**Domain:** `hack.smarter`
+**Hostname:** `DC01`
 
 ---
 
