@@ -1,0 +1,123 @@
+---
+layout: default
+---
+<article class="writeup vulnresearch">
+  <header class="writeup-header">
+    <h1 class="section-header glitch">{{ page.title }}</h1>
+    <div class="writeup-meta">
+      <span class="writeup-tag" style="background: var(--red);">CVE RESEARCH</span>
+      {% if page.severity %}
+      <span class="writeup-difficulty difficulty-{{ page.severity | downcase }}"
+        {% if page.severity == "Critical" %}style="background: #ff0000; color: white;"{% endif %}
+        {% if page.severity == "High" %}style="background: #ff6600; color: white;"{% endif %}
+        {% if page.severity == "Medium" %}style="background: #ffcc00; color: black;"{% endif %}>
+        {{ page.severity }}
+      </span>
+      {% endif %}
+      {% if page.cvss %}
+      <span style="color: var(--yellow);">CVSS: {{ page.cvss }}</span>
+      {% endif %}
+      {% if page.date %}
+      <span>{{ page.date | date: "%Y-%m-%d" }}</span>
+      {% endif %}
+      {% if page.cwe %}
+      <span style="color: var(--cyan);">{{ page.cwe }}</span>
+      {% endif %}
+    </div>
+    {% if page.product %}
+    <div class="writeup-meta" style="margin-top: 10px;">
+      <span>Product: <strong style="color: var(--green);">{{ page.product }}</strong></span>
+      {% if page.github_stars %}
+      <span style="color: var(--yellow);">{{ page.github_stars }} GitHub Stars</span>
+      {% endif %}
+    </div>
+    {% endif %}
+  </header>
+
+  {% if page.protected %}
+  <div id="locked-section" class="locked-content">
+    <div class="lock-icon" style="font-size: 3em; color: var(--red);">[RESTRICTED ACCESS]</div>
+    <p style="color: var(--yellow);">This vulnerability research contains sensitive exploitation details.</p>
+    <p style="color: var(--cyan);">Enter access password to continue:</p>
+    <br>
+    <input type="password" id="hash-input" class="hash-input" placeholder="Enter password..." style="font-family: monospace;">
+    <button id="unlock-btn" class="unlock-btn">Authenticate</button>
+    <div id="result-message" style="margin-top: 15px; min-height: 30px;"></div>
+  </div>
+
+  <div id="unlocked-content" class="post-content" style="display: none;">
+    {{ content }}
+  </div>
+
+  <script>
+    const correctPassword = "{{ page.unlock_password }}";
+
+    async function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function typeMessage(container, text, className) {
+      container.innerHTML = '';
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.className = className;
+        span.style.animationDelay = `${i * 0.1}s`;
+        span.innerHTML = text[i] === ' ' ? '&nbsp;' : text[i];
+        container.appendChild(span);
+        await sleep(40);
+      }
+    }
+
+    async function unlockContent() {
+      const input = document.getElementById('hash-input');
+      const btn = document.getElementById('unlock-btn');
+      const result = document.getElementById('result-message');
+      const attempt = input.value.trim();
+
+      input.disabled = true;
+      btn.disabled = true;
+
+      if (attempt === correctPassword) {
+        await typeMessage(result, 'Authentication successful. Decrypting research data...', 'pulse-rainbow');
+        await sleep(1500);
+        result.innerHTML += '<br><span style="color: var(--green);">[+] ACCESS GRANTED - Welcome, Researcher</span>';
+        await sleep(1000);
+        document.getElementById('locked-section').style.display = 'none';
+        document.getElementById('unlocked-content').style.display = 'block';
+        sessionStorage.setItem('vulnresearch_unlocked', 'true');
+      } else {
+        await typeMessage(result, 'Invalid credentials. Access denied.', 'pulse-rainbow');
+        await sleep(1500);
+        result.innerHTML += '<br><span style="color: var(--red);">[-] Authentication failed</span>';
+        await sleep(500);
+        input.disabled = false;
+        btn.disabled = false;
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    // Check if already unlocked in this session
+    if (sessionStorage.getItem('vulnresearch_unlocked') === 'true') {
+      document.getElementById('locked-section').style.display = 'none';
+      document.getElementById('unlocked-content').style.display = 'block';
+    }
+
+    document.getElementById('unlock-btn').addEventListener('click', unlockContent);
+    document.getElementById('hash-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') unlockContent();
+    });
+  </script>
+
+  {% else %}
+  <div class="post-content">
+    {{ content }}
+  </div>
+  {% endif %}
+
+  <div class="writeup-nav" style="margin-top: 40px; padding-top: 20px; border-top: 1px dashed var(--terminal-black);">
+    <a href="{{ '/vulnresearch/' | relative_url }}" style="color: var(--cyan); text-decoration: none;">
+      <span style="color: var(--green);">&lt;</span> cd ../vulnresearch
+    </a>
+  </div>
+</article>

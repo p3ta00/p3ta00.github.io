@@ -1,0 +1,48 @@
+---
+layout: default
+title: Vulnerability Research
+---
+
+<div class="ctf-index">
+  <h1 class="section-header glitch">Vulnerability Research</h1>
+
+  <p style="color: var(--comment); margin-bottom: 30px;">
+    <span style="color: var(--red);">[!]</span> Original security research and CVE discoveries.
+    <span style="color: var(--yellow);">Password protected.</span>
+  </p>
+
+  <div class="writeup-list">
+    {% assign vulns = site.vulnresearch | sort: 'date' | reverse %}
+    {% for vuln in vulns %}
+    <a href="{{ vuln.url | relative_url }}" class="writeup-card" style="display: block; padding: 20px; margin-bottom: 15px; background: var(--bg-lighter); border-left: 3px solid var(--red); text-decoration: none;">
+      <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+        <span style="background: var(--magenta); color: var(--background); padding: 3px 8px; font-size: 0.75em; font-weight: bold;">CVE RESEARCH</span>
+        {% if vuln.severity %}
+        <span style="padding: 3px 8px; font-size: 0.75em; font-weight: bold;
+          {% if vuln.severity == 'Critical' %}background: #ff0000; color: white;{% endif %}
+          {% if vuln.severity == 'High' %}background: #ff6600; color: white;{% endif %}
+          {% if vuln.severity == 'Medium' %}background: #ffcc00; color: black;{% endif %}">
+          {{ vuln.severity }}
+        </span>
+        {% endif %}
+      </div>
+      <h3 style="color: var(--cyan); margin: 0 0 8px 0; font-size: 1.2em;">{{ vuln.title }}</h3>
+      <div style="display: flex; gap: 15px; font-size: 0.9em; margin-bottom: 8px;">
+        {% if vuln.product %}<span style="color: var(--foreground);">{{ vuln.product }}</span>{% endif %}
+        {% if vuln.cvss %}<span style="color: var(--yellow);">CVSS: {{ vuln.cvss }}</span>{% endif %}
+        {% if vuln.cwe %}<span style="color: var(--cyan);">{{ vuln.cwe }}</span>{% endif %}
+      </div>
+      {% if vuln.description %}
+      <p style="color: var(--comment); font-size: 0.9em; margin: 0;">{{ vuln.description }}</p>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top: 40px; padding: 20px; border: 1px dashed var(--red); background: rgba(255,0,0,0.05);">
+    <p style="color: var(--red); margin: 0;">
+      <strong>[NOTICE]</strong> All research is conducted ethically and disclosed responsibly.
+      Exploits are provided for educational and authorized testing purposes only.
+    </p>
+  </div>
+</div>

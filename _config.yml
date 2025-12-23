@@ -1,9 +1,21 @@
 # Site settings
 title: "p3ta@dc710"
-description: "CTF Writeups & Security Research"
+description: "Security Research, CVE Analysis & CTF Writeups - CVE-2025-55182, React2Shell, penetration testing, vulnerability research"
 author: "p3ta00"
 baseurl: ""
 url: "https://p3ta00.github.io"
+
+# Social/SEO
+twitter:
+  username: p3ta00
+social:
+  name: p3ta00
+  links:
+    - https://github.com/p3ta00
+    - https://twitter.com/p3ta00
+
+# Google Analytics (replace with your ID)
+google_analytics: G-XXXXXXXXXX
 
 # Build settings
 markdown: kramdown
@@ -15,6 +27,9 @@ collections:
   ctf:
     output: true
     permalink: /ctf/:path/
+  vulnresearch:
+    output: true
+    permalink: /vulnresearch/:path/
 
 # Defaults
 defaults:
@@ -23,6 +38,11 @@ defaults:
       type: "ctf"
     values:
       layout: "writeup"
+  - scope:
+      path: ""
+      type: "vulnresearch"
+    values:
+      layout: "vulnresearch"
   - scope:
       path: ""
       type: "posts"
