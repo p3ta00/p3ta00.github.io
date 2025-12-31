@@ -698,8 +698,8 @@ div.highlighter-rouge {
 
 /* CTF Writeups */
 .writeup {
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
 }
 
 .writeup-header {
@@ -713,8 +713,8 @@ div.highlighter-rouge {
 
 /* Blog posts */
 .post-content {
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
 }
 
 .post-content h1, .post-content h2, .post-content h3 {
@@ -1066,8 +1066,8 @@ a:hover, button:hover, .nav-item a:hover {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .experience-section {
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
 }
 
 /* ASCII Box Styling */
