@@ -2,7 +2,7 @@
 title: "Lumon Industries"
 platform: "HackSmarter"
 category: "Active Directory"
-difficulty: "Hard"
+difficulty: "Medium"
 date: 2026-01-23
 os: "Windows Server 2025"
 tags: ["active-directory", "ntlm-coercion", "bloodhound", "command-injection", "acl-abuse", "laps", "dcc2-cracking", "hash-cracking", "forcechangepassword"]
@@ -27,7 +27,7 @@ For the purposes of this evaluation, you will be provided the assigned credentia
 | hellyr | H3lenaR!2025 |
 
 **Platform:** HackSmarter
-**Difficulty:** Hard
+**Difficulty:** Medium
 **OS:** Windows Server 2025
 
 ---
