@@ -25,6 +25,7 @@ permalink: /uwu-toolkit/
 | [Installation](installation) | Setup and configuration guide |
 | [Commands Reference](commands) | Complete command documentation |
 | [Modules Guide](modules) | Using and creating modules |
+| [Hashcrack SSH Setup](hashcrack-ssh-setup) | Remote GPU hash cracking via SSH |
 | [Integrations](integrations) | Claude AI, Sliver, Penelope, Ligolo |
 | [Quick Reference](quick-reference) | Cheat sheet for common tasks |
 | [Search](search) | Search the wiki |
