@@ -13,7 +13,8 @@ title: CTF Writeups
   <div class="tree" style="margin: 20px 0;">
     <span class="tree-line">drwxr-xr-x  p3ta  p3ta  4096  ctf/</span>
     <span class="tree-line">├── <a href="{{ '/ctf/hacksmarter/' | relative_url }}" class="tree-dir">hacksmarter/</a></span>
-    <span class="tree-line">└── <a href="{{ '/ctf/htb/' | relative_url }}" class="tree-dir">htb/</a></span>
+    <span class="tree-line">├── <a href="{{ '/ctf/htb/' | relative_url }}" class="tree-dir">htb/</a></span>
+    <span class="tree-line">└── <a href="{{ '/ctf/ludus/' | relative_url }}" class="tree-dir">ludus/</a> <span class="tree-locked">[hash protected]</span></span>
   </div>
 
   <h2 class="section-header">Latest HackSmarter Lab</h2>
@@ -59,6 +60,35 @@ title: CTF Writeups
         <span>{{ htb_latest.os }}</span>
         {% endif %}
         {% if htb_latest.active %}
+        <span class="status active">Active</span>
+        {% else %}
+        <span class="status retired">Retired</span>
+        {% endif %}
+      </div>
+    </a>
+  </div>
+  {% else %}
+  <p style="color: var(--foreground-dark); font-style: italic;">No writeups yet. Coming soon...</p>
+  {% endif %}
+
+  <h2 class="section-header">Latest Ludus Lab</h2>
+  <p style="color: var(--foreground-dark); margin-bottom: 15px;">
+    <a href="{{ '/ctf/ludus/' | relative_url }}" style="color: var(--cyan);">View all Ludus writeups →</a>
+  </p>
+
+  {% assign ludus_latest = site.ctf | where: "platform", "Ludus" | sort: 'date' | reverse | first %}
+  {% if ludus_latest %}
+  <div class="writeup-card" {% if ludus_latest.active %}style="border-left-color: var(--green);"{% endif %}>
+    <a href="{{ ludus_latest.url | relative_url }}">
+      <div class="writeup-title">
+        {% if ludus_latest.active %}<span style="color: var(--red);">[LOCKED]</span> {% endif %}{{ ludus_latest.title }}
+      </div>
+      <div class="writeup-meta">
+        <span class="writeup-difficulty difficulty-{{ ludus_latest.difficulty | downcase }}">{{ ludus_latest.difficulty }}</span>
+        {% if ludus_latest.os %}
+        <span>{{ ludus_latest.os }}</span>
+        {% endif %}
+        {% if ludus_latest.active %}
         <span class="status active">Active</span>
         {% else %}
         <span class="status retired">Retired</span>
