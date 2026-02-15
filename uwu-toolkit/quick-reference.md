@@ -182,11 +182,47 @@ back                    # Return to base
 
 ## Common Module Paths
 
-### Active Directory (`ad/`)
+### Impacket Wrappers (`impacket/`)
 
 ```
-ad/kerberoast              # Kerberoast attack
-ad/asreproast              # AS-REP roasting
+impacket/psexec            # Remote exec via service
+impacket/wmiexec           # Semi-interactive shell via WMI
+impacket/smbexec           # Exec via SMB (no binary upload)
+impacket/dcomexec          # Exec via DCOM
+impacket/secretsdump       # Dump SAM/LSA/NTDS
+impacket/GetUserSPNs       # Kerberoasting
+impacket/GetNPUsers        # AS-REP Roasting
+impacket/getTGT            # Request TGT ticket
+impacket/getST             # Request service ticket
+impacket/smbclient         # SMB share client
+impacket/ntlmrelayx        # NTLM relay attack
+impacket/addcomputer       # Add computer account
+impacket/rbcd              # RBCD abuse
+impacket/dacledit          # Edit DACLs
+impacket/mssqlclient       # MSSQL client
+impacket/lookupsid         # SID brute-force
+```
+
+### BloodyAD Wrappers (`bloodyad/`)
+
+```
+bloodyad/genericall        # Grant GenericAll
+bloodyad/writedacl         # WriteDACL abuse
+bloodyad/setowner          # Change object ownership
+bloodyad/dcsync            # Add DCSync rights
+bloodyad/addmember         # Add to group
+bloodyad/setpassword       # Reset password
+bloodyad/shadowcreds       # Add shadow credentials
+bloodyad/rbcd              # Add RBCD delegation
+bloodyad/getwritable       # Find writable objects
+bloodyad/getobject         # Query object attributes
+```
+
+### Custom AD Modules (`ad/`)
+
+```
+ad/kerberoast              # Kerberoast (with auto-crack)
+ad/asreproast              # AS-REP roasting (with auto-crack)
 ad/bloodhound_collect      # BloodHound data collection
 ad/certipy_find            # ADCS enumeration
 ad/certipy_exploit         # ADCS exploitation

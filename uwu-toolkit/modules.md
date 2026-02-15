@@ -25,7 +25,9 @@ Complete guide to using and creating UwU Toolkit modules.
 
 | Type | Directory | Path Prefix | Description |
 |------|-----------|-------------|-------------|
-| **AD** | `modules/ad/` | `ad/` | Active Directory attacks and enumeration |
+| **Impacket** | `modules/impacket/` | `impacket/` | Impacket tool wrappers (40+ tools) |
+| **BloodyAD** | `modules/bloodyad/` | `bloodyad/` | BloodyAD operation wrappers (25+ operations) |
+| **AD** | `modules/ad/` | `ad/` | Custom AD attack and enumeration modules |
 | **Auxiliary** | `modules/auxiliary/` | `auxiliary/` | Scanning, enumeration, credential attacks |
 | **Enumeration** | `modules/enumeration/` | `enumeration/` | Host and service discovery |
 | **Exploits** | `modules/exploits/` | `exploits/` | Exploitation modules |
@@ -108,9 +110,71 @@ uwu kerberoast > check
 
 ## Available Modules
 
-### Active Directory (`ad/`)
+### Impacket Wrappers (`impacket/`)
 
-Core AD attack and enumeration modules. These live directly under `modules/ad/`, so the module path is `ad/<name>`.
+Every Impacket tool is auto-registered as an individual module. See [Integrations — Impacket](/uwu-toolkit/integrations/#impacket) for full usage.
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **psexec** | `impacket/psexec` | Remote exec via service creation |
+| **smbexec** | `impacket/smbexec` | Exec via SMB (no binary upload) |
+| **wmiexec** | `impacket/wmiexec` | Semi-interactive shell via WMI |
+| **dcomexec** | `impacket/dcomexec` | Exec via DCOM objects |
+| **atexec** | `impacket/atexec` | Exec via Task Scheduler |
+| **secretsdump** | `impacket/secretsdump` | Dump SAM/LSA/NTDS secrets |
+| **GetUserSPNs** | `impacket/GetUserSPNs` | Kerberoasting |
+| **GetNPUsers** | `impacket/GetNPUsers` | AS-REP Roasting |
+| **getTGT** | `impacket/getTGT` | Request TGT ticket |
+| **getST** | `impacket/getST` | Request service ticket (S4U) |
+| **ticketer** | `impacket/ticketer` | Golden/silver ticket creation |
+| **GetADUsers** | `impacket/GetADUsers` | AD user enumeration via LDAP |
+| **findDelegation** | `impacket/findDelegation` | Find delegation relationships |
+| **addcomputer** | `impacket/addcomputer` | Add computer account |
+| **rbcd** | `impacket/rbcd` | RBCD abuse |
+| **dacledit** | `impacket/dacledit` | Edit DACLs on AD objects |
+| **owneredit** | `impacket/owneredit` | Edit object ownership |
+| **smbclient** | `impacket/smbclient` | SMB share client |
+| **ntlmrelayx** | `impacket/ntlmrelayx` | NTLM relay attack |
+| **mssqlclient** | `impacket/mssqlclient` | Interactive MSSQL client |
+| **lookupsid** | `impacket/lookupsid` | SID brute-force enumeration |
+| **services** | `impacket/services` | Windows service management |
+| **changepasswd** | `impacket/changepasswd` | Change user password |
+| **raiseChild** | `impacket/raiseChild` | Child-to-parent domain escalation |
+
+Plus 20+ more (ticketConverter, describeTicket, reg, smbserver, smbpasswd, mimikatz, rpcdump, samrdump, netview, Get-GPPPassword, DumpNTLMInfo, getArch, mssqlinstance, smbrelayx, karmaSMB, rdp_check, wmiquery, wmipersist, exchanger, goldenPac, esentutl, ntfs_read).
+
+### BloodyAD Wrappers (`bloodyad/`)
+
+Every BloodyAD operation is auto-registered as an individual module. See [Integrations — BloodyAD](/uwu-toolkit/integrations/#bloodyad) for full usage.
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **genericall** | `bloodyad/genericall` | Grant GenericAll on target |
+| **writedacl** | `bloodyad/writedacl` | WriteDACL abuse |
+| **remove_genericall** | `bloodyad/remove_genericall` | Remove GenericAll |
+| **setowner** | `bloodyad/setowner` | Change object ownership |
+| **dcsync** | `bloodyad/dcsync` | Add DCSync rights |
+| **addmember** | `bloodyad/addmember` | Add member to group |
+| **removemember** | `bloodyad/removemember` | Remove member from group |
+| **setpassword** | `bloodyad/setpassword` | Reset user password |
+| **shadowcreds** | `bloodyad/shadowcreds` | Add shadow credentials |
+| **rbcd** | `bloodyad/rbcd` | Add RBCD delegation |
+| **addcomputer** | `bloodyad/addcomputer` | Add computer account |
+| **adduser** | `bloodyad/adduser` | Add user account |
+| **setobject** | `bloodyad/setobject` | Set/modify AD object attribute |
+| **adduac** | `bloodyad/adduac` | Add UAC flag |
+| **removeuac** | `bloodyad/removeuac` | Remove UAC flag |
+| **getwritable** | `bloodyad/getwritable` | Find writable objects |
+| **getobject** | `bloodyad/getobject` | Query object attributes |
+| **getmembership** | `bloodyad/getmembership` | Get group memberships |
+| **getsearch** | `bloodyad/getsearch` | Custom LDAP search |
+| **dnsdump** | `bloodyad/dnsdump` | Dump DNS records |
+| **adddns** | `bloodyad/adddns` | Add DNS record |
+| **removedns** | `bloodyad/removedns` | Remove DNS record |
+
+### Custom AD Modules (`ad/`)
+
+Custom multi-step attack and enumeration modules. These live directly under `modules/ad/`, so the module path is `ad/<name>`.
 
 | Module | Path | Description |
 |--------|------|-------------|
@@ -368,7 +432,11 @@ Save your module in the appropriate directory:
 
 ```
 modules/
-├── ad/                  # Active Directory modules
+├── impacket/            # Impacket tool wrappers (auto-registered)
+│   └── _impacket_base.py
+├── bloodyad/            # BloodyAD operation wrappers (auto-registered)
+│   └── _bloodyad_base.py
+├── ad/                  # Custom AD attack modules
 │   ├── kerberoast.py
 │   ├── asreproast.py
 │   └── ...
@@ -398,6 +466,10 @@ Module path in UwU Toolkit maps from filesystem path by stripping `modules/` and
 - `modules/auxiliary/smb/smb_shares.py` --> `auxiliary/smb/smb_shares`
 - `modules/post/linux/linpeas_enum.py` --> `post/linux/linpeas_enum`
 - `modules/exploits/windows/local/pdf24_privesc.py` --> `exploits/windows/local/pdf24_privesc`
+
+Impacket and BloodyAD wrappers are auto-registered from their registries — no individual `.py` files needed:
+- `impacket/psexec` — from `_impacket_base.py` registry
+- `bloodyad/genericall` — from `_bloodyad_base.py` registry
 
 ---
 

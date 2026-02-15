@@ -50,7 +50,9 @@ permalink: /uwu-toolkit/
 
 | Type | Directory | Description |
 |------|-----------|-------------|
-| **AD** | `modules/ad/` | Active Directory attacks (Kerberoast, ADCS, delegation, spraying) |
+| **Impacket** | `modules/impacket/` | 40+ Impacket tool wrappers (psexec, secretsdump, etc.) |
+| **BloodyAD** | `modules/bloodyad/` | 25+ BloodyAD operation wrappers (ACL abuse, groups, etc.) |
+| **AD** | `modules/ad/` | Custom AD attack modules (Kerberoast, ADCS, delegation, spraying) |
 | **Auxiliary** | `modules/auxiliary/` | SMB, SSH, RDP, web scanning, hash cracking, AWS, git |
 | **Enumeration** | `modules/enumeration/` | Host and service discovery |
 | **Post** | `modules/post/` | Post-exploitation for Linux and Windows |
@@ -161,7 +163,9 @@ uwu-toolkit/
 │       ├── c2_handler.py
 │       └── tools_handler.py
 ├── modules/            # Module collection
-│   ├── ad/             # Active Directory modules
+│   ├── impacket/       # Impacket tool wrappers (40+ auto-registered)
+│   ├── bloodyad/       # BloodyAD operation wrappers (25+ auto-registered)
+│   ├── ad/             # Custom AD attack modules
 │   ├── auxiliary/      # Auxiliary modules (smb, ssh, web, aws, cracking, git, rdp)
 │   ├── enumeration/    # Enumeration modules
 │   ├── exploits/       # Exploit modules
