@@ -17,6 +17,7 @@ UwU Toolkit integrates with external tools and services to enhance your penetrat
 - [Sliver C2 Integration](#sliver-c2-integration)
 - [Penelope Shell Handler](#penelope-shell-handler)
 - [Ligolo-ng Tunneling](#ligolo-ng-tunneling)
+- [MCP Server](#mcp-server)
 
 ---
 
@@ -745,6 +746,86 @@ $ ^D
 uwu > kill 1
 [+] Shell 1 killed
 ```
+
+---
+
+## MCP Server
+
+UwU Toolkit includes a [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that exposes its pentesting tools and data to AI assistants like Claude Code.
+
+### Architecture
+
+The MCP server uses [FastMCP](https://github.com/jlowin/fastmcp) and exposes three resource types:
+
+| Type | Description |
+|------|-------------|
+| **Tools** | 50+ security tools (Impacket, NetExec, Certipy, BloodyAD, nmap, LDAP) plus module/session/engagement management |
+| **Resources** | Module catalog, available tools list, lab configurations |
+| **Prompts** | Guided workflows for AD enumeration, attack path planning, lateral movement |
+
+### Tool Categories
+
+| Module | Tools |
+|--------|-------|
+| `impacket_tools` | secretsdump, psexec, wmiexec, smbexec, dcomexec, getTGT, getST, GetUserSPNs, GetNPUsers, addcomputer, rbcd, dacledit, findDelegation, mssqlclient, smbclient, lookupsid, GetLAPSPassword, GetGPPPassword |
+| `netexec_tools` | Multi-protocol credential validation and enumeration (SMB, LDAP, WinRM, RDP, MSSQL, SSH, WMI) |
+| `certipy_tools` | ADCS enumeration (find), certificate requests (req), authentication (auth), shadow credentials |
+| `enum_tools` | nmap scanning, LDAP search, BloodyAD ACL analysis, shell command execution |
+| `module_tools` | List, search, info, and run UwU modules |
+| `session_tools` | Shell session management |
+| `engagement_tools` | Target and credential tracking via the engagement database |
+| `job_tools` | Background job management |
+| `opsec_tools` | OpSec rating and assessment |
+
+### Starting the Server
+
+**From inside UwU console (background thread):**
+
+The MCP server starts automatically when the console launches, listening on `0.0.0.0:9400/uwu`.
+
+**Standalone mode:**
+
+```bash
+python3 -m uwu_mcp.run_server --host 0.0.0.0 --port 9400 --debug
+```
+
+**Via start script (Exegol container):**
+
+```bash
+./uwu_mcp/start.sh [PORT]
+```
+
+### Connecting Claude Code
+
+Add the server to your Claude Code MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "uwu-toolkit": {
+      "type": "url",
+      "url": "http://<CONTAINER_IP>:9400/uwu"
+    }
+  }
+}
+```
+
+### Resources
+
+| URI | Description |
+|-----|-------------|
+| `uwu://modules` | Full module catalog with paths, descriptions, tags, and platform |
+| `uwu://tools` | Available security tool binaries with their paths |
+| `uwu://lab/iron_throne` | Iron Throne AD lab configuration (users, credentials, attack paths, ADCS templates) |
+
+### Prompts
+
+| Prompt | Description |
+|--------|-------------|
+| `ad_enumeration` | Guided AD enumeration workflow (users, groups, ACLs, ADCS, delegation, shares) |
+| `attack_path_planning` | Plan attack paths from compromised user to target privilege |
+| `iron_throne_walkthrough` | Guided walkthrough for the Iron Throne lab (beginner/intermediate/advanced) |
+| `lateral_movement` | Lateral movement planning with credential type awareness |
 
 ---
 
