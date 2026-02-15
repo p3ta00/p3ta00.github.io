@@ -18,35 +18,56 @@ permalink: /uwu-toolkit/installation/
 |-----------|-----|---------|
 | Anthropic API | Claude AI | `pip install anthropic` |
 | Sliver | C2 integration | [Sliver GitHub](https://github.com/BishopFox/sliver) |
-| Impacket | AD modules | Pre-installed in Exegol |
+| Impacket | AD modules | Pre-installed in Exegol; `pip install impacket` on Kali |
 | Nmap | Enumeration | Pre-installed in most distros |
 
 ---
 
 ## Quick Install
 
-### From Source
+### Exegol (Recommended)
 
 ```bash
-# Clone the repository
+# Inside an Exegol container:
+cd /opt/my-resources/tools/uwu-toolkit
+./install-exegol.sh
+```
+
+The Exegol installer:
+1. Skips system packages (Exegol has everything)
+2. Installs Python packages (`prompt_toolkit`, `rich`, `requests`, `pyyaml`, `fastmcp`, `donut-shellcode`)
+3. Creates symlinks in `/opt/tools/bin/` and `~/.local/bin/`
+4. Creates `~/.uwu-toolkit/` directory structure
+5. Generates shell integration script
+
+### Kali / Debian
+
+```bash
 git clone https://github.com/p3ta00/uwu-toolkit.git
 cd uwu-toolkit
+./install-kali.sh
+```
 
-# Run setup script (creates ~/.local/bin/uwu symlink)
+The Kali installer:
+1. Installs system packages via apt (`python3-pip`, `tmux`, `nmap`, `smbclient`, `jq`, `rlwrap`, etc.)
+2. Installs Python framework packages
+3. Installs pentesting CLI tools (`impacket`, `certipy-ad`, `bloodyad`, `netexec`, `bloodhound`)
+4. Installs SecLists if not present
+5. Creates symlinks in `~/.local/bin/`
+6. Creates `~/.local/share/potatoes/` and `~/.local/share/ligolo-ng/` directories
+
+### Generic / Manual
+
+```bash
+git clone https://github.com/p3ta00/uwu-toolkit.git
+cd uwu-toolkit
 ./setup.sh
 
-# Or run directly
+# Or run directly without setup
 python3 uwu
 ```
 
-### Setup Script
-
-The `setup.sh` script:
-1. Creates `~/.uwu-toolkit/` directory
-2. Initializes configuration files
-3. Creates symlink to `~/.local/bin/uwu`
-
-After setup, run from anywhere:
+After any install method, run from anywhere:
 ```bash
 uwu
 ```
@@ -98,10 +119,15 @@ On first run, UwU Toolkit creates:
 
 ```
 ~/.uwu-toolkit/
-├── config.json       # Framework settings
-├── globals.json      # Persistent variables
-├── var_history.json  # Variable history
-└── command_history   # Readline history
+├── config.json           # Framework settings
+├── globals.json          # Global variables
+├── permanent.json        # Permanent variables
+├── var_history.json      # Variable history
+├── command_history       # Readline history
+├── engagement.db         # SQLite engagement database
+├── dashboard_events.json # Dashboard events
+├── loot/                 # Collected loot
+└── sessions/             # Session data
 ```
 
 ### Essential Global Variables
@@ -124,6 +150,15 @@ uwu > setg EXEGOL_CONTAINER exegol-htb
 
 # Claude AI (optional)
 uwu > setg ANTHROPIC_API_KEY sk-ant-api03-...
+```
+
+### Permanent Variables
+
+Permanent variables have the highest priority and survive `uwu-clear globals`:
+
+```bash
+uwu > setp WORKING_DIR /workspace
+uwu > setp LHOST 10.10.14.50
 ```
 
 ### Config File Options
@@ -210,6 +245,9 @@ uwu > sliver status    # Check status
 # Reload modules
 uwu > reload
 
+# Reload all modules and discover new ones
+uwu > reload all
+
 # Check module path
 uwu > show modules
 ```
@@ -261,8 +299,8 @@ Configurations and history are preserved in `~/.uwu-toolkit/`.
 ## Uninstalling
 
 ```bash
-# Remove symlink
-rm ~/.local/bin/uwu
+# Remove symlinks
+rm ~/.local/bin/uwu ~/.local/bin/uwu-dashboard ~/.local/bin/uwu-clear
 
 # Remove config (optional)
 rm -rf ~/.uwu-toolkit

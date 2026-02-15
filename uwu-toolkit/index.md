@@ -22,7 +22,7 @@ permalink: /uwu-toolkit/
 
 | Section | Description |
 |---------|-------------|
-| [Installation](installation) | Setup and configuration guide |
+| [Installation](installation) | Setup for Exegol and Kali |
 | [Commands Reference](commands) | Complete command documentation |
 | [Modules Guide](modules) | Using and creating modules |
 | [Hashcrack SSH Setup](hashcrack-ssh-setup) | Remote GPU hash cracking via SSH |
@@ -37,20 +37,25 @@ permalink: /uwu-toolkit/
 ### Core Capabilities
 
 - **Metasploit-like Interface** - Familiar `use`, `set`, `run` workflow
-- **Persistent Variables** - Global variables persist across sessions
+- **Persistent Variables** - Global and permanent variables persist across sessions
 - **Variable History** - Recall previously used values with tab completion
 - **Tab Completion** - Full readline support for commands, modules, and variables
 - **Resource Files** - Automate command sequences with `.rc` files
+- **Engagement Database** - SQLite-backed tracking for targets, credentials, sessions, findings, timeline, and attack graphs
+- **Target Management** - Register, select, and track hosts with domain/vhost support
+- **Credential Management** - Store, import, and use credentials with auto-loading into variables
+- **uwu-clear** - Reset any data store (db, globals, permanent, history, events) without losing config
 
 ### Module Categories
 
-| Type | Description | Example Modules |
-|------|-------------|-----------------|
-| **Auxiliary** | Scanning, enumeration, credential attacks | `kerberoast`, `asreproast`, `smb_enum` |
-| **Enumeration** | Host and service discovery | `autoenum`, `nmap_scan`, `dns_enum` |
-| **Post** | Post-exploitation tools | `linpeas_enum`, `pspy_monitor` |
-| **Exploits** | Exploitation modules | Custom exploit templates |
-| **Payloads** | Payload generators | `reverse_shells` |
+| Type | Directory | Description |
+|------|-----------|-------------|
+| **AD** | `modules/ad/` | Active Directory attacks (Kerberoast, ADCS, delegation, spraying) |
+| **Auxiliary** | `modules/auxiliary/` | SMB, SSH, RDP, web scanning, hash cracking, AWS, git |
+| **Enumeration** | `modules/enumeration/` | Host and service discovery |
+| **Post** | `modules/post/` | Post-exploitation for Linux and Windows |
+| **Exploits** | `modules/exploits/` | Exploitation modules |
+| **Payloads** | `modules/payloads/` | Payload generators (reverse shells, donut, ASPX) |
 
 ### Integrations
 
@@ -60,6 +65,23 @@ permalink: /uwu-toolkit/
 - **Penelope** - Advanced shell handler with auto-upgrade and session management
 - **Ligolo-ng** - Network tunneling with TUN interface and route management
 - **Shell Management** - Unified shell session handling across all tools
+- **MCP Server** - Model Context Protocol server for AI agent integration
+
+### Standalone Tools (uwu-*)
+
+Helper scripts usable outside the console:
+
+| Script | Description |
+|--------|-------------|
+| `uwu-clear` | Reset data stores from shell |
+| `uwu-export` | Export credentials as environment variables |
+| `uwu-loot` | Add credentials to the CTF database |
+| `uwu-list` | List all stored credentials |
+| `uwu-pwned` | Mark credentials as compromised |
+| `uwu-target` | Mark target credentials |
+| `uwu-hacks` | Quick-reference attack commands |
+| `uwu-navi` | Launch navi with credentials loaded |
+| `uwu-parse` | Parse tool output |
 
 ---
 
@@ -67,23 +89,23 @@ permalink: /uwu-toolkit/
 
 ```bash
 # Interactive mode
-python3 uwu
+uwu
 
 # Execute commands directly
-python3 uwu -x "use auxiliary/ad/kerberoast; set RHOSTS 10.10.10.1; run"
+uwu -x "use ad/kerberoast; set RHOSTS 10.10.10.1; run"
 
 # Run resource file
-python3 uwu -r script.rc
+uwu -r script.rc
 
 # Quiet mode (no banner)
-python3 uwu -q
+uwu -q
 ```
 
 ### Basic Workflow
 
 ```
 uwu > search kerberos
-uwu > use auxiliary/ad/kerberoast
+uwu > use ad/kerberoast
 uwu kerberoast > options
 uwu kerberoast > set RHOSTS 10.10.10.100
 uwu kerberoast > set DOMAIN corp.local
@@ -98,27 +120,64 @@ uwu kerberoast > run
 
 ```
 uwu-toolkit/
-├── uwu.py              # Main entry point
+├── uwu                 # Main entry (Python script)
+├── uwu.py              # Alternate entry point
+├── uwu_dashboard       # tmux dashboard
+├── uwu-clear           # Reset data stores
+├── uwu-export          # Export creds to env
+├── uwu-loot            # Add credentials
+├── uwu-list            # List credentials
+├── uwu-pwned           # Mark pwned creds
+├── uwu-target          # Mark target creds
+├── uwu-hacks           # Attack cheatsheets
+├── uwu-navi            # Navi integration
+├── uwu-parse           # Parse tool output
+├── install-exegol.sh   # Exegol installer
+├── install-kali.sh     # Kali/Debian installer
+├── setup.sh            # Generic setup (legacy)
 ├── core/               # Framework core
-│   ├── console.py      # Interactive console
-│   ├── config.py       # Configuration management
-│   ├── module_base.py  # Base module class
-│   ├── module_loader.py# Module discovery
-│   ├── colors.py       # Cyberpunk theme
+│   ├── console.py      # Interactive console + command dispatch
+│   ├── config.py       # Configuration + variable persistence
+│   ├── module_base.py  # Base module class + find_tool()
+│   ├── module_loader.py# Module discovery + loading
+│   ├── colors.py       # Cyberpunk neon theme
+│   ├── engagement_db.py# SQLite engagement database
+│   ├── creds.py        # Credential manager
+│   ├── targets.py      # Target manager
+│   ├── wordlists.py    # Wordlist path resolution
+│   ├── opsec.py        # OpSec rating system
+│   ├── macros.py       # Macro support
 │   ├── claude.py       # Claude AI integration
 │   ├── sliver.py       # Sliver C2 integration
-│   └── shells.py       # Shell management
+│   ├── penelope.py     # Penelope integration
+│   ├── ligolo.py       # Ligolo-ng integration
+│   ├── shells.py       # Shell session management
+│   ├── tmux_status.py  # tmux status line
+│   └── handlers/       # Command handler modules
+│       ├── module_handler.py
+│       ├── variable_handler.py
+│       ├── server_handler.py
+│       ├── shell_handler.py
+│       ├── c2_handler.py
+│       └── tools_handler.py
 ├── modules/            # Module collection
-│   ├── auxiliary/      # Auxiliary modules
+│   ├── ad/             # Active Directory modules
+│   ├── auxiliary/      # Auxiliary modules (smb, ssh, web, aws, cracking, git, rdp)
 │   ├── enumeration/    # Enumeration modules
 │   ├── exploits/       # Exploit modules
-│   ├── post/           # Post-exploitation
+│   ├── post/           # Post-exploitation (linux, windows, pivot)
 │   └── payloads/       # Payload generators
+├── uwu_mcp/           # MCP server for AI agents
 └── ~/.uwu-toolkit/     # User data
-    ├── config.json     # Framework config
-    ├── globals.json    # Persistent globals
+    ├── config.json     # Framework settings
+    ├── globals.json    # Global variables
+    ├── permanent.json  # Permanent variables (highest priority)
     ├── var_history.json# Variable history
-    └── loot/           # Collected loot
+    ├── command_history # Readline history
+    ├── engagement.db   # SQLite engagement database
+    ├── dashboard_events.json # Dashboard events
+    ├── loot/           # Collected loot
+    └── sessions/       # Session data
 ```
 
 ---
@@ -129,11 +188,15 @@ Configuration files are stored in `~/.uwu-toolkit/`:
 
 | File | Purpose |
 |------|---------|
-| `config.json` | Framework settings |
-| `globals.json` | Persistent global variables |
+| `config.json` | Framework settings (never cleared by uwu-clear) |
+| `globals.json` | Global variables (persist across sessions) |
+| `permanent.json` | Permanent variables (highest priority, persist forever) |
 | `var_history.json` | Variable history for recall |
 | `command_history` | Readline command history |
+| `engagement.db` | SQLite database (targets, credentials, sessions, findings, timeline, attack graph) |
+| `dashboard_events.json` | Events for the tmux dashboard |
 | `loot/` | Collected loot and output |
+| `sessions/` | Session data |
 
 ### Important Global Variables
 
@@ -146,6 +209,10 @@ setg PASS Password123           # Password
 setg LHOST 10.10.14.50         # Your IP
 setg EXEGOL_CONTAINER exegol-htb # Exegol container
 setg ANTHROPIC_API_KEY sk-...   # For Claude AI
+
+# Permanent variables (survive uwu-clear globals)
+setp WORKING_DIR /workspace
+setp LHOST 10.10.14.50
 ```
 
 ---

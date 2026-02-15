@@ -17,6 +17,9 @@ Complete reference for all UwU Toolkit console commands.
 - [Variable Commands](#variable-commands)
 - [Server Utilities](#server-utilities)
 - [Shell Management](#shell-management)
+- [Target Management](#target-management)
+- [Credentials](#credentials)
+- [Setup & Config](#setup--config)
 - [Claude AI](#claude-ai)
 - [Sliver C2](#sliver-c2)
 - [Penelope Shell Handler](#penelope-shell-handler)
@@ -70,9 +73,9 @@ uwu > banner
 Select a module to work with.
 
 ```bash
-uwu > use auxiliary/ad/kerberoast
-uwu > use enumeration/autoenum
-uwu > use post/linux/linpeas_enum
+uwu > use ad/kerberoast
+uwu > use ad/asreproast
+uwu > use ad/adcs_auto
 ```
 
 **Tab Completion:** Press Tab to autocomplete module paths.
@@ -100,7 +103,7 @@ Display detailed information about the current module.
 uwu kerberoast > info
 
        Name: kerberoast
-     Module: auxiliary/kerberoast
+     Module: ad/kerberoast
    Platform: windows
      Author: UwU Toolkit
     Version: 1.0.0
@@ -174,10 +177,10 @@ uwu > search ad attack
   Matching Modules (3 found)
   ==================================================
 
-  AUXILIARY
-    auxiliary/ad/kerberoast
+  AD
+    ad/kerberoast
       Kerberoast attack - request TGS tickets for cr...
-    auxiliary/ad/asreproast
+    ad/asreproast
       AS-REP Roasting attack - get hashes for user...
 ```
 
@@ -187,7 +190,17 @@ Reload the current module from disk. Useful during development.
 
 ```bash
 uwu kerberoast > reload
-[+] Module reloaded: auxiliary/kerberoast
+[+] Module reloaded: ad/kerberoast
+```
+
+### reloadall
+
+Reload all modules from disk. Re-scans the modules directory and refreshes every loaded module.
+
+```bash
+uwu > reloadall
+[*] Reloading all modules...
+[+] 24 modules loaded
 ```
 
 ---
@@ -221,9 +234,30 @@ uwu > set RHOSTS
 Select [1]:
 ```
 
+**Special set syntax for targets:**
+
+```bash
+uwu > set target <ip> <hostname> [dc]   # Add a target (dc flag marks as DC)
+uwu > set dc <id>                        # Set active DC by target ID
+```
+
+See [Target Management](#target-management) for details.
+
+### get
+
+Get the current value of a variable.
+
+```bash
+uwu > get RHOSTS
+RHOSTS => 10.10.10.100
+
+uwu > get DOMAIN
+DOMAIN => corp.local
+```
+
 ### setg
 
-Set a global variable. Persists across sessions and modules.
+Set a global variable. Persists across module changes and is saved to the database.
 
 ```bash
 uwu > setg RHOSTS 10.10.10.100
@@ -235,6 +269,38 @@ uwu > setg PASS Password123!
 ```
 
 **Tip:** Use `setg` for commonly used values like target IP, domain credentials, and your attack IP.
+
+### getg
+
+Get the current value of a global variable.
+
+```bash
+uwu > getg DOMAIN
+DOMAIN => corp.local (global)
+```
+
+### setp
+
+Set a permanent variable. Permanent variables survive database clears and persist across engagements.
+
+```bash
+uwu > setp LHOST 10.10.14.50
+LHOST => 10.10.14.50 (permanent)
+
+uwu > setp PROXY_PORT 1080
+PROXY_PORT => 1080 (permanent)
+```
+
+**Tip:** Use `setp` for values that never change between engagements, like your attack box IP or preferred ports.
+
+### getp
+
+Get the current value of a permanent variable.
+
+```bash
+uwu > getp LHOST
+LHOST => 10.10.14.50 (permanent)
+```
 
 ### unset
 
@@ -254,6 +320,15 @@ uwu > unsetg RHOSTS
 [+] Unset global RHOSTS
 ```
 
+### unsetp
+
+Unset a permanent variable.
+
+```bash
+uwu > unsetp LHOST
+[+] Unset permanent LHOST
+```
+
 ### show
 
 Show various information types.
@@ -267,9 +342,25 @@ uwu > show history    # Variable history summary
 uwu > show modules    # All loaded modules
 ```
 
+### showp
+
+Show all permanent variables.
+
+```bash
+uwu > showp
+
+  Permanent Variables
+  ==================================================
+
+  Variable             Value
+  -------------------- ----------------------------------------
+  LHOST                10.10.14.50
+  PROXY_PORT           1080
+```
+
 ### vars
 
-Show all current variables (session + global).
+Show all current variables (session + global + permanent).
 
 ```bash
 uwu > vars
@@ -279,6 +370,7 @@ uwu > vars
   DOMAIN               corp.local                     global
   RHOSTS               10.10.10.100                   global
   USER                 administrator                  global
+  LHOST                10.10.14.50                    permanent
 ```
 
 ### globals
@@ -297,6 +389,24 @@ uwu > globals
                        Active Directory domain name
   RHOSTS               10.10.10.100
                        Target host(s)
+```
+
+### cleang
+
+Clear all global variables.
+
+```bash
+uwu > cleang
+[+] All global variables cleared
+```
+
+### cleanp
+
+Clear all permanent variables.
+
+```bash
+uwu > cleanp
+[+] All permanent variables cleared
 ```
 
 ### history
@@ -406,6 +516,14 @@ uwu > sessions   # Alias
   2    nc     10.10.10.50:51234  active     yes
 ```
 
+### session
+
+Select or view a specific session.
+
+```bash
+uwu > session 1
+```
+
 ### interact
 
 Interact with a shell session.
@@ -429,6 +547,314 @@ Kill a shell session.
 uwu > kill 1
 [+] Shell 1 killed
 ```
+
+### upgrade
+
+Upgrade a basic shell to a fully interactive PTY.
+
+```bash
+uwu > upgrade 1
+[*] Upgrading shell 1...
+[+] Shell upgraded to PTY
+```
+
+---
+
+## Target Management
+
+Track targets, hostnames, and domain controllers for an engagement.
+
+### target
+
+Manage engagement targets.
+
+```bash
+# List all targets
+uwu > target list
+
+  Targets
+  ==================================================
+
+  ID   IP              Hostname         DC    Notes
+  ---- --------------- ---------------- ----- -----
+  1    10.10.10.100    DC01.corp.local  *
+  2    10.10.10.50     WEB01                  IIS server
+  3    10.10.10.51     SQL01                  MSSQL
+
+# Add a target via set
+uwu > set target 10.10.10.100 DC01.corp.local dc
+[+] Target added: 10.10.10.100 (DC01.corp.local) [DC]
+
+uwu > set target 10.10.10.50 WEB01
+[+] Target added: 10.10.10.50 (WEB01)
+
+# Set a target as the active DC
+uwu > set dc 1
+[+] DC set to target 1: 10.10.10.100
+
+# Delete a target
+uwu > target del 2
+[+] Target 2 deleted
+
+# Add a vhost entry
+uwu > target vhost 2 admin.corp.local
+[+] VHost added for target 2: admin.corp.local
+
+# Set domain for target
+uwu > target domain 1 corp.local
+[+] Domain set for target 1: corp.local
+
+# Add notes to a target
+uwu > target notes 1 "Primary DC, runs ADCS"
+[+] Notes updated for target 1
+
+# Clear all targets
+uwu > target clear
+[+] All targets cleared
+
+# Show target help
+uwu > target help
+```
+
+---
+
+## Credentials
+
+Store, import, and manage credentials found during an engagement.
+
+### creds
+
+Manage discovered credentials.
+
+```bash
+# Show all stored credentials
+uwu > creds show
+
+  Credentials
+  ==================================================
+
+  ID   Username         Domain         Type       Value
+  ---- --------------- -------------- ---------- ----------------------------------------
+  1    administrator   CORP           password   P@ssword123!
+  2    svc_sql         CORP           ntlm       aad3b435...
+  3    krbtgt          CORP           ntlm       5c2ef7b2...
+
+# Add a credential manually
+uwu > creds add administrator CORP password P@ssword123!
+[+] Credential added: CORP\administrator (password)
+
+uwu > creds add svc_sql CORP ntlm aad3b435b51404ee:31d6cfe0d16ae931
+[+] Credential added: CORP\svc_sql (ntlm)
+
+# Delete a credential
+uwu > creds del 2
+[+] Credential 2 deleted
+
+# Use a credential (auto-populates USER/PASS/DOMAIN or HASHES for modules)
+uwu > creds use 1
+[+] Set USER => administrator
+[+] Set DOMAIN => CORP
+[+] Set PASS => P@ssword123!
+
+# Import credentials from a file (secretsdump output, hashcat potfile, etc.)
+uwu > creds import secretsdump_output.txt
+[+] Imported 15 credentials
+```
+
+---
+
+## Setup & Config
+
+### hashcrack_setup
+
+Configure hashcat/john cracking backends. Manages API keys for cloud cracking services and local tool paths.
+
+```bash
+# Interactive setup wizard
+uwu > hashcrack_setup
+[*] Hashcrack Setup
+[*] Checking local tools...
+
+# Show current configuration
+uwu > hashcrack_setup --show
+
+  Hashcrack Configuration
+  ========================================
+
+  Hashcat:    /usr/bin/hashcat (installed)
+  John:       /usr/bin/john (installed)
+  Wordlist:   /usr/share/wordlists/rockyou.txt
+  API Keys:   1 configured
+
+# Test cracking setup
+uwu > hashcrack_setup --test
+[*] Testing hashcat... OK
+[*] Testing john... OK
+[*] Testing API key... OK
+
+# Add an API key for cloud cracking
+uwu > hashcrack_setup --add-key
+```
+
+### uwu-clear
+
+Clear various UwU Toolkit data stores. Useful for starting fresh between engagements.
+
+```bash
+# Clear everything (full reset)
+uwu > uwu-clear all
+[!] This will clear ALL data. Continue? [y/N] y
+[+] All data cleared
+
+# Clear only the database
+uwu > uwu-clear db
+
+# Clear only credentials
+uwu > uwu-clear creds
+
+# Clear only targets
+uwu > uwu-clear targets
+
+# Clear only global variables
+uwu > uwu-clear globals
+
+# Clear only permanent variables
+uwu > uwu-clear permanent
+
+# Clear command history
+uwu > uwu-clear history
+
+# Clear event log
+uwu > uwu-clear events
+```
+
+### clocksync
+
+Synchronize system clock with a domain controller. Critical for Kerberos attacks where time skew must be under 5 minutes.
+
+```bash
+# Sync clock with DC
+uwu > clocksync 10.10.10.100
+[*] Querying DC time...
+[+] Clock synced: offset -3.2s applied
+
+# Check current sync status
+uwu > clocksync --status
+[*] Current offset: -3.2s from 10.10.10.100
+[*] Last synced: 2024-01-15 14:30:22
+
+# Clear clock sync (restore original time)
+uwu > clocksync --clear
+[+] Clock sync cleared
+```
+
+### hosts
+
+Display discovered hosts from scans and enumeration. Aggregates host data from nmap scans, LDAP queries, and manual target entries.
+
+```bash
+uwu > hosts
+
+  Discovered Hosts
+  ==================================================
+
+  IP              Hostname             OS                    Ports
+  --------------- -------------------- --------------------- ----------
+  10.10.10.100    DC01.corp.local      Windows Server 2022   53,88,389
+  10.10.10.50     WEB01.corp.local     Windows Server 2019   80,443
+  10.10.10.51     SQL01.corp.local     Windows Server 2019   1433
+```
+
+### status
+
+Show the current engagement status overview. Displays active targets, credentials, running services, and shell sessions at a glance.
+
+```bash
+uwu > status
+
+  Engagement Status
+  ==================================================
+
+  Targets:      3 tracked (DC: 10.10.10.100)
+  Credentials:  5 stored (2 passwords, 3 hashes)
+  Shells:       1 active
+  Listeners:    2 running (http-8000, nc-4444)
+  Clock Sync:   -3.2s (DC01)
+  Globals:      DOMAIN=corp.local, USER=administrator
+```
+
+### timeline
+
+Display a chronological timeline of actions taken during the engagement. Useful for reporting and maintaining an audit trail.
+
+```bash
+uwu > timeline
+
+  Engagement Timeline
+  ==================================================
+
+  [14:30:22] Module: ad/kerberoast - 3 SPNs found
+  [14:32:10] Cred added: CORP\svc_sql (ntlm)
+  [14:35:45] Module: ad/asreproast - 1 user roasted
+  [14:40:00] Shell: 10.10.10.50:49123 connected
+  [14:45:12] Module: ad/secretsdump - NTDS dumped
+```
+
+### report
+
+Generate an engagement report from collected data (targets, credentials, timeline events).
+
+```bash
+uwu > report
+
+  Generating Report...
+  [+] Report saved to: report_corp.local_2024-01-15.md
+```
+
+### macro
+
+Define and run command macros for repeatable workflows.
+
+```bash
+uwu > macro
+
+  Available Macros
+  ========================================
+
+  Name                 Description
+  -------------------- ----------------------------------------
+  quick-enum           Run basic AD enumeration suite
+  dump-and-crack       Secretsdump + hashcat pipeline
+```
+
+### potatoes
+
+Manage potato privilege escalation binaries (SweetPotato, GodPotato, etc.). Serves selected potato binaries via the HTTP server for easy transfer to targets.
+
+```bash
+uwu > potatoes
+
+  Potato Binaries
+  ========================================
+
+  Name              Path                           Arch
+  ----------------- ------------------------------ ------
+  SweetPotato       /opt/tools/SweetPotato.exe     x64
+  GodPotato         /opt/tools/GodPotato.exe       x64
+  PrintSpoofer      /opt/tools/PrintSpoofer.exe    x64
+```
+
+### nxc
+
+Shortcut for NetExec (nxc) with auto-populated globals. Passes current DOMAIN, USER, PASS/HASHES from global variables so you don't have to type them every time.
+
+```bash
+uwu > nxc smb 10.10.10.100 --shares
+uwu > nxc ldap 10.10.10.100 --users
+uwu > nxc winrm 10.10.10.100 -x "whoami"
+```
+
+Variables DOMAIN, USER, and PASS/HASHES are injected from globals automatically.
 
 ---
 
@@ -843,7 +1269,7 @@ export RHOSTS='10.10.10.100'
 python3 uwu
 
 # Execute commands (semicolon separated)
-python3 uwu -x "use auxiliary/ad/kerberoast; set RHOSTS 10.10.10.1; run"
+python3 uwu -x "use ad/kerberoast; set RHOSTS 10.10.10.1; run"
 
 # Execute resource file
 python3 uwu -r script.rc
@@ -863,12 +1289,12 @@ Create `.rc` files for automation:
 # kerberoast.rc
 setg DOMAIN CORP.LOCAL
 setg RHOSTS 10.10.10.100
-use auxiliary/ad/kerberoast
+use ad/kerberoast
 set USER admin
 set PASS Password123
 run
 back
-use auxiliary/ad/asreproast
+use ad/asreproast
 run
 ```
 

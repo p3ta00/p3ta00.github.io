@@ -42,9 +42,16 @@ uwu > setg EXEGOL_CONTAINER exegol-htb
 When a module needs tools not installed locally:
 
 1. **Tool Detection** - Module calls `find_tool("GetUserSPNs.py")`
-2. **Local Check** - Searches extended PATH (`~/.local/bin`, `/opt/tools`, etc.)
+2. **Local Check** - Searches extended PATH (`~/.local/bin`, `/opt/tools`, `/usr/bin`, etc.)
 3. **Exegol Fallback** - If not found, uses `run_in_exegol()` to execute in container
 4. **Output Return** - Results are captured and returned to UwU Toolkit
+
+### Kali Compatibility
+
+The same codebase works on Kali without code changes:
+- `find_tool()` checks `~/.local/bin` and `/usr/bin` (where Kali puts pip-installed tools)
+- Wordlist resolution checks `/usr/share/seclists` (Kali's default)
+- `WORKING_DIR` auto-detects `~/htb` or `~/ctf` if they exist
 
 ### Module Example
 

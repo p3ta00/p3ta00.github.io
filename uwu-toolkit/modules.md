@@ -23,13 +23,14 @@ Complete guide to using and creating UwU Toolkit modules.
 
 ## Module Types
 
-| Type | Directory | Description |
-|------|-----------|-------------|
-| **Auxiliary** | `modules/auxiliary/` | Scanning, enumeration, credential attacks |
-| **Enumeration** | `modules/enumeration/` | Host and service discovery |
-| **Exploits** | `modules/exploits/` | Exploitation modules |
-| **Post** | `modules/post/` | Post-exploitation tools |
-| **Payloads** | `modules/payloads/` | Payload generators |
+| Type | Directory | Path Prefix | Description |
+|------|-----------|-------------|-------------|
+| **AD** | `modules/ad/` | `ad/` | Active Directory attacks and enumeration |
+| **Auxiliary** | `modules/auxiliary/` | `auxiliary/` | Scanning, enumeration, credential attacks |
+| **Enumeration** | `modules/enumeration/` | `enumeration/` | Host and service discovery |
+| **Exploits** | `modules/exploits/` | `exploits/` | Exploitation modules |
+| **Post** | `modules/post/` | `post/` | Post-exploitation tools |
+| **Payloads** | `modules/payloads/` | `payloads/` | Payload generators |
 
 ### Platforms
 
@@ -55,7 +56,7 @@ Modules can target specific platforms:
 uwu > search kerberos
 
 # 2. Select a module
-uwu > use auxiliary/ad/kerberoast
+uwu > use ad/kerberoast
 
 # 3. View options
 uwu kerberoast > options
@@ -80,7 +81,7 @@ uwu kerberoast > back
 uwu kerberoast > info
 
        Name: kerberoast
-     Module: auxiliary/kerberoast
+     Module: ad/kerberoast
    Platform: windows
      Author: UwU Toolkit
     Version: 1.0.0
@@ -107,63 +108,161 @@ uwu kerberoast > check
 
 ## Available Modules
 
-### Active Directory (`auxiliary/ad/`)
+### Active Directory (`ad/`)
 
-| Module | Description |
-|--------|-------------|
-| `kerberoast` | Request TGS tickets for offline cracking |
-| `asreproast` | AS-REP roasting for users without preauth |
-| `bloodhound_collect` | BloodHound data collection |
-| `certipy_find` | AD CS enumeration with Certipy |
-| `certipy_exploit` | AD CS exploitation |
-| `secretsdump` | Dump secrets from domain controller |
-| `netexec` | NetExec wrapper for AD enumeration |
-| `ad_enum` | Comprehensive AD enumeration |
-| `kerb_userenum` | Kerberos user enumeration |
+Core AD attack and enumeration modules. These live directly under `modules/ad/`, so the module path is `ad/<name>`.
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **kerberoast** | `ad/kerberoast` | Request TGS tickets for offline cracking |
+| **asreproast** | `ad/asreproast` | AS-REP roasting for users without preauth |
+| **targeted_kerberoast** | `ad/targeted_kerberoast` | Targeted Kerberoast with SPN manipulation |
+| **bloodhound_collect** | `ad/bloodhound_collect` | BloodHound data collection |
+| **bloodhound_edges** | `ad/bloodhound_edges` | BloodHound edge analysis |
+| **bloodyhound** | `ad/bloodyhound` | BloodyAD + BloodHound combined workflow |
+| **bloodyad_validate** | `ad/bloodyad_validate` | BloodyAD ACL validation |
+| **certipy_find** | `ad/certipy_find` | AD CS enumeration with Certipy |
+| **certipy_exploit** | `ad/certipy_exploit` | AD CS exploitation (ESC1-ESC16) |
+| **adcs_auto** | `ad/adcs_auto` | Automated ADCS scan + exploit pipeline |
+| **ad_enum** | `ad/ad_enum` | Comprehensive AD enumeration |
+| **ad_enumerate_all** | `ad/ad_enumerate_all` | Full-scope AD enumeration |
+| **ad_attack_enum** | `ad/ad_attack_enum` | Attack surface enumeration |
+| **delegation_exploit** | `ad/delegation_exploit` | Delegation abuse (unconstrained/constrained/RBCD) |
+| **rbcd_auto** | `ad/rbcd_auto` | Automated RBCD attack chain |
+| **evil_winrm** | `ad/evil_winrm` | Evil-WinRM session management |
+| **impacket_validate** | `ad/impacket_validate` | Validate Impacket credential combos |
+| **kerb_userenum** | `ad/kerb_userenum` | Kerberos user enumeration |
+| **netexec** | `ad/netexec` | NetExec wrapper for AD enumeration |
+| **password_spray** | `ad/password_spray` | Password spraying attacks |
+| **powerview_autoenum** | `ad/powerview_autoenum` | Automated PowerView enumeration |
+| **powerview_lab** | `ad/powerview_lab` | PowerView lab environment setup |
+| **powerview_remote** | `ad/powerview_remote` | Remote PowerView execution |
+| **powerview_remote_exec** | `ad/powerview_remote_exec` | Remote PowerView with command exec |
+| **sid_lookup** | `ad/sid_lookup` | SID-to-name resolution |
+| **uac_decoder** | `ad/uac_decoder` | Decode userAccountControl flags |
+| **iron_throne_bench** | `ad/iron_throne_bench` | Iron Throne lab benchmark suite |
+| **WriteAccountRestrictions** | `ad/WriteAccountRestrictions` | WriteAccountRestrictions ACL abuse |
+| **badsuccessor** | `ad/badsuccessor` | BadSuccessor dMSA privilege escalation |
 
 ### SMB (`auxiliary/smb/`)
 
-| Module | Description |
-|--------|-------------|
-| `smb_enum` | SMB share and user enumeration |
-| `smb_read` | Read files from SMB shares |
+| Module | Path | Description |
+|--------|------|-------------|
+| **smb_shares** | `auxiliary/smb/smb_shares` | SMB share enumeration and access check |
+| **smb_read** | `auxiliary/smb/smb_read` | Read files from SMB shares |
+| **enum4linux** | `auxiliary/smb/enum4linux` | enum4linux-ng wrapper |
+| **ntlm_coerce** | `auxiliary/smb/ntlm_coerce` | NTLM authentication coercion (PetitPotam, etc.) |
 
-### Enumeration (`enumeration/`)
+### SSH (`auxiliary/ssh/`)
 
-| Module | Description |
-|--------|-------------|
-| `autoenum` | Automated enumeration pipeline (like AutoRecon) |
-| `nmap_scan` | Nmap wrapper with profiles |
-| `portscan_fast` | Fast TCP port scanning |
-| `dns_enum` | DNS enumeration and zone transfer |
-| `web_fuzz` | Directory/file fuzzing |
-| `ftp_enum` | FTP enumeration |
-| `nfs_enum` | NFS share enumeration |
+| Module | Path | Description |
+|--------|------|-------------|
+| **ssh_enum** | `auxiliary/ssh/ssh_enum` | SSH enumeration and banner grabbing |
 
-### Post-Exploitation (`post/`)
+### Web (`auxiliary/web/`)
 
-| Module | Description |
-|--------|-------------|
-| `post/linux/linpeas_enum` | LinPEAS privilege escalation scan |
-| `post/linux/pspy_monitor` | Process monitoring with pspy64 |
-| `post/linux/linux_recon` | Linux system reconnaissance |
-| `post/windows/gather/lnk_parser` | Parse Windows LNK files |
-| `post/windows/escalate/gpo_abuse` | GPO abuse for privilege escalation |
+| Module | Path | Description |
+|--------|------|-------------|
+| **username_harvest** | `auxiliary/web/username_harvest` | Harvest usernames from web apps |
+| **web_scanner** | `auxiliary/web/web_scanner` | Web vulnerability scanner |
 
-### Payloads (`payloads/`)
+### RDP (`auxiliary/rdp/`)
 
-| Module | Description |
-|--------|-------------|
-| `reverse_shells` | Generate reverse shell payloads |
+| Module | Path | Description |
+|--------|------|-------------|
+| **rdp_session** | `auxiliary/rdp/rdp_session` | RDP session management |
+
+### Cracking (`auxiliary/cracking/`)
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **hashcrack** | `auxiliary/cracking/hashcrack` | Hash cracking with hashcat/john |
+| **cisco_type5_crack** | `auxiliary/cracking/cisco_type5_crack` | Cisco Type 5 password cracking |
+
+### Git (`auxiliary/git/`)
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **gitea_api** | `auxiliary/git/gitea_api` | Gitea API enumeration |
+| **gitea_commit_secrets** | `auxiliary/git/gitea_commit_secrets` | Extract secrets from Gitea commits |
+| **git_secrets** | `auxiliary/git/git_secrets` | Scan git repos for secrets |
 
 ### AWS (`auxiliary/aws/`)
 
-| Module | Description |
-|--------|-------------|
-| `s3_enum` | S3 bucket enumeration |
-| `iam_enum` | IAM enumeration |
-| `ec2_metadata` | EC2 metadata service access |
-| `lambda_enum` | Lambda function enumeration |
+| Module | Path | Description |
+|--------|------|-------------|
+| **s3_enum** | `auxiliary/aws/s3_enum` | S3 bucket enumeration |
+| **iam_enum** | `auxiliary/aws/iam_enum` | IAM user/role/policy enumeration |
+| **ec2_metadata** | `auxiliary/aws/ec2_metadata` | EC2 metadata service access (SSRF) |
+| **lambda_enum** | `auxiliary/aws/lambda_enum` | Lambda function enumeration |
+| **cred_catcher** | `auxiliary/aws/cred_catcher` | AWS credential harvesting |
+| **sts_whoami** | `auxiliary/aws/sts_whoami` | STS GetCallerIdentity check |
+
+### Enumeration (`enumeration/`)
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **autoenum** | `enumeration/autoenum` | Automated enumeration pipeline (like AutoRecon) |
+| **auto_enumerator** | `enumeration/auto_enumerator` | Configurable auto-enumeration |
+| **portscan_fast** | `enumeration/portscan_fast` | Fast TCP port scanning |
+| **dns_enum** | `enumeration/dns_enum` | DNS enumeration and zone transfer |
+| **web_fuzz** | `enumeration/web_fuzz` | Directory/file fuzzing |
+| **ftp_enum** | `enumeration/ftp_enum` | FTP enumeration and anonymous access |
+| **nfs_enum** | `enumeration/nfs_enum` | NFS share enumeration |
+| **cicd_detect** | `enumeration/cicd_detect` | CI/CD pipeline detection |
+| **dirsearch_scan** | `enumeration/dirsearch_scan` | Dirsearch directory brute-forcing |
+| **gitea_enum** | `enumeration/gitea_enum` | Gitea instance enumeration |
+| **vhost_scan** | `enumeration/vhost_scan` | Virtual host discovery |
+
+### Exploits (`exploits/`)
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **template** | `exploits/template` | Exploit module template |
+| **samba_usermap_script** | `exploits/samba_usermap_script` | Samba usermap_script RCE (CVE-2007-2447) |
+| **git_webshell** | `exploits/cicd/git_webshell` | CI/CD git-based webshell deployment |
+| **pdf24_privesc** | `exploits/windows/local/pdf24_privesc` | PDF24 local privilege escalation |
+
+### Post-Exploitation (`post/`)
+
+#### Linux
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **linux_enum** | `post/linux_enum` | Linux system enumeration |
+| **linux_privesc** | `post/linux_privesc` | Linux privilege escalation checks |
+| **linpeas_enum** | `post/linux/linpeas_enum` | LinPEAS privilege escalation scan |
+| **pspy_monitor** | `post/linux/pspy_monitor` | Process monitoring with pspy64 |
+| **linux_recon** | `post/linux/linux_recon` | Linux system reconnaissance |
+| **privesc_suggest** | `post/linux/privesc_suggest` | Privilege escalation suggester |
+
+#### Windows
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **lnk_parser** | `post/windows/gather/lnk_parser` | Parse Windows LNK shortcut files |
+| **installed_apps** | `post/windows/gather/installed_apps` | Enumerate installed applications |
+| **mremoteng_creds** | `post/windows/gather/mremoteng_creds` | Extract mRemoteNG credentials |
+| **msi_finder** | `post/windows/gather/msi_finder` | Find exploitable MSI installers |
+| **user_enum** | `post/windows/gather/user_enum` | Windows user enumeration |
+| **gpo_abuse** | `post/windows/escalate/gpo_abuse` | GPO abuse for privilege escalation |
+| **sebackup_dump** | `post/windows/sebackup_dump` | SeBackupPrivilege NTDS extraction |
+| **seimpersonate** | `post/windows/seimpersonate` | SeImpersonatePrivilege exploitation |
+
+#### Pivoting
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **ligolo_pivot** | `post/pivot/ligolo_pivot` | Ligolo-ng tunnel management |
+
+### Payloads (`payloads/`)
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **reverse_shells** | `payloads/reverse_shells` | Multi-format reverse shell generator |
+| **reverse_shell** | `payloads/reverse_shell` | Single reverse shell payload |
+| **aspx_shell** | `payloads/aspx_shell` | ASPX web shell generator |
+| **donut** | `payloads/donut` | Donut shellcode generator |
 
 ---
 
@@ -269,24 +368,36 @@ Save your module in the appropriate directory:
 
 ```
 modules/
+├── ad/                  # Active Directory modules
+│   ├── kerberoast.py
+│   ├── asreproast.py
+│   └── ...
 ├── auxiliary/
-│   ├── ad/           # Active Directory modules
-│   ├── smb/          # SMB modules
-│   ├── ssh/          # SSH modules
-│   ├── web/          # Web modules
-│   └── my_module.py  # Your new module
-├── enumeration/
+│   ├── smb/             # SMB modules
+│   ├── ssh/             # SSH modules
+│   ├── web/             # Web modules
+│   ├── rdp/             # RDP modules
+│   ├── cracking/        # Hash cracking modules
+│   ├── git/             # Git modules
+│   └── aws/             # AWS modules
+├── enumeration/         # Host/service discovery
 ├── exploits/
+│   ├── cicd/
+│   └── windows/local/
 ├── post/
 │   ├── linux/
-│   └── windows/
+│   ├── windows/
+│   │   ├── gather/
+│   │   └── escalate/
+│   └── pivot/
 └── payloads/
 ```
 
-Module path in UwU Toolkit:
-- `modules/auxiliary/my_module.py` → `auxiliary/my_module`
-- `modules/auxiliary/ad/kerberoast.py` → `auxiliary/ad/kerberoast`
-- `modules/post/linux/linpeas_enum.py` → `post/linux/linpeas_enum`
+Module path in UwU Toolkit maps from filesystem path by stripping `modules/` and `.py`:
+- `modules/ad/kerberoast.py` --> `ad/kerberoast`
+- `modules/auxiliary/smb/smb_shares.py` --> `auxiliary/smb/smb_shares`
+- `modules/post/linux/linpeas_enum.py` --> `post/linux/linpeas_enum`
+- `modules/exploits/windows/local/pdf24_privesc.py` --> `exploits/windows/local/pdf24_privesc`
 
 ---
 
@@ -509,76 +620,6 @@ self.references = [
     "https://book.hacktricks.xyz/windows-hardening/...",
     "https://github.com/SecureAuthCorp/impacket"
 ]
-```
-
----
-
-## Module Examples
-
-### Simple Scanner
-
-```python
-class PortScanner(ModuleBase):
-    def __init__(self):
-        super().__init__()
-        self.name = "port_scanner"
-        self.description = "Simple TCP port scanner"
-        self.module_type = ModuleType.ENUMERATION
-        self.platform = Platform.NETWORK
-
-        self.register_option("RHOSTS", "Target host", required=True)
-        self.register_option("PORTS", "Ports to scan", default="80,443,22,21")
-
-    def run(self) -> bool:
-        target = self.get_option("RHOSTS")
-        ports = self.get_option("PORTS").split(",")
-
-        self.print_status(f"Scanning {target}")
-
-        for port in ports:
-            if self._check_port(target, int(port)):
-                self.print_good(f"Port {port} is open")
-            else:
-                self.print_line(f"Port {port} is closed")
-
-        return True
-```
-
-### Credential Attack
-
-```python
-class CredentialDumper(ModuleBase):
-    def __init__(self):
-        super().__init__()
-        self.name = "cred_dump"
-        self.description = "Dump credentials from target"
-        self.module_type = ModuleType.POST
-        self.platform = Platform.WINDOWS
-
-        self.register_option("RHOSTS", "Target DC", required=True)
-        self.register_option("DOMAIN", "Domain name", required=True)
-        self.register_option("USER", "Username", required=True)
-        self.register_option("PASS", "Password", required=True)
-        self.register_option("OUTPUT", "Output file", default="creds.txt")
-
-    def run(self) -> bool:
-        dc = self.get_option("RHOSTS")
-        domain = self.get_option("DOMAIN")
-        user = self.get_option("USER")
-        password = self.get_option("PASS")
-
-        cmd = f"secretsdump.py '{domain}/{user}:{password}'@{dc}"
-
-        self.print_status("Dumping credentials...")
-        ret, stdout, stderr = self.run_in_exegol(cmd, timeout=300)
-
-        if "NTLM" in stdout:
-            self.print_good("Credentials dumped!")
-            # Save and parse output...
-            return True
-        else:
-            self.print_error("No credentials found")
-            return False
 ```
 
 ---

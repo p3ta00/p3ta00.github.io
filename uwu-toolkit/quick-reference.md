@@ -60,15 +60,15 @@ back                    # Return to base
 
 ```bash
 # Kerberoast
-use auxiliary/ad/kerberoast
+use ad/kerberoast
 set RHOSTS 10.10.10.100
 set DOMAIN corp.local
 set USER admin
 set PASS Password123
 run
 
-# SMB Enumeration
-use auxiliary/smb/smb_enum
+# SMB Share Enumeration
+use auxiliary/smb/smb_shares
 set RHOSTS 10.10.10.100
 run
 
@@ -101,6 +101,7 @@ run
 | `check` | Check prerequisites |
 | `search <term>` | Search modules |
 | `reload` | Reload module |
+| `show modules` | List all modules |
 
 ### Variables
 | Command | Description |
@@ -109,9 +110,38 @@ run
 | `setg <VAR> <val>` | Set global variable |
 | `unset <VAR>` | Unset session variable |
 | `unsetg <VAR>` | Unset global variable |
+| `setp <VAR> <val>` | Set persistent variable |
+| `getp <VAR>` | Get persistent variable |
+| `unsetp <VAR>` | Unset persistent variable |
+| `showp` | Show persistent variables |
 | `vars` | Show all variables |
 | `globals` | Show global variables |
 | `history [VAR]` | Show variable history |
+
+### Target & Creds
+| Command | Description |
+|---------|-------------|
+| `target` | Show current target info |
+| `target del` | Clear target |
+| `target vhost <host>` | Set virtual host |
+| `target domain <domain>` | Set target domain |
+| `creds` | Show stored credentials |
+| `creds add` | Add credentials |
+| `creds del` | Delete credentials |
+| `creds use` | Use stored credentials |
+| `creds import` | Import credentials from file |
+
+### Setup & Config
+| Command | Description |
+|---------|-------------|
+| `hashcrack_setup` | Configure hashcrack SSH backend |
+| `uwu-clear` | Clear all state and temp files |
+| `clocksync` | Sync clock with target DC |
+| `hosts` | Manage /etc/hosts entries |
+| `potatoes` | Download potato privilege escalation binaries |
+| `nxc` | NetExec shortcut |
+| `status` | Show environment status |
+| `timeline` | Show attack timeline |
 
 ### Servers
 | Command | Description |
@@ -179,48 +209,71 @@ run
 
 ## Common Module Paths
 
-### Active Directory
+### Active Directory (`ad/`)
 ```
-auxiliary/ad/kerberoast       # Kerberoast attack
-auxiliary/ad/asreproast       # AS-REP roasting
-auxiliary/ad/bloodhound_collect # BloodHound data
-auxiliary/ad/certipy_find     # AD CS enumeration
-auxiliary/ad/certipy_exploit  # AD CS exploitation
-auxiliary/ad/secretsdump      # Dump secrets
-auxiliary/ad/netexec          # NetExec wrapper
-auxiliary/ad/ad_enum          # AD enumeration
-auxiliary/ad/kerb_userenum    # User enumeration
-```
-
-### SMB
-```
-auxiliary/smb/smb_enum        # Share enumeration
-auxiliary/smb/smb_read        # Read files
-```
-
-### Enumeration
-```
-enumeration/autoenum          # Full auto enum
-enumeration/nmap_scan         # Nmap wrapper
-enumeration/portscan_fast     # Fast port scan
-enumeration/dns_enum          # DNS enumeration
-enumeration/web_fuzz          # Web fuzzing
-enumeration/ftp_enum          # FTP enumeration
-enumeration/nfs_enum          # NFS enumeration
+ad/kerberoast              # Kerberoast attack
+ad/asreproast              # AS-REP roasting
+ad/bloodhound_collect      # BloodHound data collection
+ad/certipy_find            # AD CS enumeration
+ad/certipy_exploit         # AD CS exploitation
+ad/adcs_auto               # Automated ADCS scan + exploit
+ad/netexec                 # NetExec wrapper
+ad/ad_enum                 # AD enumeration
+ad/ad_enumerate_all        # Full AD enumeration
+ad/kerb_userenum           # Kerberos user enumeration
+ad/password_spray          # Password spraying
+ad/delegation_exploit      # Delegation attacks
+ad/evil_winrm              # Evil-WinRM sessions
+ad/targeted_kerberoast     # Targeted kerberoast
+ad/rbcd_auto               # Automated RBCD attack
+ad/bloodyad_validate       # BloodyAD validation
 ```
 
-### Post-Exploitation
+### SMB (`auxiliary/smb/`)
 ```
-post/linux/linpeas_enum       # LinPEAS
-post/linux/pspy_monitor       # Process monitoring
-post/linux/linux_recon        # Linux recon
-post/windows/gather/lnk_parser # LNK parsing
-post/windows/escalate/gpo_abuse # GPO abuse
+auxiliary/smb/smb_shares   # SMB share enumeration
+auxiliary/smb/smb_read     # Read files from shares
+auxiliary/smb/enum4linux   # enum4linux-ng wrapper
+auxiliary/smb/ntlm_coerce  # NTLM coercion attacks
 ```
 
-### Payloads
+### Cracking (`auxiliary/cracking/`)
 ```
-payloads/reverse_shells       # Shell generator
+auxiliary/cracking/hashcrack  # Hash cracking (local/SSH)
+```
+
+### Enumeration (`enumeration/`)
+```
+enumeration/autoenum       # Full auto enumeration
+enumeration/portscan_fast  # Fast TCP port scan
+enumeration/dns_enum       # DNS enumeration
+enumeration/web_fuzz       # Web directory fuzzing
+enumeration/ftp_enum       # FTP enumeration
+enumeration/nfs_enum       # NFS share enumeration
+enumeration/vhost_scan     # Virtual host scanning
+enumeration/dirsearch_scan # Dirsearch wrapper
+```
+
+### Post-Exploitation (`post/`)
+```
+post/linux/linpeas_enum              # LinPEAS
+post/linux/pspy_monitor              # Process monitoring
+post/linux/linux_recon               # Linux recon
+post/linux/privesc_suggest           # Privilege escalation suggestions
+post/windows/gather/lnk_parser      # LNK file parsing
+post/windows/gather/installed_apps   # Installed applications
+post/windows/gather/mremoteng_creds  # mRemoteNG credential extraction
+post/windows/escalate/gpo_abuse      # GPO abuse
+post/windows/sebackup_dump           # SeBackupPrivilege NTDS dump
+post/windows/seimpersonate           # SeImpersonatePrivilege abuse
+post/pivot/ligolo_pivot              # Ligolo-ng pivoting
+```
+
+### Payloads (`payloads/`)
+```
+payloads/reverse_shells    # Shell generator
+payloads/donut             # Donut shellcode generator
+payloads/aspx_shell        # ASPX webshell generator
 ```
 
 ---
@@ -250,7 +303,7 @@ setg RHOSTS 10.10.10.100
 use enumeration/autoenum
 run
 back
-use auxiliary/smb/smb_enum
+use auxiliary/smb/smb_shares
 run
 ```
 
@@ -273,38 +326,6 @@ python3 uwu -h                 # Help
 
 ---
 
-## Tab Completion
-
-- **Commands** - Tab completes commands
-- **Modules** - Tab completes module paths
-- **Variables** - Tab completes variable names
-- **Files** - Tab completes file paths
-
----
-
-## Output Colors
-
-| Color | Meaning |
-|-------|---------|
-| `[*]` Blue | Status/Info |
-| `[+]` Green | Success |
-| `[-]` Red | Error |
-| `[!]` Orange | Warning |
-
----
-
-## Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `Tab` | Autocomplete |
-| `Ctrl+C` | Cancel current |
-| `Ctrl+D` | Background/Exit |
-| `Up/Down` | Command history |
-| `Ctrl+R` | Search history |
-
----
-
 ## Common Workflows
 
 ### Initial Enumeration
@@ -319,24 +340,43 @@ run
 
 ```bash
 # 1. Enumerate users
-use auxiliary/ad/kerb_userenum
+use ad/kerb_userenum
 set RHOSTS 10.10.10.100
 set DOMAIN corp.local
 run
 
 # 2. AS-REP Roast
-use auxiliary/ad/asreproast
+use ad/asreproast
 set USER userlist.txt
 run
 
 # 3. Kerberoast
-use auxiliary/ad/kerberoast
+use ad/kerberoast
 set USER admin
 set PASS Password123
 run
 
-# 4. Crack hashes offline
-!hashcat -m 13100 hashes.txt rockyou.txt
+# 4. Crack hashes
+use auxiliary/cracking/hashcrack
+set HASHFILE kerberoast_hashes.txt
+set HASHTYPE 13100
+run
+```
+
+### ADCS Attack
+
+```bash
+# 1. Find vulnerable templates
+use ad/certipy_find
+set RHOSTS 10.10.10.100
+set DOMAIN corp.local
+set USER lowpriv
+set PASS Password123
+run
+
+# 2. Exploit vulnerable template
+use ad/certipy_exploit
+run
 ```
 
 ### Post-Exploitation (Linux)
@@ -408,6 +448,8 @@ ligolo resume
 4. **Use resource files** - Automate repetitive tasks
 5. **Background sessions** - `Ctrl+D` to keep state
 6. **Exegol fallback** - Tools run in container if not local
+7. **Use `creds`** - Store and reuse credentials across modules
+8. **Use `clocksync`** - Sync clock before Kerberos attacks
 
 ---
 
@@ -435,6 +477,34 @@ setg EXEGOL_CONTAINER exegol-htb
 ```bash
 sudo uwu        # For raw sockets, etc.
 ```
+
+### Kerberos clock skew
+```bash
+clocksync        # Sync with target DC
+```
+
+---
+
+## Output Colors
+
+| Color | Meaning |
+|-------|---------|
+| `[*]` Blue | Status/Info |
+| `[+]` Green | Success |
+| `[-]` Red | Error |
+| `[!]` Orange | Warning |
+
+---
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Tab` | Autocomplete |
+| `Ctrl+C` | Cancel current |
+| `Ctrl+D` | Background/Exit |
+| `Up/Down` | Command history |
+| `Ctrl+R` | Search history |
 
 ---
 

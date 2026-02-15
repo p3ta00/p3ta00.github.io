@@ -102,37 +102,43 @@ const wikiPages = [
     title: "Wiki Index",
     url: "/uwu-toolkit/",
     category: "Overview",
-    content: "UwU Toolkit modular penetration testing framework Metasploit Exegol modules auxiliary enumeration exploits post payloads Claude AI Sliver C2 Penelope Ligolo shell management variables global persistent"
+    content: "UwU Toolkit modular penetration testing framework Metasploit Exegol Kali modules ad auxiliary enumeration exploits post payloads Claude AI Sliver C2 Penelope Ligolo shell management variables global permanent persistent engagement database targets credentials uwu-clear uwu-export uwu-loot uwu-hacks uwu-navi MCP server"
   },
   {
     title: "Installation Guide",
     url: "/uwu-toolkit/installation/",
     category: "Setup",
-    content: "installation setup requirements Python Linux macOS Windows WSL Exegol pip install clone git setup.sh symlink config configuration ANTHROPIC_API_KEY Sliver server client Claude AI troubleshooting module not found permission denied"
+    content: "installation setup requirements Python Linux macOS Windows WSL Exegol Kali Debian install-exegol.sh install-kali.sh setup.sh pip install clone git symlink config configuration permanent variables setp ANTHROPIC_API_KEY Sliver server client Claude AI troubleshooting module not found permission denied engagement.db WORKING_DIR"
   },
   {
     title: "Commands Reference",
     url: "/uwu-toolkit/commands/",
     category: "Commands",
-    content: "commands help exit quit clear banner use back info options run exploit check search reload set setg unset unsetg show vars globals history start stop listeners gosh php nc shell sessions interact kill claude sliver penelope ligolo route agents resume fg status configs export"
+    content: "commands help exit quit clear banner use back info options run exploit check search reload reloadall set setg setp get getg getp unset unsetg unsetp show showp vars globals history cleang cleanp start stop listeners gosh php nc shell sessions interact kill upgrade listen claude sliver penelope ligolo route agents resume fg status configs export target creds uwu-clear hashcrack_setup clocksync hosts potatoes nxc timeline report macro"
   },
   {
     title: "Modules Guide",
     url: "/uwu-toolkit/modules/",
     category: "Modules",
-    content: "modules auxiliary enumeration exploits post payloads kerberoast asreproast bloodhound certipy secretsdump netexec smb_enum autoenum nmap_scan portscan dns_enum web_fuzz linpeas pspy reverse_shells ModuleBase register_option get_option print_status print_good print_error run_command run_in_exegol"
+    content: "modules ad auxiliary enumeration exploits post payloads kerberoast asreproast bloodhound certipy netexec adcs_auto delegation_exploit evil_winrm password_spray rbcd_auto bloodyad_validate targeted_kerberoast smb_shares smb_read enum4linux ntlm_coerce hashcrack autoenum portscan dns_enum web_fuzz linpeas pspy reverse_shells donut aspx_shell sebackup_dump seimpersonate ModuleBase register_option get_option print_status print_good print_error run_command run_in_exegol find_tool"
+  },
+  {
+    title: "Hashcrack SSH Setup",
+    url: "/uwu-toolkit/hashcrack-ssh-setup/",
+    category: "Setup",
+    content: "hashcrack remote hashcat GPU SSH cracking NTLM NTLMv2 Kerberos TGS AS-REP DCC2 wordlist rules OneRuleToRuleThemAll rockyou hashcrack_setup docker gateway 172.17.0.1"
   },
   {
     title: "Integrations",
     url: "/uwu-toolkit/integrations/",
     category: "Integrations",
-    content: "integrations Exegol container docker Claude AI Anthropic API interactive mode analyze debug ask Sliver C2 server client connect resume Penelope shell handler listener upgrade PTY sessions Ligolo-ng tunneling proxy agent TUN interface route pivoting background Ctrl+D"
+    content: "integrations Exegol container docker Kali compatibility find_tool Claude AI Anthropic API interactive mode analyze debug ask Sliver C2 server client connect resume Penelope shell handler listener upgrade PTY sessions Ligolo-ng tunneling proxy agent TUN interface route pivoting background Ctrl+D MCP"
   },
   {
     title: "Quick Reference",
     url: "/uwu-toolkit/quick-reference/",
     category: "Cheatsheet",
-    content: "quick reference cheatsheet commands workflow AD Active Directory kerberoast enumeration post-exploitation services HTTP listener tips troubleshooting tab completion keyboard shortcuts Ctrl+D background resume penelope ligolo route"
+    content: "quick reference cheatsheet commands workflow AD Active Directory kerberoast ADCS certipy enumeration post-exploitation services HTTP listener target credentials creds hashcrack_setup uwu-clear clocksync tips troubleshooting tab completion keyboard shortcuts Ctrl+D background resume penelope ligolo route potatoes"
   },
   {
     title: "Search",
@@ -145,9 +151,14 @@ const wikiPages = [
 // Command-specific entries for better search
 const commandEntries = [
   { title: "use - Select Module", url: "/uwu-toolkit/commands/#use", category: "Command", content: "use select module path tab completion partial matching" },
-  { title: "set/setg - Set Variables", url: "/uwu-toolkit/commands/#set", category: "Command", content: "set setg variable session global persist history interactive" },
+  { title: "set/setg/setp - Set Variables", url: "/uwu-toolkit/commands/#set", category: "Command", content: "set setg setp variable session global permanent persist history interactive" },
   { title: "run/exploit - Execute Module", url: "/uwu-toolkit/commands/#run-exploit", category: "Command", content: "run exploit execute module check prerequisites" },
   { title: "search - Find Modules", url: "/uwu-toolkit/commands/#search", category: "Command", content: "search find modules name description tags kerberos smb linux" },
+  { title: "target - Target Management", url: "/uwu-toolkit/commands/#target-management", category: "Command", content: "target register host IP domain controller vhost notes DC_IP DC_HOST set target set dc" },
+  { title: "creds - Credential Management", url: "/uwu-toolkit/commands/#credentials", category: "Command", content: "creds credentials add delete use import secretsdump password hash NTLM domain" },
+  { title: "uwu-clear - Reset Data", url: "/uwu-toolkit/commands/#uwu-clear", category: "Command", content: "uwu-clear reset clear data database globals permanent history events credentials targets" },
+  { title: "hashcrack_setup - Remote Cracking", url: "/uwu-toolkit/commands/#hashcrack_setup", category: "Command", content: "hashcrack_setup SSH remote GPU hashcat cracking wordlist rules" },
+  { title: "clocksync - Fix Clock Skew", url: "/uwu-toolkit/commands/#clocksync", category: "Command", content: "clocksync clock skew Kerberos time DC FAKETIME ntpdate" },
   { title: "shells/sessions - List Shells", url: "/uwu-toolkit/commands/#shells-sessions", category: "Command", content: "shells sessions list active shell reverse connection interact" },
   { title: "penelope - Shell Handler", url: "/uwu-toolkit/commands/#penelope", category: "Command", content: "penelope shell handler listener PTY upgrade auto sessions background resume" },
   { title: "ligolo - Network Tunneling", url: "/uwu-toolkit/commands/#ligolo", category: "Command", content: "ligolo tunneling proxy agent TUN interface route pivot internal network" },
