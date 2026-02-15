@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Custom Tooling - UwU Toolkit
 permalink: /uwu-toolkit/custom-tooling/
 ---
@@ -492,5 +492,3 @@ Remote GPU cracking via SSH — see [Hashcrack SSH Setup](/uwu-toolkit/hashcrack
 | **Iron Throne Bench** | `ad/iron_throne_bench` | Iron Throne lab benchmark suite |
 
 ---
-
-[Back to Wiki Index](/uwu-toolkit/)

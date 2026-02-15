@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Remote Hashcat Cracking Setup - UwU Toolkit
 permalink: /uwu-toolkit/hashcrack-ssh-setup/
 ---
@@ -202,4 +202,3 @@ uwu hashcrack > run
 
 ---
 
-[Back to Wiki Index](/uwu-toolkit/)

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Quick Reference - UwU Toolkit
 permalink: /uwu-toolkit/quick-reference/
 ---
@@ -377,5 +377,3 @@ setg EXEGOL_CONTAINER exegol-htb  # Fix Exegol detection
 | `Ctrl+R` | Search history |
 
 ---
-
-[Back to Wiki Index](/uwu-toolkit/)

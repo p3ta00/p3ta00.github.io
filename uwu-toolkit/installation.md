@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Installation - UwU Toolkit
 permalink: /uwu-toolkit/installation/
 ---
@@ -311,4 +311,3 @@ rm -rf /path/to/uwu-toolkit
 
 ---
 
-[Back to Wiki Index](/uwu-toolkit/)

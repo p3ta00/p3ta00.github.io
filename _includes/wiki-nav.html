@@ -1,0 +1,69 @@
+<aside class="wiki-sidebar" id="wiki-sidebar">
+  <div class="wiki-sidebar-header">
+    <span class="wiki-logo">UwU</span>
+    <span class="wiki-logo-sub">toolkit wiki</span>
+    <button class="wiki-sidebar-close" id="wiki-sidebar-close" aria-label="Close sidebar">&times;</button>
+  </div>
+
+  <nav class="wiki-nav">
+    <ul class="wiki-nav-list">
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/' | relative_url }}">
+          <span class="wiki-nav-icon">~</span> Home
+        </a>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/installation/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/installation/' | relative_url }}">
+          <span class="wiki-nav-icon">#</span> Installation
+        </a>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/commands/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/commands/' | relative_url }}">
+          <span class="wiki-nav-icon">$</span> Commands
+        </a>
+      </li>
+
+      <li class="wiki-nav-separator">
+        <span>MODULES</span>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/modules/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/modules/' | relative_url }}">
+          <span class="wiki-nav-icon">&gt;</span> Modules Guide
+        </a>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/custom-tooling/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/custom-tooling/' | relative_url }}">
+          <span class="wiki-nav-icon">&gt;</span> Custom Tooling
+        </a>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/integrations/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/integrations/' | relative_url }}">
+          <span class="wiki-nav-icon">&gt;</span> Integrations
+        </a>
+      </li>
+
+      <li class="wiki-nav-separator">
+        <span>REFERENCE</span>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/hashcrack-ssh-setup/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/hashcrack-ssh-setup/' | relative_url }}">
+          <span class="wiki-nav-icon">&gt;</span> Hashcrack SSH
+        </a>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/quick-reference/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/quick-reference/' | relative_url }}">
+          <span class="wiki-nav-icon">&gt;</span> Quick Reference
+        </a>
+      </li>
+      <li class="wiki-nav-item {% if page.permalink == '/uwu-toolkit/search/' %}active{% endif %}">
+        <a href="{{ '/uwu-toolkit/search/' | relative_url }}">
+          <span class="wiki-nav-icon">?</span> Search
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="wiki-sidebar-footer">
+    <a href="https://github.com/p3ta00/uwu-toolkit" target="_blank" class="wiki-github-link">[github]</a>
+  </div>
+</aside>

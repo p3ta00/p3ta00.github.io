@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Search - UwU Toolkit Wiki
 permalink: /uwu-toolkit/search/
 ---
@@ -290,5 +290,3 @@ renderResults([], '');
 - [Quick Reference](/uwu-toolkit/quick-reference/) - Cheat sheet
 
 ---
-
-[Back to Wiki Index](/uwu-toolkit/)

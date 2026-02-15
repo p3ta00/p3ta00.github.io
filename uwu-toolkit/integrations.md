@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Integrations - UwU Toolkit
 permalink: /uwu-toolkit/integrations/
 ---
@@ -927,5 +927,3 @@ Add the server to your Claude Code MCP configuration:
 | `lateral_movement` | Lateral movement planning with credential type awareness |
 
 ---
-
-[Back to Wiki Index](/uwu-toolkit/)

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Modules Guide - UwU Toolkit
 permalink: /uwu-toolkit/modules/
 ---
@@ -504,5 +504,3 @@ self.references = [
 ```
 
 ---
-
-[Back to Wiki Index](/uwu-toolkit/)

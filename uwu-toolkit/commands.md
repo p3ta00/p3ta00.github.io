@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Commands Reference - UwU Toolkit
 permalink: /uwu-toolkit/commands/
 ---
@@ -1305,4 +1305,3 @@ python3 uwu -r kerberoast.rc
 
 ---
 
-[Back to Wiki Index](/uwu-toolkit/)

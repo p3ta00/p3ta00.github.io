@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: UwU Toolkit Wiki
 permalink: /uwu-toolkit/
 ---
