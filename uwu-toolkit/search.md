@@ -132,7 +132,13 @@ const wikiPages = [
     title: "Integrations",
     url: "/uwu-toolkit/integrations/",
     category: "Integrations",
-    content: "integrations Exegol container docker Kali compatibility Claude AI Anthropic API interactive mode analyze debug ask Sliver C2 server client connect resume Penelope shell handler listener upgrade PTY sessions Ligolo-ng tunneling proxy agent TUN interface route pivoting background Ctrl+D MCP server Model Context Protocol FastMCP tools resources prompts impacket impacket/psexec impacket/wmiexec impacket/smbexec impacket/dcomexec impacket/atexec impacket/secretsdump impacket/getTGT impacket/getST impacket/GetUserSPNs impacket/GetNPUsers impacket/addcomputer impacket/rbcd impacket/dacledit impacket/findDelegation impacket/mssqlclient impacket/smbclient impacket/lookupsid impacket/ntlmrelayx impacket/ticketer impacket/services impacket/reg pass-the-hash bloodyad bloodyad/genericall bloodyad/writedacl bloodyad/setowner bloodyad/dcsync bloodyad/addmember bloodyad/setpassword bloodyad/shadowcreds bloodyad/rbcd bloodyad/getwritable bloodyad/getobject bloodyad/addcomputer ACL ForceChangePassword WriteDACL WriteOwner netexec nxc smb ldap winrm rdp mssql ssh wmi shares users groups sessions ntds sam lsa rid-brute credential spraying certipy ADCS certificate ESC1 ESC2 ESC3 ESC6 ESC9 template CA PFX shadow credentials ad_enumeration attack_path_planning lateral_movement"
+    content: "integrations Exegol container docker Kali compatibility Claude AI Anthropic API interactive mode analyze debug ask Sliver C2 server client connect resume Penelope shell handler listener upgrade PTY sessions Ligolo-ng tunneling proxy agent TUN interface route pivoting background Ctrl+D MCP server Model Context Protocol FastMCP tools resources prompts impacket impacket/psexec impacket/wmiexec impacket/smbexec impacket/dcomexec impacket/atexec impacket/secretsdump impacket/getTGT impacket/getST impacket/GetUserSPNs impacket/GetNPUsers impacket/addcomputer impacket/rbcd impacket/dacledit impacket/findDelegation impacket/mssqlclient impacket/smbclient impacket/lookupsid impacket/ntlmrelayx impacket/ticketer impacket/services impacket/reg pass-the-hash bloodyad bloodyad/genericall bloodyad/writedacl bloodyad/setowner bloodyad/dcsync bloodyad/addmember bloodyad/setpassword bloodyad/shadowcreds bloodyad/rbcd bloodyad/getwritable bloodyad/getobject bloodyad/addcomputer ACL ForceChangePassword WriteDACL WriteOwner ad_enumeration attack_path_planning lateral_movement"
+  },
+  {
+    title: "Custom Tooling",
+    url: "/uwu-toolkit/custom-tooling/",
+    category: "Modules",
+    content: "custom tooling modules ad/kerberoast ad/asreproast ad/targeted_kerberoast ad/password_spray ad/kerb_userenum ad/netexec ad/evil_winrm ad/badsuccessor ad/WriteAccountRestrictions ad/ad_enum ad/ad_enumerate_all ad/ad_attack_enum ad/bloodhound_collect ad/bloodhound_edges ad/bloodyhound ad/bloodyad_validate ad/impacket_validate ad/powerview_autoenum ad/powerview_remote ad/sid_lookup ad/uac_decoder ad/certipy_find ad/certipy_exploit ad/adcs_auto ADCS ESC1 ESC2 ESC3 ESC6 ESC9 certificate template ad/delegation_exploit ad/rbcd_auto RBCD delegation auxiliary/smb/smb_shares auxiliary/smb/smb_read auxiliary/smb/enum4linux auxiliary/smb/ntlm_coerce PetitPotam coercion enumeration/autoenum enumeration/portscan_fast enumeration/dns_enum enumeration/web_fuzz enumeration/vhost_scan post/linux/linpeas_enum post/linux/pspy_monitor post/windows/sebackup_dump post/windows/seimpersonate post/pivot/ligolo_pivot payloads/reverse_shells payloads/aspx_shell payloads/donut auxiliary/cracking/hashcrack auxiliary/aws/s3_enum auxiliary/git/git_secrets netexec nxc smb ldap winrm rdp mssql ssh wmi shares credential spraying certipy shadow credentials kerberoast asreproast"
   },
   {
     title: "Quick Reference",
@@ -279,7 +285,8 @@ renderResults([], '');
 - [Wiki Index](/uwu-toolkit/) - Main documentation
 - [Commands Reference](/uwu-toolkit/commands/) - All commands
 - [Modules Guide](/uwu-toolkit/modules/) - Using and creating modules
-- [Integrations](/uwu-toolkit/integrations/) - Claude, Sliver, Penelope, Ligolo
+- [Custom Tooling](/uwu-toolkit/custom-tooling/) - All custom attack modules
+- [Integrations](/uwu-toolkit/integrations/) - Impacket, BloodyAD, Claude, Sliver, Penelope, Ligolo
 - [Quick Reference](/uwu-toolkit/quick-reference/) - Cheat sheet
 
 ---

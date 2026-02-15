@@ -25,8 +25,9 @@ permalink: /uwu-toolkit/
 | [Installation](installation) | Setup for Exegol and Kali |
 | [Commands Reference](commands) | Complete command documentation |
 | [Modules Guide](modules) | Using and creating modules |
+| [Custom Tooling](custom-tooling) | All custom attack, enum, and post-exploit modules |
+| [Integrations](integrations) | Impacket, BloodyAD, Claude AI, Sliver, Penelope, Ligolo |
 | [Hashcrack SSH Setup](hashcrack-ssh-setup) | Remote GPU hash cracking via SSH |
-| [Integrations](integrations) | Claude AI, Sliver, Penelope, Ligolo |
 | [Quick Reference](quick-reference) | Cheat sheet for common tasks |
 | [Search](search) | Search the wiki |
 
