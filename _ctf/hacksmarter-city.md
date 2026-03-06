@@ -2,7 +2,7 @@
 title: "City Council"
 platform: "HackSmarter"
 category: "Windows"
-difficulty: "Hard"
+difficulty: "Medium"
 date: 2026-03-06
 os: "Windows Server 2019"
 tags: ["windows", "active-directory", "kerberoast", "dpapi", "acl-abuse", "bloodhound", "ntlmv2", "sliver", "godpotato", "seimpersonateprivilege", "pyinstaller", "credential-theft"]
@@ -17,7 +17,7 @@ tags: ["windows", "active-directory", "kerberoast", "dpapi", "acl-abuse", "blood
 ## Overview
 
 **Platform:** HackSmarter
-**Difficulty:** Hard
+**Difficulty:** Medium
 **Domain:** city.local
 
 A local municipality recently survived a devastating ransomware campaign. While their internal IT team believes the infection has been purged and the holes plugged, the Board of Supervisors isn't taking any chances. They've brought in Hack Smarter to provide a "second pair of eyes."
