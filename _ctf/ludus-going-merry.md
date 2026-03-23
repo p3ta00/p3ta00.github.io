@@ -7,7 +7,7 @@ date: 2026-02-08
 os: "Windows Server 2022"
 active: true
 hash_required: true
-unlock_password: "GM{k1ng_0f_th3_p1r4t3s_f0und_th3_0n3_p13c3}"
+unlock_password: "REDACTED"
 tags: ["windows", "active-directory", "deserialization", "json.net", "mssql", "adcs", "esc1", "shadow-credentials", "backup-operators", "efs", "ntds-dump", "dpapi", "pkinit"]
 ---
 

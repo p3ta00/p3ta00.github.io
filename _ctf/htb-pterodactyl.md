@@ -7,7 +7,7 @@ date: 2026-02-08
 os: "openSUSE Leap 15.6"
 active: true
 hash_required: true
-unlock_password: "71638bddb42429a60e93cc76aa892882"
+unlock_password: "REDACTED"
 tags: ["linux", "web", "pterodactyl-panel", "cve-2025-49132", "path-traversal", "lfi", "pearcmd", "rce", "bcrypt", "mariadb", "cve-2025-6018", "cve-2025-6019", "pam", "udisks", "xfs"]
 ---
 

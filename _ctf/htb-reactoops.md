@@ -7,7 +7,7 @@ date: 2025-12-20
 os: "Linux"
 active: true
 hash_required: true
-unlock_password: "HTB{jus7_1n_c4s3_y0u_m1ss3d_r34ct2sh3ll___cr1t1c4l_un4uth3nt1c4t3d_RCE_1n_R34ct___CVE-2025-55182}"
+unlock_password: "REDACTED"
 tags: ["web", "react", "nextjs", "rce", "cve-2025-55182", "prototype-pollution", "flight-protocol", "react-server-components"]
 ---
 
