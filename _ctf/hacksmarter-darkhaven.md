@@ -1956,7 +1956,7 @@ Info: Establishing connection to remote endpoint
 *Evil-WinRM* PS C:\>
 ```
 
-The WinRM session kept typing so let's run RustHound.
+The WinRM session kept dying on me — shells were dropping mid-command and Evil-WinRM was throwing authorization errors after one or two keystrokes. Rather than fight the interactive shell, I pivoted to an LDAP-based BloodHound collection that only needs a working TCP 389 connection plus valid credentials. RustHound-CE talks directly to the DC over LDAP(S), so it sidesteps the WinRM stability issue entirely and gives us the full ACL graph we need to plan the next move.
 
 ## RustHound-CE
 
