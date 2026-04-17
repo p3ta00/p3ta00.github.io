@@ -2332,8 +2332,6 @@ corp.darkhaven.tech
  +-- <WITHIN_FOREST|AD>:darkhaven.tech
 ```
 
-![BloodHound Trust Map](/assets/images/ctf/darkhaven/bloodhound-trust-map.png)
-
 > **Teaching Moment — Child → Parent = Forest Root:** A `WITHIN_FOREST` trust between `corp.darkhaven.tech` and `darkhaven.tech` means `corp` is a child of the root `darkhaven.tech`. Because every child domain implicitly trusts the parent in a forest, possessing the child domain's **krbtgt** hash lets us forge a Golden Ticket that includes the *Enterprise Admins* SID from the root domain — full forest takeover. `raiseChild.py` automates this attack end-to-end.
 
 ---
