@@ -227,10 +227,6 @@ With admin access, Joomla's template editor under **System → Templates** allow
   <img src="/assets/images/ctf/samurai/template-editor.png" alt="Joomla Template Editor" style="max-width: 100%;" />
 </div>
 
-<div style="text-align: center;">
-  <img src="/assets/images/ctf/samurai/reverse-shell-template.png" alt="Reverse Shell Injected into Template" style="max-width: 100%;" />
-</div>
-
 ### Catching the Shell
 
 ```bash
