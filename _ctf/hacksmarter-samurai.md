@@ -336,6 +336,17 @@ root
 
 ---
 
+## Flags
+
+### User Flag
+
+```bash
+bash-5.1# find -name user.txt 2>/dev/null
+./var/www/user.txt
+```
+
+---
+
 ## Credentials Summary
 
 ```
