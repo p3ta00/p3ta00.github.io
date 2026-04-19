@@ -368,4 +368,3 @@ joomla425    : Pa847word987@Joomla456   → CVE-2023-23752 DB credential leak
 
 - [CVE-2023-23752 — Joomla Unauthenticated Information Disclosure](https://nvd.nist.gov/vuln/detail/CVE-2023-23752)
 - [K3ysTr0K3R/CVE-2023-23752-EXPLOIT](https://github.com/K3ysTr0K3R/CVE-2023-23752-EXPLOIT)
-- [GTFOBins — system() sudo abuse](https://gtfobins.github.io/)
