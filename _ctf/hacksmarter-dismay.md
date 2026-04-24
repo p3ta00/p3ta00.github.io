@@ -600,7 +600,11 @@ The note reveals that `wang.kali` is responsible for maintaining a binary in the
 
 # Phase 3: AV Bypass — Shell as wang.kali
 
-The note makes clear that `wang.kali` is responsible for maintaining executables on the `Tools` share and is expected to push a replacement binary. Since we have write access, we compile a malicious `Dism.exe` that masquerades as the legitimate deployment binary and upload it to the share to intercept execution.
+The note makes clear that `wang.kali` is responsible for maintaining executables on the `Tools` share and is expected to push a replacement binary.
+
+The initial approach was to drop a malicious `.lnk` file via the NXC `SLINKY` module and capture a hash with Responder — however, no authentication was received and that path was abandoned.
+
+Since we have direct write access to the share, the approach shifts to replacing `Dism.exe` itself. We compile a malicious `Dism.exe` and upload it to the share to intercept the next execution.
 
 ## Implant Generation — Sliver
 
