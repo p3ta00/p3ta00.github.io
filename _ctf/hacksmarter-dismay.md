@@ -600,7 +600,7 @@ The note reveals that `wang.kali` is responsible for maintaining a binary in the
 
 # Phase 3: AV Bypass — Shell as wang.kali
 
-The `Tools.lnk` shortcut points to `Dism.exe` on the share, which is executed by `wang.kali` when the broken binary needs to be "fixed." We replace it with a custom multi-stage loader designed to bypass AV.
+The note makes clear that `wang.kali` is responsible for maintaining executables on the `Tools` share and is expected to push a replacement binary. Since we have write access, we compile a malicious `Dism.exe` that masquerades as the legitimate deployment binary and upload it to the share to intercept execution.
 
 ## Implant Generation — Sliver
 
