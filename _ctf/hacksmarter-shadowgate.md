@@ -2,7 +2,7 @@
 title: "ShadowGate"
 platform: "HackSmarter"
 category: "Active Directory"
-difficulty: "Hard"
+difficulty: "Easy"
 date: 2026-05-11
 os: "Windows Server 2022"
 tags: ["active-directory", "windows", "asreproast", "hashcat", "rusthound", "bloodhound", "shadow-credentials", "genericwrite", "adcs", "esc8", "ntlm-relay", "certipy", "pkinit", "unpac-the-hash", "dcsync", "secretsdump", "kerberos", "smb"]
