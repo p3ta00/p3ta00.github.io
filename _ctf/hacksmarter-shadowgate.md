@@ -24,7 +24,6 @@ The assessment will evaluate whether a motivated attacker with standard network 
 
 The Hack Smarter team has been authorized to perform a black box internal penetration test against the ShadowGate environment.
 
-**Platform:** HackSmarter
 **Difficulty:** Easy
 **OS:** Windows Server 2022
 **IP:** `10.1.83.236`
@@ -40,51 +39,6 @@ The Hack Smarter team has been authorized to perform a black box internal penetr
 - **UnPAC-the-hash + DCSync** — The DC01$ certificate was used for PKINIT authentication to extract the machine account NT hash, then `secretsdump` replicated all domain credentials.
 
 **Risk Rating:** Critical
-
----
-
-## Attack Chain Summary
-
-```
-Null Session → AS-REP Roast (jtrueblood) → Crack Hash → BloodHound
-→ GenericWrite → Shadow Credentials (bbrown) → ADCS ESC8 Relay
-→ DC01$ Certificate → PKINIT → DCSync → Domain Admin
-```
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Null Session → User Enumeration → AS-REP Roast (jtrueblood)   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Hashcat → blood_brothers → BloodHound (jtrueblood)             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  GenericWrite → Shadow Credentials → bbrown NT Hash             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  CertEnroll Share → ADCS ESC8 (HTTP Web Enrollment + No Signing)│
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  certipy relay + coercer → DC01$ Certificate (dc01.pfx)         │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  PKINIT + UnPAC-the-hash → DC01$ NT Hash → DCSync → DA          │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 

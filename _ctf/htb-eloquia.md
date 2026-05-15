@@ -15,7 +15,6 @@ tags: ["windows", "sqlite", "load_extension", "rce", "dpapi", "edge-browser", "c
 
 ## Overview
 
-**Platform:** HackTheBox
 **Difficulty:** Insane
 **IP:** 10.129.x.x
 
@@ -45,31 +44,6 @@ The engagement identified critical vulnerabilities:
 - **Service runs as SYSTEM** enabling privilege escalation via binary hijacking
 
 **Risk Rating:** Critical
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│     SQL Explorer → SQLite load_extension() → RCE as WEB        │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Edge Browser Profile → DPAPI Decrypt → Olivia.KAT Creds    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     WinRM Access → Service Analysis → Binary Write Permissions │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Replace Failure2Ban.exe → Service Restart → SYSTEM Shell   │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 

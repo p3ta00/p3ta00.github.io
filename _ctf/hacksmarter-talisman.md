@@ -23,10 +23,9 @@ A set of leaked credentials, recently recovered from a third-party data breach, 
 ### Leaked Credentials
 
 ```
-jane / Greattalisman1!
+jane / [REDACTED]
 ```
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **OS:** Linux
 
@@ -274,42 +273,7 @@ Successfully extracted the oracle user's SSH private key:
 
 ```
 -----BEGIN OPENSSH PRIVATE KEY-----
-b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
-NhAAAAAwEAAQAAAYEAzPq+dDVoX80DwMvHWBdxaN2jBb2NDP2ua1VgtjPUke1gKmfqfV0o
-KgDMe9GW8DiTV3R977XB1L+7CG+Kewe/Als578HwEbh4Zm7Oya6WjMhdRz5EoP3I4qzglY
-6s0J9WerbBK/gPOVq58886HthlXn/Z4zyI7VhhMLdRTua98aFqdzxiF7NwQreoa73IDm0c
-XAi65BZUJ05zkJ6aOYaYlr+4LjBMFyri/0UIRg91tkfWYfYvF26+vYuUYT9lspa1SEoyYo
-77JgjMXe4lf4NJPuiOTFGaw1V758874gQWbmI8YnBZ4arvZ3EkglySR5b4CoC9PfojvEih
-WXP9/RGrcSqfRd3YXvym18d94DYPtxHRMpKN/QPh80V3TTTfigwK9G6yDTULF1+blzBQON
-ddHfffPWHMoPBwLUxSdC1TL3V2XwlNJmWmyxpsHdCYi5HMMppzip6wOpW+mAm3oiziiZWZ
-KpjKFZrojIImS4DHoDGPBjb12MrE5qFxFgAe8gX3AAAFmL9qBe6/agXuAAAAB3NzaC1yc2
-EAAAGBAMz6vnQ1aF/NA8DLx1gXcWjdowW9jQz9rmtVYLYz1JHtYCpn6n1dKCoAzHvRlvA4
-k1d0fe+1wdS/uwhvinsHvwJbOe/B8BG4eGZuzsmulozIXUc+RKD9yOKs4JWOrNCfVnq2wS
-v4DzlaufPPOh7YZV5/2eM8iO1YYTC3UU7mvfGhanc8YhezcEK3qGu9yA5tHFwIuuQWVCdO
-c5CemjmGmJa/uC4wTBcq4v9FCEYPdbZH1mH2Lxduvr2LlGE/ZbKWtUhKMmKO+yYIzF3uJX
-+DST7ojkxRmsNVe+fPO+IEFm5iPGJwWeGq72dxJIJckkeW+AqAvT36I7xIoVlz/f0Rq3Eq
-n0Xd2F78ptfHfeA2D7cR0TKSjf0D4fNFd00034oMCvRusg01Cxdfm5cwUDjXXR333z1hzK
-DwcC1MUnQtUy91dl8JTSZlpssabB3QmIuRzDKac4qesDqVvpgJt6Is4omVmSqYyhWa6IyC
-JkuAx6AxjwY29djKxOahcRYAHvIF9wAAAAMBAAEAAAGAUNQzk/mXfeeHKlhw9DDSXMrBRT
-s4yr2iMNsK9u47TYvwVuiBVAwPEXkdKVo9jd6RY3QhUQw4Md+lLi9lyRwF2zUEBKJSO3ql
-p6bcTjVVUpCUD8rjHyTUOWZ4bSFEzkN2w48bX25C+pfnKdg2kAE+/+OklPHDAOzP7njrTB
-S7I/RF2lzqRXRRuU1Y0ZuVrvKhsz0SDW0spA9QjN+t6y9DLnbNdxE+gAg+WPDs0Uu5XDa5
-uAlvCmt2NaI70ZlBTgoVHxBDX5s7JxNeuTbU9gQvHcciIRxqJq7Zj2xi6/l763+5ZeBIpf
-0ifKIRXjt+nsxmIWcrsuGqOP/Ve1JwRXzwWVkb+w20SfFqtQonQo+fofEeRIzFk0N+92Yp
-zRxvpfOauLH747/x4TA519vOwZt2aexh7KNDb6CA9eqr7hkGAjLLFX9mdm03jbqt7d2YZr
-lXBL8a4aX54tbpKuUWwWbV31yYO9ICSKsTG6nuNm9sJrTcoFmTFOQpW1xa6jTzSJAZAAAA
-wQDiFaql5oHhvSP+9uItT3yulRTKLgqhkbm9o9qT9F6f6zhGCUQIWw3T+J5ESgbQK4wMnO
-UTl1Nt/7/Q9+R/6uiHfdNJPjjT59faMoVx48SFGoABBRRArVAzQf+5kEb604NVq2i+fdOJ
-e35ZNPwym32W1EEVCfHan/E639hsbbWN3n7slXQ1+hxr3wf634e95WtRj5l6myUg3zrWPr
-0fW0iZ9tvizmIPc/QGnMRiHRE3BnZh9iJe9fQmEqQezrZtX0sAAADBAPbgcpTGjKyvepQv
-Rk7UoOTFSbXSmn0r19P3e7Rjbs0MCmViRpugRN0XdVrBwEM4H624pZD+CV483J9HJGupOO
-9KGeecoP4eQjrv219+f+hndp+E0Vb48zJwl1zY804asUn1TcXrszEidd1ENhrnlS03/A79
-u5vxx9zvj40byOjNltr24980gcicRSmXRFhXSxS4jiIPioHy+2CezJqfrONLdKKIgRMAG7
-K5FGYeXMeu9cei5puHGkTXpemg4WXn1QAAAMEA1I3ucUPcwRAdySzqYCFjI7O1Mk/G1poD
-CI92ofqkRbM5J4t6zFbMewe7alKlnZiJykyN2nqzRPQePvcsZwc2PxiqLVoi5/+9b1sBOf
-1T3FQH9kBsrWbyaNr3BumhTTJMCtALGP9ehm/qR5nWNRg6FUZfVSGbScM5yfEk9s8/kqgE
-1rZvSGdXH+Qya3JvJq4jqba/2PGeB/R1ADgS/sdqEexbYvuwjPKrGopWLJyrJ25O0ZxWLm
-coPAl3bDUbAAibAAAAHG9yYWNsZUBsb2NhbGhvc3QubG9jYWxkb21haW4BAgMEBQY=
+[REDACTED]
 -----END OPENSSH PRIVATE KEY-----
 ```
 
@@ -466,7 +430,7 @@ rootbash-4.4#
 ```
 Phase 1 - Initial Access
 ─────────────────────────────────────
-jane        : Greattalisman1!     → CloudBeaver (leaked creds)
+jane        : [REDACTED]          → CloudBeaver (leaked creds)
 
 Phase 2 - Lateral Movement
 ─────────────────────────────────────

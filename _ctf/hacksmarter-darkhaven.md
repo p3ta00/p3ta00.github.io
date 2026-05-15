@@ -22,7 +22,6 @@ A Close Access Team has infiltrated Darkhaven Technologies and dropped a machine
 
 > Some attacks might require "user interaction". We have simulated end users on the network, so this **is** in-scope.
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **OS:** Windows Server 2025
 
@@ -51,66 +50,6 @@ A Close Access Team has infiltrated Darkhaven Technologies and dropped a machine
 - **Child → Parent Trust Abuse** — `raiseChild.py` escalated from `corp.darkhaven.tech` to the forest root `darkhaven.tech`, completing full multi-forest compromise.
 
 **Risk Rating:** Critical
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Web Portal Helpdesk → Default Creds → sql_svc                  │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  MSSQL xp_cmdshell → Sliver Foothold (SQL) → KeePass Recovery   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  KeePass → showard → Spider Shares → Password Spray (ichambers) │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  ichambers (admin on CA) → Local SAM Dump → Local Admin Hash    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  svc_netops (Runbook) → RDP SHARE → GodPotato → SYSTEM          │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Inveigh NTLMv2 Capture → Hashcat → svc_webpool                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Notepad++ Backup (Web) → kwarren Cleartext Password            │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  ReadGMSAPassword → ca_svc_account$ (admin on CA)               │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  PowerShell History → ldap_svc Password → DCSync ext            │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  ldap_sync.exe Strings → ldap_svc (corp.darkhaven.tech admin)   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  raiseChild.py → Enterprise Admin → Forest Root Compromise      │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 

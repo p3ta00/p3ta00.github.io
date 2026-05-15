@@ -15,7 +15,6 @@ tags: ["web", "react", "nextjs", "rce", "cve-2025-55182", "prototype-pollution",
 
 ## Overview
 
-**Platform:** HackTheBox
 **Difficulty:** Very Easy
 **Category:** Web Challenge
 
@@ -41,31 +40,6 @@ The engagement identified a critical vulnerability:
 - **Error-based exfiltration** via NEXT_REDIRECT allows command output retrieval without callback server
 
 **Risk Rating:** Critical (CVSS 10.0)
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│     Identify Next.js via x-powered-by header                   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Source Analysis → Next.js 16.0.6 + React 19 (Vulnerable)   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     CVE-2025-55182 → Prototype Pollution → Flight Protocol     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Error-based Exfil → NEXT_REDIRECT → Flag in digest field   │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 

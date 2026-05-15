@@ -16,7 +16,6 @@ tags: ["windows", "active-directory", "smb", "rdp", "bloodhound", "forcechangepa
 
 ## Overview
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **Domain:** `dismay.hsm`
 **OS:** Windows Server 2022
@@ -43,47 +42,6 @@ This is a multi-machine Active Directory engagement simulating an internal penet
 - **ACL abuse chain** via BloodHound: `guy.rookie` → ForceChangePassword → `jena.yamazaki` → Targeted Kerberoast / password reset → `mike.silver` → AddMember → `SHARES_OPERATORS`.
 - **AV bypass** via Dism.exe binary replacement on a monitored Tools share, using a Go stager → PowerShell stager → custom shellcode runner → Sliver MTLS implant chain.
 - **ADCS ESC8** exploited via NTLM relay (ntlmrelayx + coercer) to obtain a Domain Controller certificate, enabling DCSync and full domain compromise.
-
----
-
-## Attack Path Overview
-
-```
-xiao.ge (provided creds)
-         │
-         ▼
-NEXUS RDP → Public\Pictures + Recycle Bin
-         │
-         ▼
-WsusContent SMB Share → Invoice PDF + Meeting Notes + Confidential.7z
-         │
-         ▼
-Confidential.7z (staging_admin creds) → guy.rookie plaintext password
-         │
-         ▼
-DC1 LDAP auth → BloodHound (RustHound)
-         │
-         ▼
-guy.rookie →[ForceChangePassword]→ jena.yamazaki
-         │
-         ▼
-jena.yamazaki →[Targeted Kerberoast / SetPassword]→ mike.silver
-         │
-         ▼
-mike.silver →[AddMember]→ SHARES_OPERATORS → READ/WRITE Tools share
-         │
-         ▼
-Tools share → Dism.exe binary replacement → Go stager → PS stager → Sliver
-         │
-         ▼
-wang.kali shell → AddMember DC2-WINRM-USERS → mike.silver WinRM on DC2
-         │
-         ▼
-Certipy ESC8 → ntlmrelayx + coercer → DC1$ certificate
-         │
-         ▼
-certipy auth → DC1$ NT hash → DCSync → Administrator hash → Domain Admin
-```
 
 ---
 

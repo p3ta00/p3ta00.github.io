@@ -16,7 +16,6 @@ tags: ["windows", "active-directory", "kerberoast", "dpapi", "acl-abuse", "blood
 
 ## Overview
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **Domain:** city.local
 
@@ -48,56 +47,6 @@ The engagement uncovered a chain of critical vulnerabilities that allowed comple
 - **SeImpersonatePrivilege abuse** on the IIS service account escalating to NT AUTHORITY\SYSTEM via GodPotato
 
 **Risk Rating:** Critical
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│   Web Enumeration → Download City Services Portal Binary        │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  PyInstaller Analysis → Hardcoded Creds (svc_services_portal)   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  BloodHound → Kerberoast clerk.john → Crack → SMB Access        │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Uploads Share → NTLMv2 Coercion (Slinky) → Crack jon.peters    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Targeted Kerberoast (nina.soto) → Backups Share → WIM Files    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  DPAPI Decryption → emma.hayes Credentials                      │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  ACL Abuse → Enable sam.brooks → WinRM → Lateral Movement       │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  OU Move web_admin → IIS Webshell → Sliver C2 Session           │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  SeImpersonatePrivilege → GodPotato → NT AUTHORITY\SYSTEM       │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 

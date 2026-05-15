@@ -19,7 +19,6 @@ tags: ["windows", "active-directory", "kerberoast", "gmsa", "ntlm-relay", "rbcd"
 
 ## Overview
 
-**Platform:** HackTheBox
 **Difficulty:** Hard
 **Domain:** pirate.htb
 
@@ -53,56 +52,6 @@ The engagement uncovered a chain of critical vulnerabilities across two hosts th
 - **SPN injection** via addspn.py to weaponize constrained delegation with the altservice trick for DC01
 
 **Risk Rating:** Critical
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  BloodHound Enumeration → Identify Kerberoastable Accounts      │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Kerberoast a.white_adm → Hash Uncrackable                      │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  MS01$ Machine Account → GMSA Secret Dump → gMSA_ADFS_prod$     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Evil-WinRM → DC01 → Internal Network Discovery (192.168.100.x) │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Ligolo Pivot → WEB01 (192.168.100.2) → SMB Signing Disabled    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Coercer + NTLM Relay → LDAPS → RBCD (TTIHTMPS$ → WEB01)       │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  S4U2Proxy → Administrator@WEB01 → PsExec → Secretsdump         │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  a.white Creds → bloodyAD Password Reset a.white_adm             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  SPN Injection → Constrained Delegation altservice → DC01 Admin  │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 

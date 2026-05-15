@@ -16,7 +16,6 @@ tags: ["linux", "web", "joomla", "cve-2023-23752", "command-injection", "suid", 
 
 ## Overview
 
-**Platform:** HackSmarter
 **OS:** Ubuntu 22.04
 **Difficulty:** Easy
 **IP:** `10.1.232.141`
@@ -27,26 +26,6 @@ tags: ["linux", "web", "joomla", "cve-2023-23752", "command-injection", "suid", 
 ## Objective
 
 As part of a penetration test, your team identified an interesting web server. Your task is to enumerate the target, establish an initial foothold, and escalate privileges to root.
-
----
-
-## Attack Path Overview
-
-```
-Nmap → Apache/Joomla 4.2.5
-         │
-         ▼
-CVE-2023-23752 → DB creds leaked via REST API
-         │
-         ▼
-Joomla Admin Login (cred reuse) → Template PHP Injection → www-data shell
-         │
-         ▼
-sudo -l → NOPASSWD /opt/backup/DbMaria
-         │
-         ▼
-system() command injection → chmod u+s /bin/bash → root
-```
 
 ---
 

