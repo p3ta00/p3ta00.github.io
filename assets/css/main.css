@@ -717,14 +717,22 @@ div.highlighter-rouge {
   width: 100%;
 }
 
-.post-content h1, .post-content h2, .post-content h3 {
-  color: var(--purple);
-  margin: 25px 0 15px;
+.post-content h1 {
+  color: var(--cyan);
+  margin: 30px 0 15px;
+  font-size: 1.6em;
 }
 
-.post-content h1::before, .post-content h2::before, .post-content h3::before {
-  content: '## ';
-  color: var(--pink);
+.post-content h2 {
+  color: var(--green);
+  margin: 25px 0 12px;
+  font-size: 1.3em;
+}
+
+.post-content h3 {
+  color: var(--orange);
+  margin: 20px 0 10px;
+  font-size: 1.1em;
 }
 
 .post-content p {

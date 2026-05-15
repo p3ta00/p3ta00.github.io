@@ -2,7 +2,7 @@
 title: "Edge"
 platform: "HackSmarter"
 category: "Credential Access"
-difficulty: "Medium"
+difficulty: "Easy"
 date: 2026-05-15
 os: "Windows 11 / Server 2025"
 tags: ["windows", "smb", "credential-dumping", "browser-exploitation", "edge", "app-bound-encryption", "edgesnapper", "vdi", "kiosk-bypass", "rdp", "sliver", "c2", "donut", "shellcode", "av-bypass", "lateral-movement", "putty", "winrm"]
