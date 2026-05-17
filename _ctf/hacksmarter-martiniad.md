@@ -41,26 +41,6 @@ Martini Bars is a corporate branch office of an adult beverage company that rece
 
 ---
 
-## Attack Path Overview
-
-```
-Unauthenticated SMB
-        │
-        ▼ Guest account enabled — READ/WRITE to notes share
-notes\notes.txt → plaintext credentials (mprice)
-        │
-        ▼ Valid domain account — Kerberos access
-Kerberoasting → ATHENA_SVC TGS (RC4-HMAC)
-        │
-        ▼ Hashcat rockyou.txt
-Cracked password → password reuse on athena.t0 (Domain Admin)
-        │
-        ▼ DRSUAPI replication
-secretsdump → Full NTDS dump → KRBTGT hash
-```
-
----
-
 # Enumeration
 
 ## SMB Null Session and Guest Enumeration
