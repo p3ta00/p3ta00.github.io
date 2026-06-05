@@ -229,10 +229,6 @@ Pass: <redacted>
 Flag: <redacted>
 ```
 
-<div style="text-align: center;">
-  <img src="/assets/images/ctf/bitstream/idor-message27.png" alt="IDOR Message 27 Contents" style="max-width: 100%;" />
-</div>
-
 The credentials were transmitted in plaintext inside an internal message that joey has no legitimate access to. This is a textbook IDOR — sequential, predictable resource identifiers with no server-side authorization check.
 
 **Credentials recovered:** `sql_svc` : `<redacted>`
