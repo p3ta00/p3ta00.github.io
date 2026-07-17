@@ -175,6 +175,10 @@ dev                     [Status: 200, Size: 14924, Words: 4761, Lines: 425, Dura
 
 Browsing `dev.shadowgate.local` lands on a "Dev File Upload Portal" whose **File Upload Workflow** panel names a specific employee by first-name-dot-last-initial:
 
+<div style="text-align: center;">
+  <img src="/assets/images/ctf/shadowgate2/dev-portal-login.png" alt="Dev File Upload Portal login page with File Upload Workflow panel" style="max-width: 100%;" />
+</div>
+
 ```
 Security Review: All uploaded files are reviewed and processed by mitch.r
 ```
