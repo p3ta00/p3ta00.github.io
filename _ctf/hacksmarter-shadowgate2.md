@@ -187,6 +187,8 @@ That single line is the whole username convention for the domain — `firstname.
 
 ### User Enumeration
 
+`userlist2.txt` isn't a generic wordlist — it's built by pulling real employee names off the ShadowGate site itself (the "Our Team" page and staff mentions elsewhere) and converting each one to the `firstname.lastinitial` convention identified from the dev portal. That turns a handful of scraped names into a small, high-confidence candidate list to validate against Kerberos:
+
 ```bash
 $ kerbrute userenum -d shadowgate.local --dc 10.1.104.4 /workspace/userlist2.txt
 ```
