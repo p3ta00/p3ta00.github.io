@@ -351,7 +351,7 @@ pre {
   border: 1px solid var(--terminal-black);
   border-left: 3px solid var(--blue);
   border-radius: 6px;
-  padding: 15px;
+  padding: 15px 15px 26px 15px;
   overflow-x: auto;
   margin: 15px 0;
   position: relative;
@@ -394,7 +394,7 @@ pre code {
   border: 1px solid var(--terminal-black);
   border-left: 3px solid var(--blue);
   border-radius: 6px;
-  padding: 15px;
+  padding: 15px 15px 26px 15px;
   overflow-x: auto;
   margin: 15px 0;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
